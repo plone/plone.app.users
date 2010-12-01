@@ -11,6 +11,7 @@ from zope.component import getMultiAdapter
 from AccessControl import getSecurityManager
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import normalizeString
 from Products.CMFPlone import PloneMessageFactory as _
 
 from ZODB.POSException import ConflictError
@@ -155,7 +156,7 @@ def getGroupIds(context):
         if g.id != 'AuthenticatedUsers':
             groupData.append(('%s (%s)' % (g.getGroupTitleOrName(), g.id), g.id))
     # Sort by title
-    groupData.sort(key=lambda x: x[0].lower())
+    groupData.sort(key=lambda x: normalizeString(x[0]))
     return SimpleVocabulary.fromItems(groupData)
 
 
