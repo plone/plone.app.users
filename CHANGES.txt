@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.2 - 2010-11-24
+1.0.3 - unreleased
 ------------------
 
 - Don't assume that fields in the user schema will be saved in property sheets
@@ -15,6 +15,9 @@ Changelog
   Sort groups on their title normalized.
   Similar as http://dev.plone.org/plone/ticket/11301
   [thomasdesvenain]
+
+1.0.2 - 2010-11-24
+------------------
 
 - Don't use a custom widget just to set the description of the fullname field,
   which should be set on the field itself.
