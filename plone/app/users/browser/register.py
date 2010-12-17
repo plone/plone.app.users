@@ -155,10 +155,17 @@ def getGroupIds(context):
     groupData = []
     for g in groups:
         if g.id != 'AuthenticatedUsers':
-            groupData.append(('%s (%s)' % (g.getGroupTitleOrName(), g.id), g.id))
+            group_title = g.getGroupTitleOrName()
+            if not isinstance(group_title, unicode):
+                group_title = group_title.decode('utf-8')
+            if group_title != g.id:
+                title = u'%s (%s)' % (group_title, g.id)
+            else:
+                title = group_title
+            groupData.append(SimpleVocabulary.createTerm(g.id, g.id, title))
     # Sort by title
-    groupData.sort(key=lambda x: normalizeString(x[0]))
-    return SimpleVocabulary.fromItems(groupData)
+    groupData.sort(key=lambda term: normalizeString(term.title))
+    return SimpleVocabulary(groupData)
 
 
 class BaseRegistrationForm(PageForm):

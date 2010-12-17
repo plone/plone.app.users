@@ -4,6 +4,10 @@ Changelog
 1.0.3 - unreleased
 ------------------
 
+- Fixed UnicodeDecodeError caused by wrong groups vocabulary (token and value
+  in terms were switched). This closes http://dev.plone.org/plone/ticket/11316
+  [vincentfretin]
+
 - Don't assume that fields in the user schema will be saved in property sheets
   when a new user registers. Instead, adapt the navigation root to the user
   schema to get the same adapter as is used on the Personal Information form,
