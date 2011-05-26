@@ -252,7 +252,6 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
 class UserDataPanel(AccountPanelForm):
 
     label = _(u'title_personal_information_form', default=u'Personal Information')
-    description = _(u'description_personal_information_form', default='Change your personal information')
     form_name = _(u'User Data Form')
 
     def __init__(self, context, request):
@@ -267,6 +266,18 @@ class UserDataPanel(AccountPanelForm):
         schema = util.getSchema()
         self.form_fields = form.FormFields(schema)
         self.form_fields['portrait'].custom_widget = FileUploadWidget
+
+    @property
+    def description(self):
+        mt = getToolByName(self.context, 'portal_membership')
+        if self.userid and (self.userid != mt.getAuthenticatedMember().id):
+            #editing someone else's profile
+            return _(u'description_personal_information_form_otheruser',
+                     default='Change personal information for $name',
+                     mapping={'name': self.userid})
+        else:
+            #editing my own profile
+            return _(u'description_personal_information_form', default='Change your personal information')
 
     def getPortrait(self):
         context = aq_inner(self.context)

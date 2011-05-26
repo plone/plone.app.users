@@ -4,6 +4,10 @@ Changelog
 1.0.5 - Unreleased
 ------------------
 
+- Check for permission when editing other user's profiles.
+  (This fixes http://dev.plone.org/plone/ticket/11842)
+  [fRiSi]
+
 1.0.4 - 2011-02-25
 ------------------
 

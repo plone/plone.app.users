@@ -360,6 +360,7 @@ class BaseRegistrationForm(PageForm):
         portal = getUtility(ISiteRoot)
         registration = getToolByName(self.context, 'portal_registration')
         portal_props = getToolByName(self.context, 'portal_properties')
+        mt = getToolByName(self.context, 'portal_membership')
         props = portal_props.site_properties
         use_email_as_login = props.getProperty('use_email_as_login')
 
@@ -381,11 +382,11 @@ class BaseRegistrationForm(PageForm):
             logging.exception(err)
             IStatusMessage(self.request).addStatusMessage(err, type="error")
             return
-        
+
         # set additional properties using the user schema adapter
         schema = getUtility(IUserDataSchemaProvider).getSchema()
-        self.request.set('userid', user_id)
         adapter = getAdapter(self.context, schema)
+        adapter.context = mt.getMemberById(user_id)
         for name in getFieldNamesInOrder(schema):
             if name in data:
                 setattr(adapter, name, data[name])
