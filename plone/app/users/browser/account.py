@@ -18,16 +18,17 @@ from Products.statusmessages.interfaces import IStatusMessage
 
 from plone.app.users.browser.interfaces import IAccountPanelForm, IAccountPanelView
 
+
 class AccountPanelSchemaAdapter(SchemaAdapterBase):
 
     def __init__(self, context):
         mt = getToolByName(context, 'portal_membership')
-        userid = context.REQUEST.get('userid')
-
-        if userid and mt.checkPermission('zope2.ManageUsers', context):
+        userid = context.REQUEST.form.get('userid')
+        if userid and mt.checkPermission('Manage Users', context):
             self.context = mt.getMemberById(userid)
         else:
             self.context = mt.getAuthenticatedMember()
+
 
 class AccountPanelView(BrowserView):
     """ The bare view for the account panel with macro function.
