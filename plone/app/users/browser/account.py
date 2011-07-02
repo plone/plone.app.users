@@ -24,7 +24,7 @@ class AccountPanelSchemaAdapter(SchemaAdapterBase):
     def __init__(self, context):
         mt = getToolByName(context, 'portal_membership')
         userid = context.REQUEST.form.get('userid')
-        if userid and mt.checkPermission('Manage Users', context):
+        if userid and mt.checkPermission('Manage users', context):
             self.context = mt.getMemberById(userid)
         else:
             self.context = mt.getAuthenticatedMember()
