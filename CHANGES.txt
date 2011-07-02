@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.0.6 - Unreleased
+1.0.6 - 2011-07-02
 ------------------
 
 - Fix incorrect permission check which prevented users with the ``Manage
