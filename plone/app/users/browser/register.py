@@ -305,7 +305,6 @@ class BaseRegistrationForm(PageForm):
         # check if username is valid
         # Skip this check if username was already in error list
         if not username_field in error_keys:
-            portal = getUtility(ISiteRoot)
             if username == portal.getId():
                 err_str = _(u"This username is reserved. Please choose a "
                             "different name.")
@@ -357,7 +356,9 @@ class BaseRegistrationForm(PageForm):
         return self.context.unrestrictedTraverse('registered')()
 
     def handle_join_success(self, data):
-        portal = getUtility(ISiteRoot)
+        # portal should be acquisition wrapped, this is needed for the schema
+        # adapter below
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
         registration = getToolByName(self.context, 'portal_registration')
         portal_props = getToolByName(self.context, 'portal_properties')
         mt = getToolByName(self.context, 'portal_membership')
@@ -385,7 +386,7 @@ class BaseRegistrationForm(PageForm):
 
         # set additional properties using the user schema adapter
         schema = getUtility(IUserDataSchemaProvider).getSchema()
-        adapter = getAdapter(self.context, schema)
+        adapter = getAdapter(portal, schema)
         adapter.context = mt.getMemberById(user_id)
         for name in getFieldNamesInOrder(schema):
             if name in data:
@@ -408,7 +409,7 @@ class BaseRegistrationForm(PageForm):
                 # Let Zope handle this exception.
                 raise
             except Exception:
-                ctrlOverview = getMultiAdapter((self.context, self.request),
+                ctrlOverview = getMultiAdapter((portal, self.request),
                                                name='overview-controlpanel')
                 mail_settings_correct = not ctrlOverview.mailhost_warning()
                 if mail_settings_correct:
@@ -456,8 +457,8 @@ class RegistrationForm(BaseRegistrationForm):
            incapable of sending emails and email validation is switched on
            (users are not allowed to select their own passwords).
         """
-        ctrlOverview = getMultiAdapter((self.context, self.request), name='overview-controlpanel')
         portal = getUtility(ISiteRoot)
+        ctrlOverview = getMultiAdapter((portal, self.request), name='overview-controlpanel')
 
         # hide form iff mailhost_warning == True and validate_email == True
         return not (ctrlOverview.mailhost_warning() and portal.getProperty('validate_email', True))
@@ -500,7 +501,8 @@ class AddUserForm(BaseRegistrationForm):
         # The mail_me field needs special handling depending on the
         # validate_email property and on the correctness of the mail
         # settings.
-        ctrlOverview = getMultiAdapter((self.context, self.request),
+        portal = getUtility(ISiteRoot)
+        ctrlOverview = getMultiAdapter((portal, self.request),
                                        name='overview-controlpanel')
         mail_settings_correct = not ctrlOverview.mailhost_warning()
         if not mail_settings_correct:
@@ -511,7 +513,6 @@ class AddUserForm(BaseRegistrationForm):
             # will check that at least one of the options is chosen.
             defaultFields['password'].field.required = False
             defaultFields['password_ctl'].field.required = False
-            portal = getUtility(ISiteRoot)
             if portal.getProperty('validate_email', True):
                 defaultFields['mail_me'].field.default = True
             else:

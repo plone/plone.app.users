@@ -4,6 +4,10 @@ Changelog
 1.0.7 - unreleased
 ------------------
 
+- Use portal object instead of self.context in AddUserForm so we can easily
+  subclass the class for another context. Merged r48005 from trunk (Plone 4.1).
+  [vincentfretin]
+
 
 1.0.6 - 2011-07-02
 ------------------
