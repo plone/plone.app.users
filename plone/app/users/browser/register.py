@@ -55,7 +55,7 @@ class IRegisterSchema(Interface):
     password = schema.Password(
         title=_(u'label_password', default=u'Password'),
         description=_(u'help_password_creation',
-                      default=u'Minimum 5 characters.'))
+                      default=u'Enter your new password.'))
 
     password_ctl = schema.Password(
         title=_(u'label_confirm_password',
@@ -240,6 +240,17 @@ class BaseRegistrationForm(PageForm):
         for name in ('password', 'password_ctl'):
             all_fields[name].field.required = True
 
+        # Change the password description based on PAS Plugin
+        # The user needs a list of instructions on what kind of password is required.
+        # We'll reuse password errors as instructions e.g. "Must contain a letter and a number".
+        # Assume PASPlugin errors are already translated
+        if all_fields.get('password',None):
+            registration = getToolByName(self.context, 'portal_registration')
+            err_str = registration.testPasswordValidity('')
+            if err_str:
+                msgid = _(u'Enter your new password. ${errors}', mapping=dict(errors=err_str))
+                all_fields['password'].field.description = self.context.translate(msgid)
+
         # Pass the list of join form fields as a reference to the
         # Fields constructor, and return.
         return form.Fields(*[all_fields[id] for id in registration_fields])
@@ -287,16 +298,19 @@ class BaseRegistrationForm(PageForm):
                     self.widgets['password'].error = err_str
                     self.widgets['password_ctl'].error = err_str
 
-        # Password field should have a minimum length of 5
+        # Password field checked against RegistrationTool
         if 'password' in form_field_names:
             # Skip this check if password fields already have an error
             if not 'password' in error_keys:
                 password = self.widgets['password'].getInputValue()
-                if password and len(password) < 5:
-                    err_str = _(u'Passwords must contain at least 5 letters.')
-                    errors.append(WidgetInputError(
-                            'password', u'label_password', err_str))
-                    self.widgets['password'].error = err_str
+                if password:
+                    # Use PAS to test validity
+                    err_str = registration.testPasswordValidity(password)
+                    if err_str:
+                        errors.append(WidgetInputError('password',
+                                      u'label_password', err_str))
+                        self.widgets['password'].error = err_str
+
 
         username = ''
         email = ''
@@ -461,6 +475,7 @@ class BaseRegistrationForm(PageForm):
                     return
 
         return
+
 
 
 class RegistrationForm(BaseRegistrationForm):
