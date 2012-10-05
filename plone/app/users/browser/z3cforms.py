@@ -73,10 +73,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
                 continue
 
             value = member.getProperty(k, _marker)
-            if value is _marker:
-                data[k] = None
-            
-            data[k] = safe_unicode(value)
+            data[k] = None if value is _marker else safe_unicode(value)
         return data
 
     def applyChanges(self, data):
