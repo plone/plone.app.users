@@ -118,5 +118,6 @@
         view=".z3cforms.AccountPanelForm"
         permission="zope2.View"
         />
+    <include package="plone.autoform" />
 
 </configure>

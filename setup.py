@@ -33,6 +33,7 @@ setup(name='plone.app.users',
       install_requires=[
           'setuptools',
           'five.formlib',
+          'plone.autoform',
           'plone.protect',
           'plone.app.controlpanel >=2.1b1',
           'plone.app.layout',

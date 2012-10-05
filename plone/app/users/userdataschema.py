@@ -2,6 +2,8 @@ from zope.interface import Interface, implements
 from zope import schema
 from zope.component import getUtility
 
+from plone.namedfile.field import NamedBlobImage
+
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.exceptions import EmailAddressInvalid
@@ -38,7 +40,7 @@ def checkEmailAddress(value):
     return True
 
 
-class IUserDataSchema(Interface):
+class IUserDataBaseSchema(Interface):
     """
     """
 
@@ -77,6 +79,8 @@ class IUserDataSchema(Interface):
                       "your office is located."),
         required=False)
 
+class IUserDataSchema(IUserDataBaseSchema):
+
     portrait = FileUpload(title=_(u'label_portrait', default=u'Portrait'),
         description=_(u'help_portrait',
                       default=u'To add or change the portrait: click the '
@@ -88,4 +92,15 @@ class IUserDataSchema(Interface):
     pdelete = schema.Bool(
         title=_(u'label_delete_portrait', default=u'Delete Portrait'),
         description=u'',
+        required=False)
+
+class IUserDataZ3CSchema(IUserDataBaseSchema):
+    """Overrides to make the schema z3c-compliant"""
+
+    portrait = NamedBlobImage(title=_(u'label_portrait', default=u'Portrait'),
+        description=_(u'help_portrait',
+                      default=u'To add or change the portrait: click the '
+                      '"Browse" button; select a picture of yourself. '
+                      'Recommended image size is 75 pixels wide by 100 '
+                      'pixels tall.'),
         required=False)

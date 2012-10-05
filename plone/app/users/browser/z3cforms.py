@@ -14,8 +14,8 @@ from zope.schema import Bool
 from z3c.form import form, field, button
 from z3c.form.interfaces import HIDDEN_MODE
 
+from plone.autoform.form import AutoExtensibleForm
 from plone.app.controlpanel.events import ConfigurationChangedEvent
-from plone.namedfile.field import NamedBlobImage
 
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
@@ -33,17 +33,17 @@ from Products.PlonePAS.tools.membership import default_portrait as pas_default_p
 from ZTUtils import make_query
 
 from .account import IAccountPanelForm, AccountPanelSchemaAdapter
-from ..userdataschema import IUserDataSchema, IUserDataSchemaProvider
+from ..userdataschema import IUserDataZ3CSchema, IUserDataSchemaProvider
 from .personalpreferences import IPersonalPreferences
 
 #TODO: CSRF
 #TODO: Uploading an image for another user
 
-class AccountPanelForm(form.Form):
+class AccountPanelForm(AutoExtensibleForm, form.Form):
     """A simple form to be used as a basis for account panel screens."""
 
     implements(IAccountPanelForm)
-    fields = field.Fields(IAccountPanelForm)
+    schema = IAccountPanelForm
 
     hidden_widgets = []
     successMessage = _("Changes saved.")
@@ -175,7 +175,7 @@ class PersonalPreferencesPanel(AccountPanelForm):
             #editing my own profile
             return _(u'description_my_preferences', default='Your personal settings.')
 
-    fields = field.Fields(IPersonalPreferences)
+    schema = IPersonalPreferences
 
     def updateWidgets(self):
         """ Hide the visible_ids field based on portal_properties.
@@ -207,37 +207,7 @@ class UserDataPanel(AccountPanelForm):
             #editing my own profile
             return _(u'description_personal_information_form', default='Change your personal information')
 
-    @property
-    def fields(self):
-        util = getUtility(IUserDataSchemaProvider)
-        fields = field.Fields(util.getSchema())
-        try:
-            old_field = fields['portrait'].field
-            if isinstance(old_field, FileUpload):
-                new_field = NamedBlobImage(
-                    __name__ = old_field.__name__,
-                    title = old_field.title,
-                    description = old_field.description,
-                    required = old_field.required,
-                )
-                new_field.interface = old_field.interface
-                fields['portrait'].field = new_field
-                del fields['pdelete']
-        except KeyError:
-            pass
-        return fields
-
-    def updateWidgets(self):
-        """ Hide the visible_ids field based on portal_properties.
-        """
-        context = aq_inner(self.context)
-        properties = getToolByName(context, 'portal_properties')
-        siteProperties = properties.site_properties
-
-        super(UserDataPanel, self).updateWidgets()
-
-        self.widgets['portrait'].__dict__['download_url'] = 'http://camel.com'
-        import pdb ; pdb.set_trace()
+    schema = IUserDataZ3CSchema
 
 
 from plone.z3cform.layout import FormWrapper
