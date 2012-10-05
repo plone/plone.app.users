@@ -62,7 +62,8 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
 
         data = {}
         _marker = object()
-        for k in self.fields.keys():
+        # For each prefix-less version of the fieldname...
+        for k in (f.field.__name__ for f in self.fields.values()):
             if k == 'portrait':
                 portal = getToolByName(self, 'portal_url').getPortalObject()
                 value = mt.getPersonalPortrait(member.getId())
@@ -73,13 +74,12 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
 
             value = member.getProperty(k, _marker)
             if value is _marker:
-                continue
+                data[k] = None
             
             data[k] = safe_unicode(value)
         return data
 
     def applyChanges(self, data):
-        new_data = data.copy()
         mt = getToolByName(self.context, 'portal_membership')
         site_props = getToolByName(self.context, 'portal_properties').site_properties
         userid = self.request.form.get('userid')
@@ -91,6 +91,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
 
         # Remove everything that hasn't changed.
         old_data = self.getContent()
+        new_data = dict((k.split('.')[-1], data[k]) for k in data.keys())
         for k in new_data.keys():
             if k == 'portrait' and self.widgets[k].action() == 'nochange':
                 # action is 'nochange' for new uploads, don't delete them.
