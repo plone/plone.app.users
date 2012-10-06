@@ -1,9 +1,9 @@
 from Acquisition import aq_inner
 
 from zope.component import getUtility
-from zope.component import adapts
+from zope.component import adapts, adapter
 from zope.event import notify
-from zope.interface import implements, Interface
+from zope.interface import implements, implementer, Interface
 from zope import schema
 from zope.app.form.interfaces import WidgetInputError
 from zope.app.form.browser import DropdownWidget
@@ -12,10 +12,13 @@ from zope.schema import Choice
 from zope.schema import Bool
 
 from z3c.form import form, field, button
-from z3c.form.interfaces import HIDDEN_MODE
+from z3c.form.interfaces import HIDDEN_MODE, IFieldWidget, IFormLayer
+from z3c.form.widget import FieldWidget
 
 from plone.autoform.form import AutoExtensibleForm
 from plone.app.controlpanel.events import ConfigurationChangedEvent
+from plone.formwidget.namedfile.widget import NamedImageWidget as BaseNamedImageWidget
+from plone.namedfile.interfaces import INamedImageField
 
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
@@ -189,6 +192,7 @@ class PersonalPreferencesPanel(AccountPanelForm):
         if not siteProperties.visible_ids:
             self.widgets['visible_ids'].mode = HIDDEN_MODE
 
+
 class UserDataPanel(AccountPanelForm):
 
     label = _(u'title_personal_information_form', default=u'Personal Information')
@@ -207,6 +211,25 @@ class UserDataPanel(AccountPanelForm):
 
     schema = IUserDataZ3CSchema
 
+
+class NamedImageWidget(BaseNamedImageWidget):
+    # Cheat around 2 bugs:
+    # * You are not authenticated during traversal, so fetching
+    #   the current user does not work.
+    # * download_url won't append our querystring, so fetching
+    #   another user's image does not work.
+    @property
+    def download_url(self):
+        userid = self.request.form.get('userid')
+        if not(userid):
+            mt = getToolByName(self.form.context, 'portal_membership')
+            userid =  mt.getAuthenticatedMember().getId()
+        return super(NamedImageWidget, self).download_url + '?' + make_query({'userid':userid})
+
+@implementer(IFieldWidget)
+@adapter(INamedImageField, IFormLayer)
+def NamedImageFieldWidget(field, request):
+    return FieldWidget(field, NamedImageWidget(request))
 
 from plone.z3cform.layout import FormWrapper
 

@@ -2,6 +2,7 @@ from zope.interface import Interface, implements
 from zope import schema
 from zope.component import getUtility
 
+from plone.autoform import directives as form
 from plone.namedfile.field import NamedBlobImage
 
 from Products.CMFCore.interfaces import ISiteRoot
@@ -104,3 +105,4 @@ class IUserDataZ3CSchema(IUserDataBaseSchema):
                       'Recommended image size is 75 pixels wide by 100 '
                       'pixels tall.'),
         required=False)
+    form.widget(portrait='plone.app.users.browser.z3cforms.NamedImageFieldWidget')
