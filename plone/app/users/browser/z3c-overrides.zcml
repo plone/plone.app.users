@@ -1,0 +1,35 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="plone">
+
+    <browser:page
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      name="personal-preferences"
+      class=".z3cforms.PersonalPreferencesPanel"
+      permission="cmf.SetOwnProperties"
+      />
+
+    <browser:page
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      name="user-preferences"
+      class=".z3cforms.PersonalPreferencesConfiglet"
+      permission="plone.app.controlpanel.UsersAndGroups"
+      />
+
+    <browser:page
+        for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      name="personal-information"
+      class=".z3cforms.UserDataPanel"
+      permission="cmf.SetOwnProperties"
+      />
+
+    <browser:page
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      name="user-information"
+      class=".z3cforms.UserDataConfiglet"
+      permission="plone.app.controlpanel.UsersAndGroups"
+      />
+
+</configure>

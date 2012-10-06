@@ -1,0 +1,18 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="plone">
+
+    <include package="plone.autoform" />
+
+    <!-- Content views (tabs) -->
+    <browser:viewlet
+        name="plone.contentviews"
+        manager="plone.app.layout.viewlets.interfaces.IContentViews"
+        class=".z3cforms.AccountViewsViewlet"
+        view=".z3cforms.AccountPanelForm"
+        permission="zope2.View"
+        />
+
+</configure>

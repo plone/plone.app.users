@@ -34,63 +34,31 @@
       permission="cmf.SetOwnProperties"
       />
 
-<!--
     <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="personal-preferences"
       class=".personalpreferences.PersonalPreferencesPanel"
       permission="cmf.SetOwnProperties"
       />
--->
-    <browser:page
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      name="personal-preferences"
-      class=".z3cforms.PersonalPreferencesPanel"
-      permission="cmf.SetOwnProperties"
-      />
 
-<!--
     <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="user-preferences"
       class=".personalpreferences.PersonalPreferencesConfiglet"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
--->
-    <browser:page
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      name="user-preferences"
-      class=".z3cforms.PersonalPreferencesConfiglet"
-      permission="plone.app.controlpanel.UsersAndGroups"
-      />
 
-<!--
     <browser:page
         for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="personal-information"
       class=".personalpreferences.UserDataPanel"
       permission="cmf.SetOwnProperties"
       />
--->
-    <browser:page
-        for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      name="personal-information"
-      class=".z3cforms.UserDataPanel"
-      permission="cmf.SetOwnProperties"
-      />
 
-<!--
     <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="user-information"
       class=".personalpreferences.UserDataConfiglet"
-      permission="plone.app.controlpanel.UsersAndGroups"
-      />
--->
-    <browser:page
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      name="user-information"
-      class=".z3cforms.UserDataConfiglet"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
@@ -110,14 +78,5 @@
       />
     <adapter factory=".personalpreferences.PasswordPanelAdapter" />
 
-    <!-- Content views (tabs) -->
-    <browser:viewlet
-        name="plone.contentviews"
-        manager="plone.app.layout.viewlets.interfaces.IContentViews"
-        class=".z3cforms.AccountViewsViewlet"
-        view=".z3cforms.AccountPanelForm"
-        permission="zope2.View"
-        />
-    <include package="plone.autoform" />
 
 </configure>
