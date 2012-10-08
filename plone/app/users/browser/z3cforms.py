@@ -40,7 +40,6 @@ from ..userdataschema import IUserDataZ3CSchema, IUserDataSchemaProvider
 from .personalpreferences import IPersonalPreferences
 
 #TODO: CSRF
-#TODO: Uploading an image for another user
 
 class AccountPanelForm(AutoExtensibleForm, form.Form):
     """A simple form to be used as a basis for account panel screens."""
