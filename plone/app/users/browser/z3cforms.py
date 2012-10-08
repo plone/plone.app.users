@@ -1,17 +1,11 @@
 from Acquisition import aq_inner
 
 from zope.component import getUtility
-from zope.component import adapts, adapter
+from zope.component import adapter
 from zope.event import notify
-from zope.interface import implements, implementer, Interface
-from zope import schema
-from zope.app.form.interfaces import WidgetInputError
-from zope.app.form.browser import DropdownWidget
-from zope.schema import ValidationError
-from zope.schema import Choice
-from zope.schema import Bool
+from zope.interface import implements, implementer
 
-from z3c.form import form, field, button
+from z3c.form import form, button
 from z3c.form.interfaces import HIDDEN_MODE, IFieldWidget, IFormLayer
 from z3c.form.widget import FieldWidget
 
@@ -20,14 +14,9 @@ from plone.app.controlpanel.events import ConfigurationChangedEvent
 from plone.formwidget.namedfile.widget import NamedImageWidget as BaseNamedImageWidget
 from plone.namedfile.interfaces import INamedImageField
 
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 
-from Products.CMFDefault.formlib.schema import FileUpload
-from Products.CMFDefault.formlib.schema import SchemaAdapterBase
-from Products.CMFDefault.formlib.widgets import FileUploadWidget
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.utils import set_own_login_name, safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
@@ -35,7 +24,7 @@ from Products.PlonePAS.tools.membership import default_portrait as pas_default_p
 
 from ZTUtils import make_query
 
-from .account import IAccountPanelForm, AccountPanelSchemaAdapter
+from .account import IAccountPanelForm
 from ..userdataschema import IUserDataSchemaProvider
 from .personalpreferences import IPersonalPreferences
 
@@ -138,9 +127,6 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
             self.status = self.formErrorsMessage
             return
 
-        # Context might be temporary
-        real_context = self.context.portal_factory.doCreate(self.context)
-
         if self.applyChanges(data):
             self.status = self.successMessage
             notify(ConfigurationChangedEvent(self, data))
@@ -190,9 +176,6 @@ class PersonalPreferencesPanel(AccountPanelForm):
         self.widgets['wysiwyg_editor'].noValueMessage = _(u"vocabulary-available-editor-novalue", u"Use site default")
         if not siteProperties.visible_ids:
             self.widgets['visible_ids'].mode = HIDDEN_MODE
-
-
-from plone.namedfile.field import NamedBlobImage
 
 
 class UserDataPanel(AccountPanelForm):
