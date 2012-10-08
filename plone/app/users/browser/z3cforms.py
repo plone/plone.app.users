@@ -36,7 +36,7 @@ from Products.PlonePAS.tools.membership import default_portrait as pas_default_p
 from ZTUtils import make_query
 
 from .account import IAccountPanelForm, AccountPanelSchemaAdapter
-from ..userdataschema import IUserDataZ3CSchema, IUserDataSchemaProvider
+from ..userdataschema import IUserDataSchemaProvider
 from .personalpreferences import IPersonalPreferences
 
 #TODO: CSRF
@@ -192,10 +192,20 @@ class PersonalPreferencesPanel(AccountPanelForm):
             self.widgets['visible_ids'].mode = HIDDEN_MODE
 
 
+from plone.namedfile.field import NamedBlobImage
+
+
 class UserDataPanel(AccountPanelForm):
 
     label = _(u'title_personal_information_form', default=u'Personal Information')
     form_name = _(u'User Data Form')
+
+    def __init__(self, context, request):
+        util = getUtility(IUserDataSchemaProvider)
+        # If there's a specific Z3C schema, use that
+        self.schema = util.getZ3CSchema() if hasattr(util, 'getZ3CSchema') else util.getSchema()
+
+        super(UserDataPanel, self).__init__(context, request)
 
     @property
     def description(self):
@@ -207,8 +217,6 @@ class UserDataPanel(AccountPanelForm):
         else:
             #editing my own profile
             return _(u'description_personal_information_form', default='Change your personal information')
-
-    schema = IUserDataZ3CSchema
 
 
 class NamedImageWidget(BaseNamedImageWidget):
