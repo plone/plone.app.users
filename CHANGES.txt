@@ -4,6 +4,9 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- Update tests. We now check if the user can add and delete the portrait himself.
+  [tschanzt] 
+
 - Fix to not break if passwords contain non-ASCII characters.
   This closes https://dev.plone.org/ticket/13114
   [davisagli]
