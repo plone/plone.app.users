@@ -1,6 +1,5 @@
 from Acquisition import aq_inner
 
-from zope.component import getUtility
 from zope.component import adapter
 from zope.event import notify
 from zope.interface import implements, implementer
@@ -25,7 +24,7 @@ from Products.PlonePAS.tools.membership import default_portrait as pas_default_p
 from ZTUtils import make_query
 
 from .account import IAccountPanelForm
-from ..userdataschema import IUserDataSchemaProvider
+from ..userdataschema import IUserDataZ3CSchema
 from .personalpreferences import IPersonalPreferences
 
 #TODO: CSRF
@@ -182,13 +181,7 @@ class UserDataPanel(AccountPanelForm):
 
     label = _(u'title_personal_information_form', default=u'Personal Information')
     form_name = _(u'User Data Form')
-
-    def __init__(self, context, request):
-        util = getUtility(IUserDataSchemaProvider)
-        # If there's a specific Z3C schema, use that
-        self.schema = util.getZ3CSchema() if hasattr(util, 'getZ3CSchema') else util.getSchema()
-
-        super(UserDataPanel, self).__init__(context, request)
+    schema = IUserDataZ3CSchema
 
     @property
     def description(self):
