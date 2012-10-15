@@ -29,11 +29,6 @@ class UserDataSchemaProvider(object):
         """
         return IUserDataSchema
 
-    def getZ3CSchema(self):
-        """
-        """
-        return IUserDataZ3CSchema
-
 
 def checkEmailAddress(value):
     portal = getUtility(ISiteRoot)
