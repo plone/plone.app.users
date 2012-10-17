@@ -105,7 +105,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
                     ,'description','location'] and value is None:
                 new_data[k] = ''
 
-        if site_props.getProperty('use_email_as_login') and new_data['email']:
+        if site_props.getProperty('use_email_as_login') and 'email' in new_data:
             set_own_login_name(self.context, new_data['email'])
 
         member.setMemberProperties(new_data)
