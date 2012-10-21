@@ -94,11 +94,11 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         for k, value in new_data.items():
             if k == 'portrait':
                 if value is None:
-                    mt.deletePersonalPortrait(member.getId())
+                    mt.deletePersonalPortrait(str(member.getId()))
                 else:
                     file = value.open()
                     file.filename = value.filename
-                    mt.changeMemberPortrait(file, member.getId())
+                    mt.changeMemberPortrait(file, str(member.getId()))
                 del new_data[k]
                 continue
             if k in ['wysiwyg_editor','language','fullname','email','home_page'
