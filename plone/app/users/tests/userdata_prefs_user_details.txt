@@ -1,6 +1,11 @@
 Admin modifies user information thru 'Users and groups' 
 ---------------------------------------------------------------------
 
+The portrait widget varies between form libaries.
+
+    >>> delete_control = 'Remove existing image' if self.form_library == 'z3c.form' else 'Delete Portrait'
+    >>> widget_prefix = 'form.widgets' if self.form_library == 'z3c.form' else 'form'
+
 An admin can modify user information thru the @@user-information form in Users and Groups
 config page.
 
@@ -21,43 +26,40 @@ Let's see if we can navigate to the user information form in Users and groups
 
 We have these controls in the form:
 
-    >>> self.browser.getControl(name='form.fullname').value
+    >>> self.browser.getControl('Full Name').value
     ''
-    >>> self.browser.getControl(name='form.email').value
+    >>> self.browser.getControl('E-mail').value
     ''
-    >>> self.browser.getControl(name='form.home_page').value
+    >>> self.browser.getControl('Home page').value
     ''
-    >>> self.browser.getControl(name='form.description').value
+    >>> self.browser.getControl('Biography').value
     ''
-    >>> self.browser.getControl(name='form.portrait').value
-
-    >>> self.browser.getControl(name='form.pdelete').value
-    False
+    >>> self.browser.getControl(name=widget_prefix + '.portrait').value
 
 
 Modifying user data
 -------------------
 
     >>> full_name = 'Plone user'
-    >>> self.browser.getControl(name='form.fullname').value = full_name
+    >>> self.browser.getControl('Full Name').value = full_name
 
     >>> home_page = 'http://www.plone.org/'
-    >>> self.browser.getControl(name='form.home_page').value = home_page
+    >>> self.browser.getControl('Home page').value = home_page
 
     >>> description = 'Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.'
-    >>> self.browser.getControl(name='form.description').value = description
+    >>> self.browser.getControl('Biography').value = description
 
     >>> email_address = 'person@example.com'
-    >>> self.browser.getControl(name='form.email').value = email_address
+    >>> self.browser.getControl('E-mail').value = email_address
 
     >>> location = 'Somewhere'
-    >>> self.browser.getControl(name='form.location').value = location
+    >>> self.browser.getControl('Location').value = location
 
     >>> from pkg_resources import resource_stream
     >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
-    >>> self.browser.getControl(name='form.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
+    >>> self.browser.getControl(name=widget_prefix + '.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
 
-    >>> self.browser.getControl(name="form.actions.save").click()
+    >>> self.browser.getControl('Save').click()
     >>> 'Required input is missing.' in self.browser.contents
     False
     >>> 'No changes made.' in self.browser.contents
@@ -105,8 +107,8 @@ Is the data of the created Image the same as the (scaled) orignal image?
 
 Can we delete the Image using the checkbox?
 
-    >>> self.browser.getControl("Delete Portrait").selected = True
-    >>> self.browser.getControl(name="form.actions.save").click()
+    >>> self.browser.getControl(delete_control).selected = True
+    >>> self.browser.getControl('Save').click()
     >>> 'Changes saved.' in self.browser.contents
     True
 

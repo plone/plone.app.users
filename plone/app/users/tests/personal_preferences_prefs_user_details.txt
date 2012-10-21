@@ -1,6 +1,12 @@
 Admin modifies personal preferences thru 'Users and groups'
 ---------------------------------------------------------------------
 
+The empty marker varies depends on form library:
+    >>> empty_marker = '--NOVALUE--' if self.form_library == 'z3c.form' else ''
+    >>> def isEmptyMarker(v):
+    ...     if len(v) != 1: return False
+    ...     return v[0] == empty_marker
+
 An admin can modify user preferences thru the @@user-preferences form in
 Users and Groups config page.
 
@@ -22,21 +28,21 @@ Let's see if we can navigate to the user information form in Users and groups
 
 We have these controls in the form:
 
-    >>> self.browser.getControl(name='form.wysiwyg_editor').value
-    ['']
-    >>> self.browser.getControl(name='form.ext_editor').value
+    >>> isEmptyMarker(self.browser.getControl('Wysiwyg editor').value)
+    True
+    >>> self.browser.getControl('Enable external editing').selected
     False
-    >>> self.browser.getControl(name='form.language').value
-    ['']
+    >>> isEmptyMarker(self.browser.getControl('Language', index=0).value)
+    True
 
 
 Modifying values
 ----------------
 
-    >>> self.browser.getControl(name='form.wysiwyg_editor').value = ['TinyMCE']
-    >>> self.browser.getControl(name='form.ext_editor').value = True
-    >>> self.browser.getControl(name='form.language').value = ['en']
-    >>> self.browser.getControl(name="form.actions.save").click()
+    >>> self.browser.getControl('Wysiwyg editor').value = ['TinyMCE']
+    >>> self.browser.getControl('Enable external editing').selected = True
+    >>> self.browser.getControl('Language', index=0).value = ['en']
+    >>> self.browser.getControl('Save').click()
     >>> 'Changes saved' in self.browser.contents
     True
 
@@ -55,11 +61,13 @@ changed:
 And that the form still has the according values:
 
     >>> self.browser.open("http://nohost/plone/@@user-preferences?userid=test_user_1_")
-    >>> self.browser.getControl(name='form.wysiwyg_editor').value
+    >>> isEmptyMarker(self.browser.getControl('Wysiwyg editor').value)
+    False
+    >>> self.browser.getControl('Wysiwyg editor').value
     ['TinyMCE']
-    >>> self.browser.getControl(name='form.ext_editor').value
+    >>> self.browser.getControl('Enable external editing').selected
     True
-    >>> self.browser.getControl(name='form.language').value
+    >>> self.browser.getControl('Language', index=0).value
     ['en']
 
 
@@ -68,10 +76,10 @@ Clearing values
 
 Check that empty or False values do get stored.
 
-    >>> self.browser.getControl(name='form.wysiwyg_editor').value = ['']
-    >>> self.browser.getControl(name='form.ext_editor').value = False
-    >>> self.browser.getControl(name='form.language').value = ['']
-    >>> self.browser.getControl(name="form.actions.save").click()
+    >>> self.browser.getControl('Wysiwyg editor').value = [empty_marker]
+    >>> self.browser.getControl('Enable external editing').selected = False
+    >>> self.browser.getControl('Language', index=0).value = [empty_marker]
+    >>> self.browser.getControl('Save').click()
     >>> 'Changes saved' in self.browser.contents
     True
 
@@ -89,9 +97,9 @@ changed:
 And that the form still has the according values:
 
     >>> self.browser.open("http://nohost/plone/@@user-preferences?userid=test_user_1_")
-    >>> self.browser.getControl(name='form.wysiwyg_editor').value
-    ['']
-    >>> self.browser.getControl(name='form.ext_editor').value
+    >>> isEmptyMarker(self.browser.getControl('Wysiwyg editor').value)
+    True
+    >>> self.browser.getControl('Enable external editing').selected
     False
-    >>> self.browser.getControl(name='form.language').value
-    ['']
+    >>> isEmptyMarker(self.browser.getControl('Language', index=0).value)
+    True

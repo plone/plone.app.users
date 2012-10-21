@@ -12,8 +12,7 @@ OPTIONFLAGS = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
 
 
 class DocTestCase(TestCase):
-    # just here to work around a weird error message
-    pass
+    form_library = 'formlib'
 
 
 def test_suite():
