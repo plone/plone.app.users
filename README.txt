@@ -144,6 +144,49 @@ the schema. For example, for the `firstname` field, we do this::
             return self.context.setMemberProperties({'firstname': value})
         firstname = property(get_firstname, set_firstname)
 
+Switching to the the z3c.form forms
+===================================
+
+By default, plone.app.users will use formlib-based forms. To switch to
+the z3c.form-based forms, add the following in your `configure.zcml` and
+`overrides.zcml` respectively::
+
+    <include package="plone.app.users.browser" file="z3c-configure.zcml" />
+    <include package="plone.app.users.browser" file="z3c-overrides.zcml" />
+
+Overriding form fields
+----------------------
+
+Instead of using the schemaprovider, we can use an IFormExtender to add fields.
+Register an adapter thus::
+
+  <adapter
+    factory="my.customschemachema.UserDataPanelExtender"
+    provides="plone.z3cform.fieldsets.interfaces.IFormExtender" />
+
+Where the `customschemachema.py` contains::
+
+    from zope.publisher.interfaces.browser import IDefaultBrowserLayer
+    from zope.component import adapts
+    from zope.interface import Interface
+
+    from z3c.form.field import Fields
+
+    from plone.app.users.browser.z3cforms import UserDataPanel
+    from plone.z3cform.fieldsets import extensible
+
+
+    class IUserDataCustomSchema(Interface):
+        . . . all the custom fields to add . . .
+
+
+    class UserDataPanelExtender(extensible.FormExtender):
+        adapts(Interface, IDefaultBrowserLayer, UserDataPanel)
+
+        fields = Fields(IUserDataCustomSchema)
+
+You can also define an `update` method to modify the form.
+
 .. _formlib: http://pypi.python.org/pypi/zope.formlib
 .. _plone.app.controlpanel: http://pypi.python.org/pypi/plone.app.controlpanel
 .. _`collective.examples.userdata`: http://pypi.python.org/pypi/collective.examples.userdata
