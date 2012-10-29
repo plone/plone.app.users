@@ -14,6 +14,7 @@ from plone.formwidget.namedfile.widget import NamedImageWidget as BaseNamedImage
 from plone.namedfile.interfaces import INamedImageField
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFCore.permissions import SetOwnProperties
 
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import set_own_login_name, safe_unicode
@@ -34,6 +35,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
 
     implements(IAccountPanelForm)
     schema = IAccountPanelForm
+    template = ViewPageTemplateFile('z3c-account-view.pt')
 
     hidden_widgets = []
     successMessage = _("Changes saved.")
@@ -142,6 +144,36 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     def _on_save(self, data=None):
         pass
 
+    def prepareObjectTabs(self, default_tab='view', sort_first=['folderContents']):
+        context = self.context
+        mt = getToolByName(context, 'portal_membership')
+        tabs = []
+        navigation_root_url = context.absolute_url()
+
+        if mt.checkPermission(SetOwnProperties, context):
+            tabs.append({
+                'title': _('title_personal_information_form', u'Personal Information'),
+                'url': navigation_root_url + '/@@personal-information',
+                'selected': (self.__name__ == 'personal-information'),
+                'id': 'user_data-personal-information',
+            })
+            tabs.append({
+                'title': _(u'Personal Preferences'),
+                'url': navigation_root_url + '/@@personal-preferences',
+                'selected': (self.__name__ == 'personal-preferences'),
+                'id': 'user_data-personal-preferences',
+            })
+
+        member = mt.getAuthenticatedMember()
+        if member.canPasswordSet():
+            tabs.append({
+                'title': _('label_password', u'Password'),
+                'url': navigation_root_url + '/@@change-password',
+                'selected': (self.__name__ == 'change-password'),
+                'id': 'user_data-change-password',
+            })
+        return tabs
+
 
 class PersonalPreferencesPanel(AccountPanelForm):
     """ Implementation of personalize form that uses z3c.form """
@@ -214,60 +246,12 @@ class NamedImageWidget(BaseNamedImageWidget):
 def NamedImageFieldWidget(field, request):
     return FieldWidget(field, NamedImageWidget(request))
 
-from plone.z3cform.layout import FormWrapper
 
-class PersonalPreferencesConfiglet(FormWrapper):
+class PersonalPreferencesConfiglet(PersonalPreferencesPanel):
     """Control panel version of the personal preferences panel"""
-    form = PersonalPreferencesPanel
-    index = ViewPageTemplateFile('z3c-account-configlet.pt')
-
-    def makeQuery(self):
-        if hasattr(self.request,'userid'):
-            return '?' + make_query({'userid' : self.request.form.get('userid')})
-        return ''
+    template = ViewPageTemplateFile('z3c-account-configlet.pt')
 
 
-class UserDataConfiglet(FormWrapper):
+class UserDataConfiglet(UserDataPanel):
     """Control panel version of the userdata panel"""
-    form = UserDataPanel
-    index = ViewPageTemplateFile('z3c-account-configlet.pt')
-
-    def makeQuery(self):
-        if hasattr(self.request,'userid'):
-            return '?' + make_query({'userid' : self.request.get('userid')})
-        return ''
-
-
-from plone.app.layout.viewlets.common import ContentViewsViewlet 
-from Products.CMFCore.permissions import SetOwnProperties
-
-class AccountViewsViewlet(ContentViewsViewlet):
-    def prepareObjectTabs(self, default_tab='view', sort_first=['folderContents']):
-        view = self.__parent__
-        context = self.context
-        mt = getToolByName(context, 'portal_membership')
-        tabs = []
-
-        if mt.checkPermission(SetOwnProperties, context):
-            tabs.append({
-                'title': _('title_personal_information_form', u'Personal Information'),
-                'url': self.navigation_root_url + '/@@personal-information',
-                'selected': (view.__name__ == 'personal-information'),
-                'id': 'user_data-personal-information',
-            })
-            tabs.append({
-                'title': _(u'Personal Preferences'),
-                'url': self.navigation_root_url + '/@@personal-preferences',
-                'selected': (view.__name__ == 'personal-preferences'),
-                'id': 'user_data-personal-preferences',
-            })
-
-        member = mt.getAuthenticatedMember()
-        if member.canPasswordSet():
-            tabs.append({
-                'title': _('label_password', u'Password'),
-                'url': self.navigation_root_url + '/@@change-password',
-                'selected': (view.__name__ == 'change-password'),
-                'id': 'user_data-change-password',
-            })
-        return tabs
+    template = ViewPageTemplateFile('z3c-account-configlet.pt')

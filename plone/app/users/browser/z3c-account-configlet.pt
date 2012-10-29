@@ -10,8 +10,6 @@
 
 <div metal:fill-slot="prefs_configlet_content">
 
-    <!--TODO: This is cheating, should be able to use the viewlet
-        to provide this here -->
     <div id="edit-bar"
          tal:define="view_name view/__name__;
                      userquery python:view.makeQuery()">
@@ -52,12 +50,10 @@
       Up to Users Overview
     </a>
 
+    <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
+
     <div id="content-core">
-        <h1 tal:define="label view/label|nothing"
-                    tal:omit-tag="not:label"
-                                tal:content="label" />
-                                
-        <span tal:replace="structure view/contents" />
+      <metal:block use-macro="context/@@ploneform-macros/titlelessform" />
     </div>
 
     </div>

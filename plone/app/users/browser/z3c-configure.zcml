@@ -6,13 +6,4 @@
 
     <include package="plone.autoform" />
 
-    <!-- Content views (tabs) -->
-    <browser:viewlet
-        name="plone.contentviews"
-        manager="plone.app.layout.viewlets.interfaces.IContentViews"
-        class=".z3cforms.AccountViewsViewlet"
-        view=".z3cforms.AccountPanelForm"
-        permission="zope2.View"
-        />
-
 </configure>
