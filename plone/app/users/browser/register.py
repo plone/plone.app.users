@@ -17,6 +17,7 @@ from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import normalizeString, safe_unicode
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.PlonePAS.interfaces.plugins import IUserManagement
 
 from ZODB.POSException import ConflictError
 from zExceptions import Forbidden
@@ -38,6 +39,8 @@ import logging
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
 JOIN_CONST = ['username', 'password', 'email', 'mail_me']
+# Number of retries for creating a user id like bob-jones-42:
+RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 
 class IRegisterSchema(Interface):
@@ -244,6 +247,60 @@ class BaseRegistrationForm(PageForm):
         # Fields constructor, and return.
         return form.Fields(*[all_fields[id] for id in registration_fields])
 
+    def generate_user_id(self, data):
+        """Generate a user id from data.
+
+        Normally, this is only called when the email address is used
+        as login name.  Originally we also took the email address as
+        user id.  This has a few possible downsides:
+
+        - It does not work for some valid email addresses.
+
+        - Exposing the email address in this way may not be wanted.
+
+        - When the user later changes his email address, the user id
+          will still be his old address.  It works, but may be
+          confusing.
+
+        So here we try to generate a user id.  A possibility is to
+        simply generate a uuid, but that is ugly.  Taking the full
+        name as base seems good, with possibility to add some numbers.
+
+        This may update the 'username' key of the data that is passed.
+        """
+        # First get a default value that we can return if we cannot
+        # find anything better.
+        default = data.get('email') or data.get('username') or ''
+        fullname = data.get('fullname')
+        if not fullname:
+            return default
+        userid = normalizeString(fullname)
+        # First check that this is a valid member id, regardless of
+        # whether a member with this id already exists or not.  We
+        # access an underscore attribute of the registration tool, so
+        # we take a precaution in case this is ever removed as an
+        # implementation detail.
+        registration = getToolByName(self.context, 'portal_registration')
+        if hasattr(registration, '_ALLOWED_MEMBER_ID_PATTERN'):
+            if not registration._ALLOWED_MEMBER_ID_PATTERN.match(userid):
+                # If 'bob-jones' is not good then 'bob-jones-1' will not
+                # be good either.
+                return default
+        if registration.isMemberIdAllowed(userid):
+            data['username'] = userid
+            return userid
+        # Try bob-jones-1, bob-jones-2, etc.
+        idx = 1
+        while idx <= RENAME_AFTER_CREATION_ATTEMPTS:
+            new_id = "%s-%d" % (userid, idx)
+            if registration.isMemberIdAllowed(new_id):
+                data['username'] = new_id
+                return new_id
+            idx += 1
+
+        # We cannot come up with a nice id, so we simply return the default.
+        return default
+
     # Actions validators
     def validate_registration(self, action, data):
         """
@@ -307,7 +364,8 @@ class BaseRegistrationForm(PageForm):
             errors.append(exc)
         if use_email_as_login:
             username_field = 'email'
-            username = email
+            # Generate a nice user id and store that in the data.
+            username = self.generate_user_id(data)
         else:
             username_field = 'username'
             try:
@@ -342,6 +400,16 @@ class BaseRegistrationForm(PageForm):
                     errors.append(WidgetInputError(
                             'email', u'label_email', err_str))
                     self.widgets['email'].error = err_str
+
+        if use_email_as_login and not 'email' in error_keys:
+            pas = getToolByName(self, 'acl_users')
+            results = pas.searchUsers(login=email, exact_match=True)
+            if results:
+                err_str = _(u"The login name you selected is already in use "
+                            "or is not valid. Please choose another.")
+                errors.append(WidgetInputError(
+                        'email', u'label_email', err_str))
+                self.widgets['email'].error = err_str
 
         if 'password' in form_field_names and not 'password' in error_keys:
             # Admin can either set a password or mail the user (or both).
@@ -385,10 +453,14 @@ class BaseRegistrationForm(PageForm):
         if use_email_as_login:
             # The username field is not shown as the email is going to
             # be the username, but the field *is* needed further down
-            # the line.
-            data['username'] = data['email']
+            # the line.  A username probably has already been set in
+            # the data by calling generate_user_id earlier on.
+            if not data.get('username'):
+                # No username given yet, so take the email.
+                data['username'] = data['email']
             # Set username in the form; at least needed for logging in
-            # immediately when password reset is bypassed.
+            # immediately when password reset is bypassed.  We need
+            # the email address here, not the user id.
             self.request.form['form.username'] = data['email']
 
         user_id = data['username']
@@ -402,6 +474,20 @@ class BaseRegistrationForm(PageForm):
             logging.exception(err)
             IStatusMessage(self.request).addStatusMessage(err, type="error")
             return
+
+        if use_email_as_login and user_id != data['email']:
+            # The user id differs from the login name.  Set the email
+            # as the login name.
+            acl_users = getToolByName(self.context, 'acl_users')
+            for plugin_id, userfolder in acl_users.plugins.listPlugins(IUserManagement):
+                if not hasattr(userfolder, 'updateUser'):
+                    continue
+                try:
+                    userfolder.updateUser(user_id, data['email'])
+                except KeyError:
+                    continue
+                else:
+                    break
 
         # set additional properties using the user schema adapter
         schema = getUtility(IUserDataSchemaProvider).getSchema()
