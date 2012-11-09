@@ -1,5 +1,5 @@
 from zope.interface import Interface
-from zope.component import getUtility, getAdapter
+from zope.component import getUtility, getAdapter, queryUtility
 from zope.schema import getFieldNamesInOrder
 
 from five.formlib.formbase import PageForm
@@ -33,6 +33,8 @@ from plone.app.controlpanel.widgets import MultiCheckBoxVocabularyWidget
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from zope.site.hooks import getSite
 from plone.protect import CheckAuthenticator
+
+from plone.app.users.browser.interfaces import IUserIdGenerator
 
 import logging
 
@@ -250,9 +252,21 @@ class BaseRegistrationForm(PageForm):
     def generate_user_id(self, data):
         """Generate a user id from data.
 
-        Normally, this is only called when the email address is used
-        as login name.  Originally we also took the email address as
-        user id.  This has a few possible downsides:
+        We try a few options for coming up with a good user id:
+
+        1. We query a utility, so integrators can register a hook to
+           generate a user id using their own logic.
+
+        2. If a username is given and we do not use email as login,
+           then we simply return that username as the user id.
+
+        3. We create a user id based on the full name, if that is
+           passed.  This may result in an id like bob-jones-2.
+
+        When the email address is used as login name, we originally
+        used the email address as user id as well.  This has a few
+        possible downsides, which are the main reasons for the new,
+        pluggable approach:
 
         - It does not work for some valid email addresses.
 
@@ -262,15 +276,32 @@ class BaseRegistrationForm(PageForm):
           will still be his old address.  It works, but may be
           confusing.
 
-        So here we try to generate a user id.  A possibility is to
-        simply generate a uuid, but that is ugly.  Taking the full
-        name as base seems good, with possibility to add some numbers.
+        Another possibility would be to simply generate a uuid, but
+        that is ugly.
 
-        This may update the 'username' key of the data that is passed.
+        When a user id is chosen, the 'username' key of the data gets
+        updated and the user id is returned.
         """
+        generator = queryUtility(IUserIdGenerator)
+        if generator:
+            userid = generator(data)
+            if userid:
+                data['username'] = userid
+                return userid
+
+        # We may have a username already.
+        userid = data.get('username')
+        if userid:
+            # If we are not using email as login, then this user name is fine.
+            portal_props = getToolByName(self.context, 'portal_properties')
+            props = portal_props.site_properties
+            if not props.getProperty('use_email_as_login'):
+                return userid
+
         # First get a default value that we can return if we cannot
         # find anything better.
-        default = data.get('email') or data.get('username') or ''
+        default = data.get('username') or data.get('email') or ''
+        data['username'] = default
         fullname = data.get('fullname')
         if not fullname:
             return default
@@ -364,14 +395,11 @@ class BaseRegistrationForm(PageForm):
             errors.append(exc)
         if use_email_as_login:
             username_field = 'email'
-            # Generate a nice user id and store that in the data.
-            username = self.generate_user_id(data)
         else:
             username_field = 'username'
-            try:
-                username = self.widgets['username'].getInputValue()
-            except InputErrors, exc:
-                errors.append(exc)
+
+        # Generate a nice user id and store that in the data.
+        username = self.generate_user_id(data)
 
         # check if username is valid
         # Skip this check if username was already in error list
