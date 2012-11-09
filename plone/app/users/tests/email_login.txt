@@ -76,18 +76,20 @@ Testing email address as login name
     >>> 'User Name' in browser.contents
     False
 
-    Fill out the form.
-    >>> browser.getControl('Full Name').value = 'Jane Fonda'
-    >>> browser.getControl('E-mail').value = 'jane-fonda+test@example.com'
+    Fill out the form.  We use the same full name as before, to test
+    that we get a different user id.
+    >>> browser.getControl('Full Name').value = 'Bob Jones'
+    >>> browser.getControl('E-mail').value = 'bob-jones+test2@example.com'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Confirm password').value = 'secret'
     >>> browser.getControl('Register').click()
     >>> '@@usergroup-userprefs' in browser.url
     True
     >>> browser.contents
-    '...User added...jane-fonda...'
+    '...User added...bob-jones-1...'
 
     We can really get the new user.
-    >>> browser.getLink('jane-fonda').click()
-    >>> '@@user-information?userid=jane-fonda' in browser.url
+    >>> browser.getControl('Show all').click()
+    >>> browser.getLink('bob-jones-1').click()
+    >>> '@@user-information?userid=bob-jones-1' in browser.url
     True
