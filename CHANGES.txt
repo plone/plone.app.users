@@ -4,7 +4,13 @@ Changelog
 1.1.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Allow to choose a different user id generation scheme by registering
+  an IUserIdGenerator utility.
+  [maurits]
+
+- When using email as login, create a user id based on the full name.
+  This refs issue http://dev.plone.org/ticket/11616
+  [maurits]
 
 
 1.1.4 (2012-10-03)
