@@ -4,7 +4,12 @@ Changelog
 1.1.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix email as login validation in the personalize form (UserDataPanel).
+  This is for the case when email is used as login.  It checked that a
+  changed email address was valid as user id.  But the user id is
+  never changed here, only the login name.  We only need to check if
+  this address is not used by another user.
+  [maurits]
 
 
 1.1.4 (2012-10-03)
