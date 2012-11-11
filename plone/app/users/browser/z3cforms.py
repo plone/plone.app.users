@@ -142,7 +142,8 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     def cancel(self, action):
         IStatusMessage(self.request).addStatusMessage(_("Changes canceled."),
                                                       type="info")
-        self.request.response.redirect(self.request['ACTUAL_URL'])
+        self.request.response.redirect('%s%s' % (self.request['ACTUAL_URL'],
+            self.makeQuery()))
 
     def _on_save(self, data=None):
         pass

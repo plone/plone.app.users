@@ -103,3 +103,12 @@ And that the form still has the according values:
     False
     >>> isEmptyMarker(self.browser.getControl('Language', index=0).value)
     True
+
+Finally let's see if Cancel button still leaves us on selected user Preferences
+form::
+
+    >>> self.browser.getControl('Cancel').click()
+    >>> 'Changes canceled.' in self.browser.contents
+    True
+    >>> '?userid=test_user_1_' in self.browser.url
+    True
