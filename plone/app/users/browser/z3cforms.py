@@ -125,15 +125,18 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     def handleSave(self, action):
         data, errors = self.extractData()
         if errors:
-            self.status = self.formErrorsMessage
+            IStatusMessage(self.request).addStatusMessage(
+                self.formErrorsMessage, type='error')
             return
 
         if self.applyChanges(data):
-            self.status = self.successMessage
+            IStatusMessage(self.request).addStatusMessage(
+                self.successMessage, type='info')
             notify(ConfigurationChangedEvent(self, data))
             self._on_save(data)
         else:
-            self.status = self.noChangesMessage
+            IStatusMessage(self.request).addStatusMessage(
+                self.noChangesMessage, type='info')
 
     @button.buttonAndHandler(_(u'Cancel'))
     def cancel(self, action):

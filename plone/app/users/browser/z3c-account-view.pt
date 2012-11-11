@@ -33,6 +33,10 @@
         </ul>
         </div>
 
+        <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+            Portal status message
+        </div>
+
         <div id="content">
             <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
         
