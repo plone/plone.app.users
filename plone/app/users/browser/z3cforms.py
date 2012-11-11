@@ -268,7 +268,20 @@ class PasswordAccountPanel(AccountPanelForm):
     form_name = _(u'legend_password_details', default=u'Password Details')
     schema = IPasswordSchema
 
-    # TODO: update new password field description
+    def updateFields(self):
+        super(PasswordAccountPanel, self).updateFields()
+        
+        # Change the password description based on PAS Plugin
+        # The user needs a list of instructions on what kind of password is
+        # required.
+        # We'll reuse password errors as instructions e.g. "Must contain a
+        # letter and a number".
+        # Assume PASPlugin errors are already translated
+        registration = getToolByName(self.context, 'portal_registration')
+        err_str = registration.testPasswordValidity('')
+        if err_str:
+            self.fields['new_password'].field.description = \
+                _(u'Enter your new password. ') + err_str
 
     def validate_password(self, errors, data):
         context = aq_inner(self.context)
