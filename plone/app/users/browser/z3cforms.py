@@ -1,11 +1,12 @@
 from Acquisition import aq_inner
 
-from zope.component import adapter
+from zope.component import adapter, getMultiAdapter
 from zope.event import notify
-from zope.interface import implements, implementer
+from zope.interface import implements, implementer, Invalid
 
 from z3c.form import form, button
-from z3c.form.interfaces import HIDDEN_MODE, IFieldWidget, IFormLayer
+from z3c.form.interfaces import HIDDEN_MODE, IFieldWidget, IFormLayer, \
+    IErrorViewSnippet
 from z3c.form.widget import FieldWidget
 
 from plone.autoform.form import AutoExtensibleForm
@@ -26,7 +27,7 @@ from ZTUtils import make_query
 
 from .account import IAccountPanelForm
 from ..userdataschema import IUserDataZ3CSchema
-from .personalpreferences import IPersonalPreferences
+from .personalpreferences import IPersonalPreferences, IPasswordSchema
 
 #TODO: CSRF
 
@@ -259,3 +260,110 @@ class PersonalPreferencesConfiglet(PersonalPreferencesPanel):
 class UserDataConfiglet(UserDataPanel):
     """Control panel version of the userdata panel"""
     template = ViewPageTemplateFile('z3c-account-configlet.pt')
+
+class PasswordAccountPanel(AccountPanelForm):
+    """ Implementation of password reset form that uses z3c.form"""
+    label = _(u'listingheader_reset_password', default=u'Reset Password')
+    description = _(u"Change Password")
+    form_name = _(u'legend_password_details', default=u'Password Details')
+    schema = IPasswordSchema
+
+    # TODO: update new password field description
+
+    def validate_password(self, errors, data):
+        context = aq_inner(self.context)
+        registration = getToolByName(context, 'portal_registration')
+        membertool = getToolByName(context, 'portal_membership')
+
+        # check if password is correct
+        current_password = data.get('current_password')
+        if current_password:
+            current_password = current_password.encode('ascii', 'ignore')
+
+            if not membertool.testCurrentPassword(current_password):
+                # add error to current_password widget
+                err_str = _(u"Incorrect value for current password")
+                widget = self.widgets['current_password']
+                err_view = getMultiAdapter((Invalid(err_str), self.request,
+                    widget, widget.field, self, self.context),
+                    IErrorViewSnippet)
+                err_view.update()
+                widget.error = err_view
+                self.widgets.errors += (err_view,)
+                errors += (err_view,)
+
+        # check if passwords are same and valid according to plugin
+        new_password = data.get('new_password')
+        new_password_ctl = data.get('new_password_ctl')
+        if new_password and new_password_ctl:
+            failMessage = registration.testPasswordValidity(new_password,
+                                                            new_password_ctl)
+
+            # TODO: remove this check after this ticket is closed:
+            #       https://dev.plone.org/ticket/13325
+            if not failMessage and new_password != new_password_ctl:
+                failMessage = _(u'Your password and confirmation did not match.'
+                    ' Please try again.')
+
+            if failMessage:
+                # add error to new_password widget
+                widget = self.widgets['new_password']
+                err_view = getMultiAdapter((Invalid(failMessage), self.request,
+                    widget, widget.field, self, self.context),
+                    IErrorViewSnippet)
+                err_view.update()
+                widget.error = err_view
+                self.widgets.errors += (err_view,)
+                errors += (err_view,)
+
+                # add error to new_password_ctl widget
+                widget = self.widgets['new_password_ctl']
+                err_view = getMultiAdapter((Invalid(failMessage), self.request,
+                    widget, widget.field, self, self.context),
+                    IErrorViewSnippet)
+                err_view.update()
+                widget.error = err_view
+                self.widgets.errors += (err_view,)
+                errors += (err_view,)
+
+        return errors
+
+    @button.buttonAndHandler(_(u'label_change_password',
+        default=u'Change Password'), name='reset_passwd')
+    def action_reset_passwd(self, action):
+        data, errors = self.extractData()
+
+        # extra password validation
+        errors = self.validate_password(errors, data)
+
+        if errors:
+            IStatusMessage(self.request).addStatusMessage(
+                self.formErrorsMessage, type='error')
+            return
+
+        membertool = getToolByName(self.context, 'portal_membership')
+
+        password = data['new_password']
+
+        try:
+            membertool.setPassword(password, None, REQUEST=self.request)
+        except AttributeError:
+            failMessage = _(u'While changing your password an AttributeError '
+                            u'occurred. This is usually caused by your user '
+                            u'being defined outside the portal.')
+
+            IStatusMessage(self.request).addStatusMessage(_(failMessage),
+                                                          type="error")
+            return
+
+        IStatusMessage(self.request).addStatusMessage(_("Password changed"),
+                                                          type="info")
+
+    # hide inherited Save and Cancel buttons
+    @button.buttonAndHandler(_(u'Save'), condition=lambda form:False)
+    def handleSave(self, action):
+        pass
+
+    @button.buttonAndHandler(_(u'Cancel'), condition=lambda form:False)
+    def cancel(self, action):
+        pass

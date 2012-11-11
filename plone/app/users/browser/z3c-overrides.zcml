@@ -6,6 +6,13 @@
 
     <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      name="change-password"
+      class=".z3cforms.PasswordAccountPanel"
+      permission="cmf.SetOwnPassword"
+      />
+
+    <browser:page
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="personal-preferences"
       class=".z3cforms.PersonalPreferencesPanel"
       permission="cmf.SetOwnProperties"
