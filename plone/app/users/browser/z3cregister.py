@@ -53,11 +53,11 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if not self.request.get('form.username'):
                 key = expandPrefix(self.prefix) + \
                     expandPrefix(self.widgets.prefix) + 'username'
-                self.request.form['form.username'] = self.request.form[key]
+                self.request.form['form.username'] = self.request.form.get(key)
             if not self.request.get('form.password'):
                 key = expandPrefix(self.prefix) + \
                     expandPrefix(self.widgets.prefix) + 'password'
-                self.request.form['form.password'] = self.request.form[key]
+                self.request.form['form.password'] = self.request.form.get(key)
 
             return self.context.unrestrictedTraverse('registered')()
 
