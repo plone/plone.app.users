@@ -27,9 +27,9 @@ from Products.statusmessages.interfaces import IStatusMessage
 from ..userdataschema import IUserDataSchemaProvider
 from .register import IRegisterSchema, IAddUserSchema
 
-#TODO: make 'registered' template login button work
 #TODO: completely switch from schema provider to IFormExtender
-
+#TODO: pull changes from mainstream master branch and apply to z3c form
+#      versions
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     """Form to be used as base for Register and Add User forms."""
@@ -45,7 +45,22 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
     def render(self):
         if self._finishedRegister:
+            # TODO: move this to registered template once we get this PLIP
+            #       merged into master branch
+            # set username and password into request form to make Login button
+            # work on 'registered' template, alternatively we can set empty
+            # prefix for widgets on this form
+            if not self.request.get('form.username'):
+                key = expandPrefix(self.prefix) + \
+                    expandPrefix(self.widgets.prefix) + 'username'
+                self.request.form['form.username'] = self.request.form[key]
+            if not self.request.get('form.password'):
+                key = expandPrefix(self.prefix) + \
+                    expandPrefix(self.widgets.prefix) + 'password'
+                self.request.form['form.password'] = self.request.form[key]
+
             return self.context.unrestrictedTraverse('registered')()
+
         return super(BaseRegistrationForm, self).render()
 
     def updateFields(self):
