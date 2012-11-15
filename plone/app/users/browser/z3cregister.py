@@ -27,7 +27,6 @@ from Products.statusmessages.interfaces import IStatusMessage
 from ..userdataschema import IUserDataSchemaProvider
 from .register import IRegisterSchema, IAddUserSchema
 
-#TODO: make register and add-user forms work in thickboxes
 #TODO: make 'registered' template login button work
 #TODO: completely switch from schema provider to IFormExtender
 
