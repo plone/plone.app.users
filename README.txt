@@ -172,7 +172,7 @@ Where the `customschemachema.py` contains::
 
     from z3c.form.field import Fields
 
-    from plone.app.users.browser.z3cforms import UserDataPanel
+    from plone.app.users.browser.z3cpersonalpreferences import UserDataPanel
     from plone.z3cform.fieldsets import extensible
 
 
