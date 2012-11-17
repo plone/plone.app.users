@@ -80,7 +80,7 @@ class UserRegistrationFieldsVocabulary(object):
         form = UserDataPanel(site, site.REQUEST)
         form.updateFields()
         values = [f for f in form.fields]
-        
+
         # make sure required minimum number of fields is present
         for val in JOIN_CONST:
             if val not in values:

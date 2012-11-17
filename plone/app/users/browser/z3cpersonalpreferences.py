@@ -1,4 +1,5 @@
 from Acquisition import aq_inner
+from AccessControl import Unauthorized
 
 from zope.component import adapter, getMultiAdapter
 from zope.event import notify
@@ -122,9 +123,61 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     def action(self):
         return self.request.getURL() + self.makeQuery()
 
+    def validate_email(self, errors, data):
+        context = aq_inner(self.context)
+        error_keys = [error.field.getName() for error in errors]
+
+        if 'email' not in error_keys:
+            reg_tool = getToolByName(context, 'portal_registration')
+            props = getToolByName(context, 'portal_properties')
+            if props.site_properties.getProperty('use_email_as_login'):
+                err_str = ''
+                try:
+                    id_allowed = reg_tool.isMemberIdAllowed(data['email'])
+                except Unauthorized:
+                    err_str = _('message_email_cannot_change',
+                                default=(u"Sorry, you are not allowed to "
+                                         u"change your email address."))
+                else:
+                    if not id_allowed:
+                        # Keeping your email the same (which happens when you
+                        # change something else on the personalize form) or
+                        # changing it back to your login name, is fine.
+                        membership = getToolByName(context,
+                                                   'portal_membership')
+                        if self.request.get('userid'):
+                            member = membership.getMemberById(
+                                self.request.get('userid'))
+                        else:
+                            member = membership.getAuthenticatedMember()
+                        if data['email'] not in (member.getId(),
+                                                 member.getUserName()):
+                            err_str = _(
+                                'message_email_in_use',
+                                default=(
+                                    u"The email address you selected is "
+                                    u"already in use or is not valid as login "
+                                    u"name. Please choose another."))
+
+                if err_str:
+                    widget = self.widgets['email']
+                    err_view = getMultiAdapter((Invalid(err_str), self.request,
+                        widget, widget.field, self, self.context),
+                        IErrorViewSnippet)
+                    err_view.update()
+                    widget.error = err_view
+                    self.widgets.errors += (err_view,)
+                    errors += (err_view,)
+
+        return errors
+
     @button.buttonAndHandler(_(u'Save'))
     def handleSave(self, action):
         data, errors = self.extractData()
+
+        # extra validation for email
+        errors = self.validate_email(errors, data)
+
         if errors:
             IStatusMessage(self.request).addStatusMessage(
                 self.formErrorsMessage, type='error')

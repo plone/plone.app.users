@@ -27,6 +27,7 @@ from Products.statusmessages.interfaces import IStatusMessage
 from .register import IRegisterSchema, IAddUserSchema
 from ..userdataschema import IUserDataZ3CSchema
 
+#TODO: check and improve test coverage
 #TODO: pull changes from mainstream master branch and apply to z3c form
 #      versions
 #TODO: update collective.examples.userdata to use z3c form versions
