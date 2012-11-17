@@ -241,10 +241,19 @@ class NamedImageWidget(BaseNamedImageWidget):
     @property
     def download_url(self):
         userid = self.request.form.get('userid')
-        if not(userid):
+        if not userid:
             mt = getToolByName(self.form.context, 'portal_membership')
             userid =  mt.getAuthenticatedMember().getId()
-        return super(NamedImageWidget, self).download_url + '?' + make_query({'userid':userid})
+
+        # anonymous
+        if not userid:
+            return None
+
+        url = super(NamedImageWidget, self).download_url
+        if not url:
+            return None
+
+        return '%s?%s' % (url, make_query({'userid':userid}))
 
 @implementer(IFieldWidget)
 @adapter(INamedImageField, IFormLayer)

@@ -4,9 +4,9 @@ from ZODB.POSException import ConflictError
 from zExceptions import Forbidden
 from AccessControl import getSecurityManager
 
-from zope.component import getMultiAdapter, getUtility, getAdapter
+from zope.component import getMultiAdapter, getUtility
 from zope.interface import Invalid
-from zope.schema import getFieldNamesInOrder
+from zope.schema import getFieldNames
 
 from z3c.form import form, button, field
 from z3c.form.interfaces import IErrorViewSnippet, DISPLAY_MODE
@@ -24,12 +24,17 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 
-from ..userdataschema import IUserDataSchemaProvider
 from .register import IRegisterSchema, IAddUserSchema
+from ..userdataschema import IUserDataZ3CSchema
 
-#TODO: completely switch from schema provider to IFormExtender
+#TODO: migrate @@member-registration control panel to z3c.form
 #TODO: pull changes from mainstream master branch and apply to z3c form
 #      versions
+#TODO: update collective.examples.userdata to use z3c form versions
+#TODO: update README.txt
+
+class IZ3CRegisterSchema(IRegisterSchema, IUserDataZ3CSchema):
+    """Collect all register fields under the same interface"""
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     """Form to be used as base for Register and Add User forms."""
@@ -38,7 +43,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     description = u""
     formErrorsMessage = _('There were errors.')
     ignoreContext = True
-    schema = IRegisterSchema
+    schema = IZ3CRegisterSchema
 
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
@@ -66,12 +71,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     def updateFields(self):
         """Fields are dynamic in this form, to be able to handle
         different join styles.
-
-        Note: we still support extending registration form with
-        IUserDataSchemaProvider utility. Now, when registration form is
-        extensible, it's possible to extend it with IFormExtender adapter from
-        plone.z3cform package. So in the future we may get rid of
-        IUserDataSchemaProvider approach.
         """
         super(BaseRegistrationForm, self).updateFields()
 
@@ -111,11 +110,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             registration_fields.insert(
                 registration_fields.index('password_ctl') + 1, 'mail_me')
 
-        # We need fields from both schemata here.
-        util = getUtility(IUserDataSchemaProvider)
-        schema = util.getSchema()
-
-        all_fields = field.Fields(schema) + self.fields
+        all_fields = self.fields
 
         # update email field description according to set login policy
         if use_email_as_login:
@@ -151,7 +146,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                     self.context.translate(msgid)
 
         self.fields = field.Fields(*[all_fields[id]
-            for id in registration_fields])
+            for id in registration_fields if id in all_fields])
 
     # Actions validators
     def validate_registration(self, errors, data):
@@ -337,7 +332,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         registration = getToolByName(self.context, 'portal_registration')
         portal_props = getToolByName(self.context, 'portal_properties')
-        mt = getToolByName(self.context, 'portal_membership')
         props = portal_props.site_properties
         use_email_as_login = props.getProperty('use_email_as_login')
 
@@ -364,15 +358,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             IStatusMessage(self.request).addStatusMessage(err, type="error")
             return
 
-        # set additional properties using the user schema adapter
-        schema = getUtility(IUserDataSchemaProvider).getSchema()
-
-        adapter = getAdapter(portal, schema)
-        adapter.context = mt.getMemberById(user_id)
-
-        for name in getFieldNamesInOrder(schema):
-            if name in data:
-                setattr(adapter, name, data[name])
+        # set member properties
+        self.applyProperties(user_id, data)
 
         if data.get('mail_me') or (portal.validate_email and
                                    not data.get('password')):
@@ -424,6 +411,29 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                     return
 
         return
+
+    def applyProperties(self, userid, data):
+        mt = getToolByName(self.context, 'portal_membership')
+        member = mt.getMemberById(userid)
+
+        new_data = {}
+        register_fields = getFieldNames(IRegisterSchema)
+        for k, value in data.items():
+            # skip fields that are handled exclusively on user registration and
+            # are not part of personal information form
+            if k in register_fields:
+                continue
+
+            # handle photo in a special way
+            if k == 'portrait' and value is not None:
+                file = value.open()
+                file.filename = value.filename
+                mt.changeMemberPortrait(file, str(userid))
+            else:
+                new_data[k] = value
+
+        if new_data:
+            member.setMemberProperties(new_data)
 
 class RegistrationForm(BaseRegistrationForm):
     """ Dynamically get fields from user data, through admin
