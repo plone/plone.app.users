@@ -14,6 +14,7 @@ from plone.autoform.form import AutoExtensibleForm
 from plone.app.controlpanel.events import ConfigurationChangedEvent
 from plone.formwidget.namedfile.widget import NamedImageWidget as BaseNamedImageWidget
 from plone.namedfile.interfaces import INamedImageField
+from plone.protect import CheckAuthenticator
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import SetOwnProperties
@@ -30,7 +31,6 @@ from .account import IAccountPanelForm
 from ..userdataschema import IUserDataZ3CSchema
 from .personalpreferences import IPersonalPreferences, IPasswordSchema
 
-#TODO: CSRF
 
 class AccountPanelForm(AutoExtensibleForm, form.Form):
     """A simple form to be used as a basis for account panel screens."""
@@ -173,6 +173,8 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
 
     @button.buttonAndHandler(_(u'Save'))
     def handleSave(self, action):
+        CheckAuthenticator(self.request)
+
         data, errors = self.extractData()
 
         # extra validation for email

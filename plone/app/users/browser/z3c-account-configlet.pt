@@ -53,7 +53,11 @@
     <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
 
     <div id="content-core">
-      <metal:block use-macro="context/@@ploneform-macros/titlelessform" />
+      <metal:block use-macro="context/@@ploneform-macros/titlelessform">
+        <metal:bottom fill-slot="formbottom">
+        <input tal:replace="structure context/@@authenticator/authenticator" />
+        </metal:bottom>
+      </metal:block>
     </div>
 
     </div>
