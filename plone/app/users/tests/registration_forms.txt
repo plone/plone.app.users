@@ -3,7 +3,6 @@ Testing the flexible user registration
 
     >>> browser = self.browser
     >>> browser.open('http://nohost/plone')
-    >>> widget_prefix = 'form.widgets' if self.form_library == 'z3c.form' else 'form'
     >>> list_widget_suffix = ':list' if self.form_library == 'z3c.form' else ''
 
     Self-registration is disabled, user does not see 'Register' link.
@@ -230,7 +229,7 @@ Testing the flexible user registration
 
     As we want to validate emails, by default mail_me is checked.  The
     password fields have become optional.
-    >>> browser.getControl(name=widget_prefix + '.mail_me' + list_widget_suffix).value in (True, ['selected'])
+    >>> browser.getControl(name='form.mail_me' + list_widget_suffix).value in (True, ['selected'])
     True
     >>> browser.getControl('Register').click()
     >>> print browser.url
