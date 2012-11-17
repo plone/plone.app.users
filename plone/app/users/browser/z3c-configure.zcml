@@ -6,4 +6,16 @@
 
     <include package="plone.autoform" />
 
+    <utility component="..vocabularies.UserRegistrationFieldsVocabularyFactory"
+             name="plone.app.users.user_registration_fields" />
+
+    <!-- Set empty widgets prefix for our z3c forms to have form field names the
+         same as on formlib forms -->
+    <adapter
+        for=".z3cregistration.RegistrationControlPanel
+             z3c.form.interfaces.IFormLayer
+             *"
+      factory=".z3cregistration.EmptyPrefixFieldWidgets"
+      />
+
 </configure>

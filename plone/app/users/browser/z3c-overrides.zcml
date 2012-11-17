@@ -5,6 +5,13 @@
     i18n_domain="plone">
 
     <browser:page
+      name="member-registration"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".z3cregistration.RegistrationControlPanel"
+      permission="plone.app.controlpanel.UsersAndGroups"
+      />
+
+    <browser:page
       name="register"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".z3cregister.RegistrationForm"
