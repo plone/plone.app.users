@@ -33,7 +33,7 @@ from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 class Z3CFormLayer(PloneSite):
     @classmethod
     def setUp(cls):
-        from Products.Five import zcml
+        from Zope2.App import zcml
         import plone.app.users.browser
         zcml.load_config('z3c-configure.zcml', plone.app.users.browser)
         zcml.load_config('z3c-overrides.zcml', plone.app.users.browser)
