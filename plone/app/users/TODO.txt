@@ -1,8 +1,6 @@
 Z3C Forms TODOs
 ---------------
 
-[ ] fix ticket https://dev.plone.org/ticket/13325 and remove this bug fix from
-    plone.app.users package
 [ ] check and improve test coverage
 [ ] pull changes from mainstream master branch and apply to z3c form
     versions

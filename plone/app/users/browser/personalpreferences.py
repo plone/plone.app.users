@@ -453,12 +453,6 @@ class PasswordAccountPanel(AccountPanelForm):
             failMessage = registration.testPasswordValidity(new_password,
                                                             new_password_ctl)
 
-            # TODO: remove this check after this ticket is closed:
-            #       https://dev.plone.org/ticket/13325
-            if not failMessage and new_password != new_password_ctl:
-                failMessage = _(u'Your password and confirmation did not match.'
-                    ' Please try again.')
-
             if failMessage:
                 errors.append(WidgetInputError('new_password',
                                   u'label_new_password', failMessage))
