@@ -1,0 +1,14 @@
+Z3C Forms TODOs
+---------------
+
+[ ] fix ticket https://dev.plone.org/ticket/13325 and remove this bug fix from
+    plone.app.users package
+[ ] check and improve test coverage
+[ ] pull changes from mainstream master branch and apply to z3c form
+    versions
+[ ] update collective.examples.userdata to use z3c form versions
+[ ] update README.txt
+[ ] when this PLIP merged into master, then we need to update
+    Products.CMFPlone csrf.txt doc test to work for z3c.form register form as
+    well, one small change required: change button name from
+    form.actions.register to form.butons.register
