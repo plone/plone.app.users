@@ -1,5 +1,4 @@
-from zope import schema
-from zope.interface import Interface, implementsOnly
+from zope.interface import implementsOnly
 from zope.component import getMultiAdapter
 from z3c.form import form, field, button
 from z3c.form.interfaces import IWidgets
@@ -11,28 +10,13 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 
 from ..registration import USER_REGISTRATION_FIELDS
+from ..registrationschema import IZ3CRegistrationSchema
 
 
 class EmptyPrefixFieldWidgets(field.FieldWidgets):
     """Override default Field Widgets to get rid of prefix"""
     implementsOnly(IWidgets)
     prefix = ''
-
-class IZ3CRegistrationSchema(Interface):
-
-    user_registration_fields = schema.Tuple(
-        title=_(u'title_user_registration_fields',
-                 default=u'User registration fields'),
-        description=_(u"description_user_registration_fields",
-            default=(u"Select the fields for the join form. Fields in the "
-            u"right box will be shown on the form, fields on the left are "
-            u"disabled. Use the left/right buttons to move a field from right "
-            u"to left (to disable it) and vice versa. Use the up/down buttons "
-            u"to change the order in which the fields appear on the form."),
-        ),
-        value_type=schema.Choice(
-            vocabulary='plone.app.users.user_registration_fields'),
-    )
 
 class RegistrationControlPanel(form.Form):
 
