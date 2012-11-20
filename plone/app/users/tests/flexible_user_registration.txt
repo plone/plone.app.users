@@ -2,6 +2,14 @@ Testing the flexible user registration
 ======================================
 
     >>> browser = self.browser
+    >>> from zope.component import getUtility
+    >>> from plone.keyring.interfaces import IKeyManager
+    >>> import hmac
+    >>> from hashlib import sha1
+    >>> def getAuth():
+    ...     secret = getUtility(IKeyManager)[u'_system'].current
+    ...     return hmac.new(secret, 'admin', sha1).hexdigest()
+
 
 First things first... turn on self-registration so that we can see the
 @@register form. Also, let users select their own password so we don't
@@ -80,13 +88,7 @@ get all required fields on registration form.
     >>> browser.getControl('Login Name').value = 'admin'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Log in').click()
-    >>> from zope.component import getUtility
-    >>> from plone.keyring.interfaces import IKeyManager
-    >>> import hmac
-    >>> from hashlib import sha1
-    >>> secret = getUtility(IKeyManager)[u'_system'].current
-    >>> auth = hmac.new(secret, 'admin', sha1).hexdigest()
-    >>> data = 'form.user_registration_fields:list=fullname&form.actions.save=Save&form.buttons.save=Save&_authenticator=' + auth
+    >>> data = 'form.user_registration_fields:list=fullname&form.actions.save=Save&form.buttons.save=Save&_authenticator=' + getAuth()
     >>> browser.open('http://nohost/plone/@@member-registration', data)
     >>> 'Changes saved.' in browser.contents
     True
@@ -100,7 +102,7 @@ get all required fields on registration form.
     >>> browser.contents
     '...User Name...Password...Confirm password...Full Name...E-mail...'
 
-Check render register form in 'User Email As Login' mode.
+Check render register form in 'Use Email As Login' mode.
 
     >>> portal.portal_properties.site_properties._updateProperty('use_email_as_login', True)
     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['username'])
@@ -142,7 +144,7 @@ Check register form with portrait field.
 Check more validation errors. Test Confirmation Password and invalid
 email, and reserved user name validations:
 
-    >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['username', 'email', 'password', 'password_ctl', 'mail_me'])
+    >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['username', 'email', 'password', 'mail_me'])
     >>> browser.open('http://nohost/plone/@@register')
     >>> 'Registration form' in browser.contents
     True
@@ -162,3 +164,44 @@ Now also check username which is already in use:
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...The login name you selected is already in use...'
+
+More Tests for Control Panel From
+---------------------------------
+
+What if we do not do any changes but click submit button?
+
+We do this with 'open' method as our list widget uses javascript that is not
+supported by our test browser.
+
+Set list of registration fields:
+
+    >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['username', 'email'])
+
+Login as admin.
+
+    >>> browser.open('http://nohost/plone/login_form')
+    >>> browser.getControl('Login Name').value = 'admin'
+    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Log in').click()
+
+Open up control panel form.
+
+    >>> browser.open('http://nohost/plone/@@member-registration')
+    >>> open('/Users/vipod/Desktop/output.html', 'w').write(browser.contents)
+    >>> 'Registration settings' in browser.contents
+    True
+
+Submit form with the same set of fields:
+
+    >>> data = 'form.user_registration_fields:list=username&form.user_registration_fields:list=email&form.actions.save=Save&form.buttons.save=Save&_authenticator=' + getAuth()
+    >>> browser.open('http://nohost/plone/@@member-registration', data)
+    >>> 'No changes made.' in browser.contents
+    True
+
+Now let's test Cancel button:
+
+    >>> browser.getControl('Cancel').click()
+    >>> browser.url
+    'http://nohost/plone/plone_control_panel'
+    >>> 'Changes canceled.' in browser.contents
+    True

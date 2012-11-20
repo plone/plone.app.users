@@ -1,7 +1,6 @@
 Z3C Forms TODOs
 ---------------
 
-[ ] check and improve test coverage
 [ ] decide on extensible datamanager: whether to use similar approach as in
     formlib version or just set member properties as we're doing now and in case
     integrator needs a different storage, he overrides whole form with custom
