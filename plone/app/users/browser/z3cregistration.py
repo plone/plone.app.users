@@ -9,6 +9,8 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 
+from plone.protect import CheckAuthenticator
+
 from ..registration import USER_REGISTRATION_FIELDS
 from ..registrationschema import IZ3CRegistrationSchema
 
@@ -37,6 +39,9 @@ class RegistrationControlPanel(form.Form):
 
     @button.buttonAndHandler(_(u'label_save', default=u'Save'), name='save')
     def action_save(self, action):
+        # CSRF protection
+        CheckAuthenticator(self.request)
+
         data, errors = self.extractData()
         if errors:
             IStatusMessage(self.request).addStatusMessage(
