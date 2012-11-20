@@ -165,7 +165,7 @@ Now also check username which is already in use:
     >>> browser.contents
     '...The login name you selected is already in use...'
 
-More Tests for Control Panel From
+More Tests for Control Panel Form
 ---------------------------------
 
 What if we do not do any changes but click submit button?
