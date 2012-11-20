@@ -1,8 +1,6 @@
 Testing the personal information form
 =====================================
 
-TODO: Testing the portait image upload
-
 The portrait widget varies between form libaries.
 
     >>> delete_control = 'Remove existing image' if self.form_library == 'z3c.form' else 'Delete Portrait'

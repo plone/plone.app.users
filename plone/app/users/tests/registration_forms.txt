@@ -227,10 +227,18 @@ Testing the flexible user registration
     >>> browser.getControl('E-mail').value = 'user4@example.com'
     >>> browser.getControl('Reviewers').selected = True
 
-    As we want to validate emails, by default mail_me is checked.  The
-    password fields have become optional.
+    But, at first, let's try to check form validation a bit. Do not set 'mail me' and 'password' fields.
+    
+    By Default Mail Me is checked.
     >>> browser.getControl(name='form.mail_me' + list_widget_suffix).value in (True, ['selected'])
     True
+    >>> browser.getControl(name='form.mail_me' + list_widget_suffix).value = False
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...You must set a password or choose to send an email...'
+
+    As we want to validate emails. The password fields have become optional.
+    >>> browser.getControl(name='form.mail_me' + list_widget_suffix).value = True
     >>> browser.getControl('Register').click()
     >>> print browser.url
     http://...@@usergroup-userprefs...
@@ -368,3 +376,5 @@ Testing the flexible user registration
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user6pas' in browser.contents
     True
+
+
