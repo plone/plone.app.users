@@ -187,7 +187,6 @@ Login as admin.
 Open up control panel form.
 
     >>> browser.open('http://nohost/plone/@@member-registration')
-    >>> open('/Users/vipod/Desktop/output.html', 'w').write(browser.contents)
     >>> 'Registration settings' in browser.contents
     True
 
