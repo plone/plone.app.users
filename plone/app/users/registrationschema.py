@@ -30,6 +30,21 @@ class IRegistrationSchema(Interface):
         )
     )
 
+class IZ3CRegistrationSchema(Interface):
+
+    user_registration_fields = schema.Tuple(
+        title=_(u'title_user_registration_fields',
+                 default=u'User registration fields'),
+        description=_(u"description_user_registration_fields",
+            default=(u"Select the fields for the join form. Fields in the "
+            u"right box will be shown on the form, fields on the left are "
+            u"disabled. Use the left/right buttons to move a field from right "
+            u"to left (to disable it) and vice versa. Use the up/down buttons "
+            u"to change the order in which the fields appear on the form."),
+        ),
+        value_type=schema.Choice(
+            vocabulary='plone.app.users.user_registration_fields'),
+    )
 
 def UserDataWidget(field, request):
     """ Create selector with schema fields vocab """

@@ -105,4 +105,4 @@ class IUserDataZ3CSchema(IUserDataBaseSchema):
                       'Recommended image size is 75 pixels wide by 100 '
                       'pixels tall.'),
         required=False)
-    form.widget(portrait='plone.app.users.browser.z3cforms.NamedImageFieldWidget')
+    form.widget(portrait='plone.app.users.browser.z3cpersonalpreferences.NamedImageFieldWidget')

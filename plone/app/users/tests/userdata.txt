@@ -1,8 +1,6 @@
 Testing the personal information form
 =====================================
 
-TODO: Testing the portait image upload
-
 The portrait widget varies between form libaries.
 
     >>> delete_control = 'Remove existing image' if self.form_library == 'z3c.form' else 'Delete Portrait'
@@ -138,6 +136,7 @@ Is the data of the created Image the same as the (scaled) orignal image?
     >>> portrait_value.data == scaled_image_data
     True
 
+
 Clearing user data
 ------------------
 
@@ -204,3 +203,38 @@ we still get our own data
     >>> self.browser.open('http://nohost/plone/' + view_name + '?userid=admin')
     >>> self.browser.getControl('Full Name').value == full_name
     True
+
+
+Modifying user data in email mode
+---------------------------------
+
+Let's switch to using Email as Login Name
+
+    >>> portal.portal_properties.site_properties._updateProperty('use_email_as_login', True)
+    >>> self.browser.open("http://nohost/plone/" + view_name)
+
+Update our email and see if login name was synced:
+
+    >>> self.browser.getControl('E-mail').value = 'my.new.email@example.com'
+    >>> self.browser.getControl('Save').click()
+    >>> 'Changes saved.' in self.browser.contents
+    True
+    >>> member = self.membership.getMemberById('test_user_1_')
+    >>> member.getUserName()
+    'my.new.email@example.com'
+
+Now add another user and try to update our email to that other user id. This
+should fail with validation errors.
+
+    >>> portal.acl_users._doAddUser('user2@example.com', 'password1', ('Member',), ())
+    <PloneUser 'user2@example.com'>
+
+    >>> self.browser.open("http://nohost/plone/" + view_name)
+    >>> self.browser.getControl('E-mail').value = 'user2@example.com'
+    >>> self.browser.getControl('Save').click()
+    >>> 'The email address you selected is already in use or is not valid as login name. Please choose another' in self.browser.contents
+    True
+
+Revert back from email mode
+
+    >>> portal.portal_properties.site_properties._updateProperty('use_email_as_login', False)

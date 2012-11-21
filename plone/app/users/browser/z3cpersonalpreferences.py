@@ -1,17 +1,20 @@
 from Acquisition import aq_inner
+from AccessControl import Unauthorized
 
-from zope.component import adapter
+from zope.component import adapter, getMultiAdapter
 from zope.event import notify
-from zope.interface import implements, implementer
+from zope.interface import implements, implementer, Invalid
 
 from z3c.form import form, button
-from z3c.form.interfaces import HIDDEN_MODE, IFieldWidget, IFormLayer
+from z3c.form.interfaces import HIDDEN_MODE, IFieldWidget, IFormLayer, \
+    IErrorViewSnippet
 from z3c.form.widget import FieldWidget
 
 from plone.autoform.form import AutoExtensibleForm
 from plone.app.controlpanel.events import ConfigurationChangedEvent
 from plone.formwidget.namedfile.widget import NamedImageWidget as BaseNamedImageWidget
 from plone.namedfile.interfaces import INamedImageField
+from plone.protect import CheckAuthenticator
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import SetOwnProperties
@@ -26,9 +29,8 @@ from ZTUtils import make_query
 
 from .account import IAccountPanelForm
 from ..userdataschema import IUserDataZ3CSchema
-from .personalpreferences import IPersonalPreferences
+from .personalpreferences import IPersonalPreferences, IPasswordSchema
 
-#TODO: CSRF
 
 class AccountPanelForm(AutoExtensibleForm, form.Form):
     """A simple form to be used as a basis for account panel screens."""
@@ -108,7 +110,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
                 new_data[k] = ''
 
         if site_props.getProperty('use_email_as_login') and 'email' in new_data:
-            set_own_login_name(self.context, new_data['email'])
+            set_own_login_name(member, new_data['email'])
 
         member.setMemberProperties(new_data)
         return True # We updated something
@@ -121,25 +123,83 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     def action(self):
         return self.request.getURL() + self.makeQuery()
 
+    def validate_email(self, errors, data):
+        context = aq_inner(self.context)
+        error_keys = [error.field.getName() for error in errors]
+
+        if 'email' not in error_keys:
+            reg_tool = getToolByName(context, 'portal_registration')
+            props = getToolByName(context, 'portal_properties')
+            if props.site_properties.getProperty('use_email_as_login'):
+                err_str = ''
+                try:
+                    id_allowed = reg_tool.isMemberIdAllowed(data['email'])
+                except Unauthorized:
+                    err_str = _('message_email_cannot_change',
+                                default=(u"Sorry, you are not allowed to "
+                                         u"change your email address."))
+                else:
+                    if not id_allowed:
+                        # Keeping your email the same (which happens when you
+                        # change something else on the personalize form) or
+                        # changing it back to your login name, is fine.
+                        membership = getToolByName(context,
+                                                   'portal_membership')
+                        if self.request.get('userid'):
+                            member = membership.getMemberById(
+                                self.request.get('userid'))
+                        else:
+                            member = membership.getAuthenticatedMember()
+                        if data['email'] not in (member.getId(),
+                                                 member.getUserName()):
+                            err_str = _(
+                                'message_email_in_use',
+                                default=(
+                                    u"The email address you selected is "
+                                    u"already in use or is not valid as login "
+                                    u"name. Please choose another."))
+
+                if err_str:
+                    widget = self.widgets['email']
+                    err_view = getMultiAdapter((Invalid(err_str), self.request,
+                        widget, widget.field, self, self.context),
+                        IErrorViewSnippet)
+                    err_view.update()
+                    widget.error = err_view
+                    self.widgets.errors += (err_view,)
+                    errors += (err_view,)
+
+        return errors
+
     @button.buttonAndHandler(_(u'Save'))
     def handleSave(self, action):
+        CheckAuthenticator(self.request)
+
         data, errors = self.extractData()
+
+        # extra validation for email
+        errors = self.validate_email(errors, data)
+
         if errors:
-            self.status = self.formErrorsMessage
+            IStatusMessage(self.request).addStatusMessage(
+                self.formErrorsMessage, type='error')
             return
 
         if self.applyChanges(data):
-            self.status = self.successMessage
+            IStatusMessage(self.request).addStatusMessage(
+                self.successMessage, type='info')
             notify(ConfigurationChangedEvent(self, data))
             self._on_save(data)
         else:
-            self.status = self.noChangesMessage
+            IStatusMessage(self.request).addStatusMessage(
+                self.noChangesMessage, type='info')
 
     @button.buttonAndHandler(_(u'Cancel'))
     def cancel(self, action):
         IStatusMessage(self.request).addStatusMessage(_("Changes canceled."),
                                                       type="info")
-        self.request.response.redirect(self.request['ACTUAL_URL'])
+        self.request.response.redirect('%s%s' % (self.request['ACTUAL_URL'],
+            self.makeQuery()))
 
     def _on_save(self, data=None):
         pass
@@ -236,10 +296,19 @@ class NamedImageWidget(BaseNamedImageWidget):
     @property
     def download_url(self):
         userid = self.request.form.get('userid')
-        if not(userid):
+        if not userid:
             mt = getToolByName(self.form.context, 'portal_membership')
             userid =  mt.getAuthenticatedMember().getId()
-        return super(NamedImageWidget, self).download_url + '?' + make_query({'userid':userid})
+
+        # anonymous
+        if not userid:
+            return None
+
+        url = super(NamedImageWidget, self).download_url
+        if not url:
+            return None
+
+        return '%s?%s' % (url, make_query({'userid':userid}))
 
 @implementer(IFieldWidget)
 @adapter(INamedImageField, IFormLayer)
@@ -255,3 +324,117 @@ class PersonalPreferencesConfiglet(PersonalPreferencesPanel):
 class UserDataConfiglet(UserDataPanel):
     """Control panel version of the userdata panel"""
     template = ViewPageTemplateFile('z3c-account-configlet.pt')
+
+class PasswordAccountPanel(AccountPanelForm):
+    """ Implementation of password reset form that uses z3c.form"""
+    label = _(u'listingheader_reset_password', default=u'Reset Password')
+    description = _(u"Change Password")
+    form_name = _(u'legend_password_details', default=u'Password Details')
+    schema = IPasswordSchema
+
+    def updateFields(self):
+        super(PasswordAccountPanel, self).updateFields()
+        
+        # Change the password description based on PAS Plugin
+        # The user needs a list of instructions on what kind of password is
+        # required.
+        # We'll reuse password errors as instructions e.g. "Must contain a
+        # letter and a number".
+        # Assume PASPlugin errors are already translated
+        registration = getToolByName(self.context, 'portal_registration')
+        err_str = registration.testPasswordValidity('')
+        if err_str:
+            self.fields['new_password'].field.description = \
+                _(u'Enter your new password. ') + err_str
+
+    def validate_password(self, errors, data):
+        context = aq_inner(self.context)
+        registration = getToolByName(context, 'portal_registration')
+        membertool = getToolByName(context, 'portal_membership')
+
+        # check if password is correct
+        current_password = data.get('current_password')
+        if current_password:
+            current_password = current_password.encode('ascii', 'ignore')
+
+            if not membertool.testCurrentPassword(current_password):
+                # add error to current_password widget
+                err_str = _(u"Incorrect value for current password")
+                widget = self.widgets['current_password']
+                err_view = getMultiAdapter((Invalid(err_str), self.request,
+                    widget, widget.field, self, self.context),
+                    IErrorViewSnippet)
+                err_view.update()
+                widget.error = err_view
+                self.widgets.errors += (err_view,)
+                errors += (err_view,)
+
+        # check if passwords are same and valid according to plugin
+        new_password = data.get('new_password')
+        new_password_ctl = data.get('new_password_ctl')
+        if new_password and new_password_ctl:
+            failMessage = registration.testPasswordValidity(new_password,
+                                                            new_password_ctl)
+
+            if failMessage:
+                # add error to new_password widget
+                widget = self.widgets['new_password']
+                err_view = getMultiAdapter((Invalid(failMessage), self.request,
+                    widget, widget.field, self, self.context),
+                    IErrorViewSnippet)
+                err_view.update()
+                widget.error = err_view
+                self.widgets.errors += (err_view,)
+                errors += (err_view,)
+
+                # add error to new_password_ctl widget
+                widget = self.widgets['new_password_ctl']
+                err_view = getMultiAdapter((Invalid(failMessage), self.request,
+                    widget, widget.field, self, self.context),
+                    IErrorViewSnippet)
+                err_view.update()
+                widget.error = err_view
+                self.widgets.errors += (err_view,)
+                errors += (err_view,)
+
+        return errors
+
+    @button.buttonAndHandler(_(u'label_change_password',
+        default=u'Change Password'), name='reset_passwd')
+    def action_reset_passwd(self, action):
+        data, errors = self.extractData()
+
+        # extra password validation
+        errors = self.validate_password(errors, data)
+
+        if errors:
+            IStatusMessage(self.request).addStatusMessage(
+                self.formErrorsMessage, type='error')
+            return
+
+        membertool = getToolByName(self.context, 'portal_membership')
+
+        password = data['new_password']
+
+        try:
+            membertool.setPassword(password, None, REQUEST=self.request)
+        except AttributeError:
+            failMessage = _(u'While changing your password an AttributeError '
+                            u'occurred. This is usually caused by your user '
+                            u'being defined outside the portal.')
+
+            IStatusMessage(self.request).addStatusMessage(_(failMessage),
+                                                          type="error")
+            return
+
+        IStatusMessage(self.request).addStatusMessage(_("Password changed"),
+                                                          type="info")
+
+    # hide inherited Save and Cancel buttons
+    @button.buttonAndHandler(_(u'Save'), condition=lambda form:False)
+    def handleSave(self, action):
+        pass
+
+    @button.buttonAndHandler(_(u'Cancel'), condition=lambda form:False)
+    def cancel(self, action):
+        pass
