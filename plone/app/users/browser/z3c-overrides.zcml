@@ -38,6 +38,11 @@
       class=".z3cpersonalpreferences.PersonalPreferencesPanel"
       permission="cmf.SetOwnProperties"
       />
+    <adapter
+      provides=".personalpreferences.IPersonalPreferences"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      factory=".z3cpersonalpreferences.PersonalPreferencesPanelSchemaAdapter"
+      />
 
     <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
