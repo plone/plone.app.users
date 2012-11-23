@@ -4,7 +4,7 @@ from ZODB.POSException import ConflictError
 from zExceptions import Forbidden
 from AccessControl import getSecurityManager
 
-from zope.component import getMultiAdapter, getUtility
+from zope.component import getMultiAdapter, getUtility, getAdapter
 from zope.interface import Invalid
 from zope.schema import getFieldNames
 
@@ -394,27 +394,31 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         return
 
     def applyProperties(self, userid, data):
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
         mt = getToolByName(self.context, 'portal_membership')
         member = mt.getMemberById(userid)
 
-        new_data = {}
-        register_fields = getFieldNames(IRegisterSchema)
+        # cache adapters
+        adapters = {}
+
+        register_fields = getFieldNames(IRegisterSchema) + \
+            getFieldNames(IAddUserSchema)
         for k, value in data.items():
             # skip fields that are handled exclusively on user registration and
             # are not part of personal information form
             if k in register_fields:
                 continue
 
-            # handle photo in a special way
-            if k == 'portrait' and value is not None:
-                file = value.open()
-                file.filename = value.filename
-                mt.changeMemberPortrait(file, str(userid))
+            # get schema adapter
+            schema = self.fields[k].field.interface
+            if schema in adapters:
+                adapter = adapters[schema]
             else:
-                new_data[k] = value
+                adapters[schema] = adapter = getAdapter(portal, schema)
+                adapter.context = member
 
-        if new_data:
-            member.setMemberProperties(new_data)
+            # finally set value
+            setattr(adapter, k, value)
 
 class RegistrationForm(BaseRegistrationForm):
     """ Dynamically get fields from user data, through admin

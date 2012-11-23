@@ -44,8 +44,6 @@ class AccountPanelSchemaAdapter(object):
         if (userid and mt.checkPermission('Plone Site Setup: Users and Groups',
                                            context)):
             self.context = mt.getMemberById(userid)
-        elif mt.isAnonymousUser():
-            raise ValueError('Cannot change permissions for anonymous user')
         else:
             self.context = mt.getAuthenticatedMember()
 
