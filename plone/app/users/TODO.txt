@@ -1,8 +1,6 @@
 Z3C Forms TODOs
 ---------------
 
-[ ] pull changes from mainstream master branch and apply to z3c form
-    versions
 [ ] update collective.examples.userdata to use z3c form versions
 [ ] update README.txt
 [ ] when this PLIP merged into master, then we need to update
