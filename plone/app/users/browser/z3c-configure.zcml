@@ -21,13 +21,13 @@
         for=".z3cregistration.RegistrationControlPanel
              z3c.form.interfaces.IFormLayer
              *"
-      factory=".z3cregistration.EmptyPrefixFieldWidgets"
-      />
+        factory=".z3cregistration.EmptyPrefixFieldWidgets"
+        />
     <adapter
         for=".z3cregister.BaseRegistrationForm
              z3c.form.interfaces.IFormLayer
              *"
-      factory=".z3cregistration.EmptyPrefixFieldWidgets"
-      />
+        factory=".z3cregistration.EmptyPrefixFieldWidgets"
+        />
 
 </configure>
