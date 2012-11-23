@@ -9,6 +9,12 @@
     <utility component="..vocabularies.UserRegistrationFieldsVocabularyFactory"
              name="plone.app.users.user_registration_fields" />
 
+    <adapter
+      provides="..userdataschema.IUserDataZ3CSchema"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      factory=".z3cpersonalpreferences.UserDataPanelSchemaAdapter"
+      />
+
     <!-- Set empty widgets prefix for our z3c forms to have form field names the
          same as on formlib forms -->
     <adapter

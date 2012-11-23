@@ -31,6 +31,49 @@ from .account import IAccountPanelForm
 from ..userdataschema import IUserDataZ3CSchema
 from .personalpreferences import IPersonalPreferences, IPasswordSchema
 
+class AccountPanelSchemaAdapter(object):
+    """Data manager that gets and sets any property mentioned
+       in the schema to the property sheet
+    """
+    context = None
+    schema = IAccountPanelForm
+
+    def __init__(self, context):
+        mt = getToolByName(context, 'portal_membership')
+        userid = context.REQUEST.form.get('userid')
+        if (userid and mt.checkPermission('Plone Site Setup: Users and Groups',
+                                           context)):
+            self.context = mt.getMemberById(userid)
+        elif mt.isAnonymousUser():
+            raise ValueError('Cannot change permissions for anonymous user')
+        else:
+            self.context = mt.getAuthenticatedMember()
+
+    def _getProperty(self, name):
+        value = self.context.getProperty(name, '')
+        if value:
+            # PlonePAS encodes all unicode coming from PropertySheets.
+            return safe_unicode(value)
+        return value
+
+    def _setProperty(self, name, value):
+        if value is None:
+            value = ''
+        return self.context.setMemberProperties({name: value})
+
+    def __getattr__(self, name):
+        if name in self.schema:
+            # In schema and no explicit handler, assume it's in the property sheet
+            return self._getProperty(name)
+        raise AttributeError(name)
+
+    def __setattr__(self, name, value):
+        if name not in self.schema or hasattr(self.__class__, name):
+            # Either not part of the schema or dealt with by an explicit
+            # property
+            return super(AccountPanelSchemaAdapter, self).__setattr__(name, value)
+        return self._setProperty(name, value)
+
 
 class AccountPanelForm(AutoExtensibleForm, form.Form):
     """A simple form to be used as a basis for account panel screens."""
@@ -42,78 +85,6 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     hidden_widgets = []
     successMessage = _("Changes saved.")
     noChangesMessage =  _("No changes made.")
-
-    def getContent(self):
-        mt = getToolByName(self.context, 'portal_membership')
-        userid = self.request.form.get('userid')
-        if (userid and mt.checkPermission('Plone Site Setup: Users and Groups',
-                                           self.context)):
-            member = mt.getMemberById(userid)
-        else:
-            member = mt.getAuthenticatedMember()
-            if mt.isAnonymousUser():
-                return {}
-
-        data = {}
-        _marker = object()
-        # For each prefix-less version of the fieldname...
-        for k in (f.field.__name__ for f in self.fields.values()):
-            if k == 'portrait':
-                portal = getToolByName(self, 'portal_url').getPortalObject()
-                value = mt.getPersonalPortrait(member.getId())
-                if aq_inner(value) == aq_inner(getattr(portal,pas_default_portrait, None)):
-                    value = None
-                data[k] = value
-                continue
-
-            value = member.getProperty(k, _marker)
-            data[k] = None if value is _marker else safe_unicode(value)
-        return data
-
-    def applyChanges(self, data):
-        mt = getToolByName(self.context, 'portal_membership')
-        site_props = getToolByName(self.context, 'portal_properties').site_properties
-        userid = self.request.form.get('userid')
-        if (userid and mt.checkPermission('Plone Site Setup: Users and Groups',
-                                           self.context)):
-            member = mt.getMemberById(userid)
-        else:
-            member = mt.getAuthenticatedMember()
-
-        # Remove everything that hasn't changed.
-        old_data = self.getContent()
-        new_data = dict((k.split('.')[-1], data[k]) for k in data.keys())
-        for k in new_data.keys():
-            if k == 'portrait' and self.widgets[k].action() == 'nochange':
-                # action is 'nochange' for new uploads, don't delete them.
-                if not(old_data is None or new_data is not None):
-                    del new_data[k]
-                continue
-            if new_data[k] == old_data[k] or (old_data[k] == u'' and new_data[k] is None):
-                del new_data[k]
-        if len(new_data) == 0:
-            # Nothing has changed, stop here
-            return False
-
-        for k, value in new_data.items():
-            if k == 'portrait':
-                if value is None:
-                    mt.deletePersonalPortrait(str(member.getId()))
-                else:
-                    file = value.open()
-                    file.filename = value.filename
-                    mt.changeMemberPortrait(file, str(member.getId()))
-                del new_data[k]
-                continue
-            if k in ['wysiwyg_editor','language','fullname','email','home_page'
-                    ,'description','location'] and value is None:
-                new_data[k] = ''
-
-        if site_props.getProperty('use_email_as_login') and 'email' in new_data:
-            set_own_login_name(member, new_data['email'])
-
-        member.setMemberProperties(new_data)
-        return True # We updated something
 
     def makeQuery(self):
         if hasattr(self.request,'userid'):
@@ -235,6 +206,10 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         return tabs
 
 
+class PersonalPreferencesPanelSchemaAdapter(AccountPanelSchemaAdapter):
+    schema = IPersonalPreferences
+
+
 class PersonalPreferencesPanel(AccountPanelForm):
     """ Implementation of personalize form that uses z3c.form """
 
@@ -267,6 +242,44 @@ class PersonalPreferencesPanel(AccountPanelForm):
         self.widgets['wysiwyg_editor'].noValueMessage = _(u"vocabulary-available-editor-novalue", u"Use site default")
         if not siteProperties.visible_ids:
             self.widgets['visible_ids'].mode = HIDDEN_MODE
+
+
+class UserDataPanelSchemaAdapter(AccountPanelSchemaAdapter):
+    """One does not simply set portrait, email might be used to login with
+    """
+    schema = IUserDataZ3CSchema
+
+    def get_portrait(self):
+        """If user has default portrait, return none
+        """
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        mt = getToolByName(self.context, 'portal_membership')
+        value = mt.getPersonalPortrait(self.context.getId())
+        if aq_inner(value) == aq_inner(getattr(portal, pas_default_portrait, None)):
+            return None
+        return value
+
+    def set_portrait(self, value):
+        mt = getToolByName(self.context, 'portal_membership')
+        if value is None:
+            mt.deletePersonalPortrait(str(self.context.getId()))
+        else:
+            file = value.open()
+            file.filename = value.filename
+            mt.changeMemberPortrait(file, str(self.context.getId()))
+
+    portrait = property(get_portrait, set_portrait)
+
+    def get_email(self):
+        return self._getProperty('email')
+
+    def set_email(self, value):
+        pp = getToolByName(self.context, 'portal_properties')
+        if pp.site_properties.getProperty('use_email_as_login'):
+            set_own_login_name(self.context, value)
+        return self._setProperty('email', value)
+
+    email = property(get_email, set_email)
 
 
 class UserDataPanel(AccountPanelForm):
