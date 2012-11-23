@@ -5,7 +5,7 @@ from zExceptions import Forbidden
 from AccessControl import getSecurityManager
 
 from zope.component import getMultiAdapter, getUtility, getAdapter
-from zope.interface import Invalid
+from zope.interface import Invalid, Interface
 from zope.schema import getFieldNames
 
 from z3c.form import form, button, field
@@ -13,6 +13,7 @@ from z3c.form.interfaces import IErrorViewSnippet, DISPLAY_MODE
 from z3c.form.util import expandPrefix
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 
+from plone.autoform.interfaces import OMITTED_KEY, ORDER_KEY
 from plone.autoform.form import AutoExtensibleForm
 from plone.protect import CheckAuthenticator
 
@@ -53,8 +54,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         """Fields are dynamic in this form, to be able to handle
         different join styles.
         """
-        super(BaseRegistrationForm, self).updateFields()
-
         portal_props = getToolByName(self.context, 'portal_properties')
         props = portal_props.site_properties
         use_email_as_login = props.getProperty('use_email_as_login')
@@ -91,17 +90,29 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             registration_fields.insert(
                 registration_fields.index('password_ctl') + 1, 'mail_me')
 
-        all_fields = self.fields
+        # Order/filter schema by registration_fields
+        self.schema.setTaggedValue(ORDER_KEY, [
+          (registration_fields[i], 'after', registration_fields[i - 1] if i > 0 else '*')
+          for i in range(len(registration_fields))
+        ])
+        self.schema.setTaggedValue(OMITTED_KEY, [
+          (Interface, name, name not in registration_fields)
+          for name in self.schema
+        ])
+
+        # Finally, let autoform process the schema and any FormExtenders do
+        # their thing
+        super(BaseRegistrationForm, self).updateFields()
 
         # update email field description according to set login policy
         if use_email_as_login:
-            all_fields['email'].field.description = _(
+            self.fields['email'].field.description = _(
                 u'help_email_creation_for_login', default=u"Enter an email "
                 "address. This will be your login name. We respect your "
                 "privacy, and will not give the address away to any third "
                 "parties or expose it anywhere.")
         else:
-            all_fields['email'].field.description = _(u'help_email_creation',
+            self.fields['email'].field.description = _(u'help_email_creation',
                 default=u"Enter an email address. This is necessary in case the"
                 " password is lost. We respect your privacy, and will not give "
                 "the address away to any third parties or expose it anywhere.")
@@ -109,7 +120,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         # Make sure some fields are really required; a previous call
         # might have changed the default.
         for name in ('password', 'password_ctl'):
-            all_fields[name].field.required = True
+            self.fields[name].field.required = True
 
         # Change the password description based on PAS Plugin
         # The user needs a list of instructions on what kind of password is
@@ -117,17 +128,15 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         # We'll reuse password errors as instructions e.g. "Must contain a
         # letter and a number".
         # Assume PASPlugin errors are already translated
-        if all_fields.get('password',None):
+        if self.fields.get('password',None):
             registration = getToolByName(self.context, 'portal_registration')
             err_str = registration.testPasswordValidity('')
             if err_str:
                 msgid = _(u'Enter your new password. ${errors}',
                     mapping=dict(errors=err_str))
-                all_fields['password'].field.description = \
+                self.fields['password'].field.description = \
                     self.context.translate(msgid)
 
-        self.fields = field.Fields(*[all_fields[id]
-            for id in registration_fields if id in all_fields])
 
     # Actions validators
     def validate_registration(self, errors, data):
