@@ -1,8 +1,6 @@
 Z3C Forms TODOs
 ---------------
 
-[ ] update collective.examples.userdata to use z3c form versions
-[ ] update README.txt
 [ ] when this PLIP merged into master, then we need to update
     Products.CMFPlone csrf.txt doc test to work for z3c.form version of
     'register' form; one small change required: change button name from
