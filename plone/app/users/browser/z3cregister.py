@@ -57,8 +57,10 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         portal_props = getToolByName(self.context, 'portal_properties')
         props = portal_props.site_properties
         use_email_as_login = props.getProperty('use_email_as_login')
-        registration_fields = list(props.getProperty(
-                'user_registration_fields', []))
+
+        # Ensure all listed fields are in the schema
+        registration_fields = [f for f in props.getProperty(
+                'user_registration_fields', []) if f in self.schema]
 
         # Check on required join fields
         if not 'username' in registration_fields and not use_email_as_login:
