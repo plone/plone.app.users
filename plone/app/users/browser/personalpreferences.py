@@ -452,6 +452,7 @@ class PasswordAccountPanel(AccountPanelForm):
         if new_password and new_password_ctl:
             failMessage = registration.testPasswordValidity(new_password,
                                                             new_password_ctl)
+
             if failMessage:
                 errors.append(WidgetInputError('new_password',
                                   u'label_new_password', failMessage))

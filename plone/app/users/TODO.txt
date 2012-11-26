@@ -1,0 +1,8 @@
+Z3C Forms TODOs
+---------------
+
+[ ] when this PLIP merged into master, then we need to update
+    Products.CMFPlone csrf.txt doc test to work for z3c.form version of
+    'register' form; one small change required: change button name from
+    form.actions.register to form.buttons.register; actually we'll make it
+    work for both versions

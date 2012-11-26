@@ -1,0 +1,33 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="plone">
+
+    <include package="plone.autoform" />
+
+    <utility component="..vocabularies.UserRegistrationFieldsVocabularyFactory"
+             name="plone.app.users.user_registration_fields" />
+
+    <adapter
+      provides="..userdataschema.IUserDataZ3CSchema"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      factory=".z3cpersonalpreferences.UserDataPanelSchemaAdapter"
+      />
+
+    <!-- Set empty widgets prefix for our z3c forms to have form field names the
+         same as on formlib forms -->
+    <adapter
+        for=".z3cregistration.RegistrationControlPanel
+             z3c.form.interfaces.IFormLayer
+             *"
+        factory=".z3cregistration.EmptyPrefixFieldWidgets"
+        />
+    <adapter
+        for=".z3cregister.BaseRegistrationForm
+             z3c.form.interfaces.IFormLayer
+             *"
+        factory=".z3cregistration.EmptyPrefixFieldWidgets"
+        />
+
+</configure>
