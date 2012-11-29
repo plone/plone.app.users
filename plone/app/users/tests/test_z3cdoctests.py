@@ -2,9 +2,12 @@ import doctest
 from unittest import TestSuite
 
 from Testing.ZopeTestCase import FunctionalDocFileSuite
+from Testing.ZopeTestCase.placeless import zcml
 from Products.PloneTestCase.PloneTestCase import setupPloneSite
 
 from plone.app.users.tests import TestCase
+
+from .base import Z3CFormLayer
 
 setupPloneSite()
 
@@ -12,7 +15,8 @@ OPTIONFLAGS = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
 
 
 class DocTestCase(TestCase):
-    form_library = 'formlib'
+    form_library = 'z3c.form'
+    layer = Z3CFormLayer
 
 
 def test_suite():
@@ -23,7 +27,8 @@ def test_suite():
              'userdata_prefs_user_details.txt',
              'personal_preferences.txt',
              'personal_preferences_prefs_user_details.txt',
-             'password.txt'
+             'password.txt',
+             '../vocabularies.py'
              ]
     suite = TestSuite()
     for test in tests:
