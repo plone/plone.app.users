@@ -1,7 +1,5 @@
-from zope.interface import implementsOnly
 from zope.component import getMultiAdapter
 from z3c.form import form, field, button
-from z3c.form.interfaces import IWidgets
 from z3c.form.browser.orderedselect import OrderedSelectFieldWidget
 
 from Products.CMFCore.utils import getToolByName
@@ -15,17 +13,12 @@ from ..registration import USER_REGISTRATION_FIELDS
 from ..registrationschema import IZ3CRegistrationSchema
 
 
-class EmptyPrefixFieldWidgets(field.FieldWidgets):
-    """Override default Field Widgets to get rid of prefix"""
-    implementsOnly(IWidgets)
-    prefix = ''
-
 class RegistrationControlPanel(form.Form):
 
     label = _(u"Registration settings")
     description = _(u"Registration settings for this site.")
     form_name = _(u"Registration settings")
-    
+
     formErrorsMessage = _('There were errors.')
     template = ViewPageTemplateFile('z3c-memberregistration.pt')
 
@@ -47,7 +40,7 @@ class RegistrationControlPanel(form.Form):
             IStatusMessage(self.request).addStatusMessage(
                 self.formErrorsMessage, type='error')
             return
-        
+
         # save property
         if data['user_registration_fields'] != \
             self.getContent()['user_registration_fields']:

@@ -4,7 +4,6 @@ Admin modifies user information thru 'Users and groups'
 The portrait widget varies between form libaries.
 
     >>> delete_control = 'Remove existing image' if self.form_library == 'z3c.form' else 'Delete Portrait'
-    >>> widget_prefix = 'form.widgets' if self.form_library == 'z3c.form' else 'form'
 
 An admin can modify user information thru the @@user-information form in Users and Groups
 config page.
@@ -34,7 +33,7 @@ We have these controls in the form:
     ''
     >>> self.browser.getControl('Biography').value
     ''
-    >>> self.browser.getControl(name=widget_prefix + '.portrait').value
+    >>> self.browser.getControl(name='form.portrait').value
 
 
 Modifying user data
@@ -57,7 +56,7 @@ Modifying user data
 
     >>> from pkg_resources import resource_stream
     >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
-    >>> self.browser.getControl(name=widget_prefix + '.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
+    >>> self.browser.getControl(name='form.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
 
     >>> self.browser.getControl('Save').click()
     >>> 'Required input is missing.' in self.browser.contents
