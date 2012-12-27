@@ -4,6 +4,13 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- Fix email as login validation in the personalize form (UserDataPanel).
+  This is for the case when email is used as login.  It checked that a
+  changed email address was valid as user id.  But the user id is
+  never changed here, only the login name.  We only need to check if
+  this address is not used by another user.
+  [maurits]
+
 - Fix to not break if passwords contain non-ASCII characters.
   This closes https://dev.plone.org/ticket/13114
   [davisagli]

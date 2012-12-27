@@ -17,6 +17,7 @@ from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import normalizeString, safe_unicode
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.PlonePAS.interfaces.plugins import IUserManagement
 
 from ZODB.POSException import ConflictError
 from zExceptions import Forbidden
@@ -255,6 +256,22 @@ class BaseRegistrationForm(PageForm):
         # Fields constructor, and return.
         return form.Fields(*[all_fields[id] for id in registration_fields])
 
+    def generate_user_id(self, data):
+        """Generate a user id from data.
+
+        The data is the data passed in the form.  Note that when email
+        is used as login, the data will not have a username.
+
+        There are plans to add some more options and add a hook here
+        so it is possible to use a different scheme here, for example
+        creating a uuid or creating bob-jones-1 based on the fullname.
+
+        This will update the 'username' key of the data that is passed.
+        """
+        default = data.get('username') or data.get('email') or ''
+        data['username'] = default
+        return default
+
     # Actions validators
     def validate_registration(self, action, data):
         """
@@ -321,13 +338,11 @@ class BaseRegistrationForm(PageForm):
             errors.append(exc)
         if use_email_as_login:
             username_field = 'email'
-            username = email
         else:
             username_field = 'username'
-            try:
-                username = self.widgets['username'].getInputValue()
-            except InputErrors, exc:
-                errors.append(exc)
+
+        # Generate a nice user id and store that in the data.
+        username = self.generate_user_id(data)
 
         # check if username is valid
         # Skip this check if username was already in error list
@@ -356,6 +371,17 @@ class BaseRegistrationForm(PageForm):
                     errors.append(WidgetInputError(
                             'email', u'label_email', err_str))
                     self.widgets['email'].error = err_str
+
+        if use_email_as_login and not 'email' in error_keys:
+            pas = getToolByName(self, 'acl_users')
+            # TODO: maybe search for lowercase as well.
+            results = pas.searchUsers(login=email, exact_match=True)
+            if results:
+                err_str = _(u"The login name you selected is already in use "
+                            "or is not valid. Please choose another.")
+                errors.append(WidgetInputError(
+                        'email', u'label_email', err_str))
+                self.widgets['email'].error = err_str
 
         if 'password' in form_field_names and not 'password' in error_keys:
             # Admin can either set a password or mail the user (or both).
@@ -399,10 +425,15 @@ class BaseRegistrationForm(PageForm):
         if use_email_as_login:
             # The username field is not shown as the email is going to
             # be the username, but the field *is* needed further down
-            # the line.
-            data['username'] = data['email']
+            # the line.  A username probably has already been set in
+            # the data by calling generate_user_id earlier on, but
+            # let's be safe.
+            if not data.get('username'):
+                # No username given yet, so take the email.
+                data['username'] = data['email']
             # Set username in the form; at least needed for logging in
-            # immediately when password reset is bypassed.
+            # immediately when password reset is bypassed.  We need
+            # the email address here, not the user id.
             self.request.form['form.username'] = data['email']
 
         user_id = data['username']
@@ -416,6 +447,20 @@ class BaseRegistrationForm(PageForm):
             logging.exception(err)
             IStatusMessage(self.request).addStatusMessage(err, type="error")
             return
+
+        if use_email_as_login and user_id != data['email']:
+            # The user id differs from the login name.  Set the email
+            # as the login name.
+            acl_users = getToolByName(self.context, 'acl_users')
+            for plugin_id, userfolder in acl_users.plugins.listPlugins(IUserManagement):
+                if not hasattr(userfolder, 'updateUser'):
+                    continue
+                try:
+                    userfolder.updateUser(user_id, data['email'])
+                except KeyError:
+                    continue
+                else:
+                    break
 
         # set additional properties using the user schema adapter
         schema = getUtility(IUserDataSchemaProvider).getSchema()
