@@ -248,6 +248,9 @@ class BaseRegistrationForm(PageForm):
     def generate_user_id(self, data):
         """Generate a user id from data.
 
+        The data is the data passed in the form.  Note that when email
+        is used as login, the data will not have a username.
+
         There are plans to add some more options and add a hook here
         so it is possible to use a different scheme here, for example
         creating a uuid or creating bob-jones-1 based on the fullname.
@@ -321,14 +324,11 @@ class BaseRegistrationForm(PageForm):
             errors.append(exc)
         if use_email_as_login:
             username_field = 'email'
-            # Generate a nice user id and store that in the data.
-            username = self.generate_user_id(data)
         else:
             username_field = 'username'
-            try:
-                username = self.widgets['username'].getInputValue()
-            except InputErrors, exc:
-                errors.append(exc)
+
+        # Generate a nice user id and store that in the data.
+        username = self.generate_user_id(data)
 
         # check if username is valid
         # Skip this check if username was already in error list
