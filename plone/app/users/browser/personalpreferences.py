@@ -293,6 +293,7 @@ class UserDataPanel(AccountPanelForm):
                     # user id or login name, so we need to check if
                     # this email is already in use by another user.
                     pas = getToolByName(context, 'acl_users')
+                    # TODO: maybe search for lowercase as well.
                     if (membership.getMemberById(email) or
                             pas.searchUsers(login=email, exact_match=True)):
                         err_str = _(
