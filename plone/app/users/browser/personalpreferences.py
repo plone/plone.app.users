@@ -294,7 +294,7 @@ class UserDataPanel(AccountPanelForm):
                     # this email is already in use by another user.
                     pas = getToolByName(context, 'acl_users')
                     if (membership.getMemberById(email) or
-                            pas.searchUsers(login=email, exact_match=True)):
+                            pas.searchUsers(name=email, exact_match=True)):
                         err_str = _(
                             'message_email_in_use',
                             default=(

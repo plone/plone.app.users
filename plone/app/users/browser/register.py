@@ -431,7 +431,7 @@ class BaseRegistrationForm(PageForm):
 
         if use_email_as_login and not 'email' in error_keys:
             pas = getToolByName(self, 'acl_users')
-            results = pas.searchUsers(login=email, exact_match=True)
+            results = pas.searchUsers(name=email, exact_match=True)
             if results:
                 err_str = _(u"The login name you selected is already in use "
                             "or is not valid. Please choose another.")
