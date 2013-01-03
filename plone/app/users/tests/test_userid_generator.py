@@ -11,25 +11,25 @@ class TestGenerateUserId(TestCase):
         form = BaseRegistrationForm(self.portal, {})
         data = {}
         self.assertEqual(form.generate_user_id(data), '')
-        self.assertEqual(data.get('username'), '')
+        self.assertEqual(data.get('user_id'), '')
 
         # An explicit username is taken by default.
         data = {'username': 'joe',
                 'fullname': 'Joe User',
                 'email': 'joe@example.org'}
         self.assertEqual(form.generate_user_id(data), 'joe')
-        self.assertEqual(data.get('username'), 'joe')
+        self.assertEqual(data.get('user_id'), 'joe')
 
         # When no username is there, we try a normalized fullname.
         data = {'fullname': 'Joe User',
                 'email': 'joe@example.org'}
         self.assertEqual(form.generate_user_id(data), 'joe-user')
-        self.assertEqual(data.get('username'), 'joe-user')
+        self.assertEqual(data.get('user_id'), 'joe-user')
 
         # With no fullname, we take the email.
         data = {'email': 'joe@example.org'}
         self.assertEqual(form.generate_user_id(data), 'joe@example.org')
-        self.assertEqual(data.get('username'), 'joe@example.org')
+        self.assertEqual(data.get('user_id'), 'joe@example.org')
 
     def test_generate_user_id_simplistic(self):
         # Test a simplistic user id generator.
@@ -42,13 +42,13 @@ class TestGenerateUserId(TestCase):
 
         data = {}
         self.assertEqual(form.generate_user_id(data), 'one')
-        self.assertEqual(data.get('username'), 'one')
+        self.assertEqual(data.get('user_id'), 'one')
 
         data = {'username': 'joe',
                 'fullname': 'Joe User',
                 'email': 'joe@example.org'}
         self.assertEqual(form.generate_user_id(data), 'one')
-        self.assertEqual(data.get('username'), 'one')
+        self.assertEqual(data.get('user_id'), 'one')
 
     def test_generate_user_id_email(self):
         # It is easy to force the email as user id.
@@ -61,10 +61,10 @@ class TestGenerateUserId(TestCase):
 
         data = {}
         self.assertEqual(form.generate_user_id(data), '')
-        self.assertEqual(data.get('username'), '')
+        self.assertEqual(data.get('user_id'), '')
 
         data = {'username': 'joe',
                 'fullname': 'Joe User',
                 'email': 'joe@example.org'}
         self.assertEqual(form.generate_user_id(data), 'joe@example.org')
-        self.assertEqual(data.get('username'), 'joe@example.org')
+        self.assertEqual(data.get('user_id'), 'joe@example.org')
