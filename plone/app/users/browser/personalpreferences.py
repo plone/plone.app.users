@@ -288,6 +288,12 @@ class UserDataPanel(AccountPanelForm):
                 else:
                     member = membership.getAuthenticatedMember()
                 email = data['email']
+                pas = getToolByName(context, 'acl_users')
+                try:
+                    email = pas.applyTransform(email)
+                except AttributeError:
+                    # Old PAS.
+                    pass
                 if email not in (member.getId(), member.getUserName()):
                     # Our email has changed and is not the same as our
                     # user id or login name, so we need to check if
