@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1.5 (unreleased)
+1.1.5 (2013-01-13)
 ------------------
 
 - Fix email as login validation in the personalize form (UserDataPanel).
