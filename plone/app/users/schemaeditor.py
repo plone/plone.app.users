@@ -1,9 +1,13 @@
 from zope.component import getUtility
+from zope.component.hooks import getSite
+from zope.annotation.interfaces import IAnnotations
 from zope.interface import Interface, implements
+
 from plone.schemaeditor.browser.schema.traversal import SchemaContext
+
 from userdataschema import IUserDataSchemaProvider
-from plone.supermodel.utils import syncSchema
-from Products.CMFCore.utils import getToolByName
+
+SCHEMA_ANNOTATION = "plone.app.users.schema"
 
 
 class IMemberSchemaContext(Interface):
@@ -24,6 +28,6 @@ class MemberSchemaContext(SchemaContext):
 
 
 def updateSchema(object, event):
-    pm = getToolByName(object, 'portal_memberdata')
-    syncSchema(object.schema, pm.schema, overwrite=True)
-    import pdb; pdb.set_trace( )
+    site = getSite()
+    annotations = IAnnotations(site)
+    annotations[SCHEMA_ANNOTATION] = object.schema._InterfaceClass__attrs
