@@ -27,7 +27,7 @@ class UserDataSchemaProvider(object):
     def getSchema(self):
         """
         """
-        return IUserDataSchema
+        return IUserDataZ3CSchema
 
 
 def checkEmailAddress(value):

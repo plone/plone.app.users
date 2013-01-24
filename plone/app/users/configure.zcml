@@ -11,6 +11,7 @@
              factory=".userdataschema.UserDataSchemaProvider"/>
 
     <include package=".browser" />
+    <include package="plone.app.users.browser" file="z3c-configure.zcml" />
 
     <browser:page
       name="member-registration"
@@ -22,9 +23,15 @@
     <adapter factory=".registration.RegistrationControlPanelAdapter"/>
 
     <browser:page
-      name="member-fields"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      class=".schemaeditor.SchemaEditorPage"
-      permission="cmf.ManagePortal"
-      />
+        name="member-fields"
+        for="*"
+        class=".schemaeditor.MemberSchemaContext"
+        permission="plone.app.controlpanel.UsersAndGroups"
+        allowed_interface="OFS.interfaces.IItem" />
+
+    <subscriber
+        for=".schemaeditor.IMemberSchemaContext
+             plone.schemaeditor.interfaces.ISchemaModifiedEvent"
+        handler=".schemaeditor.updateSchema"
+        />
 </configure>

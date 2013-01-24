@@ -1,26 +1,29 @@
-from Acquisition import aq_inner
 from zope.component import getUtility
-from plone.schemaeditor.browser.schema.listing import SchemaListing
+from zope.interface import Interface, implements
 from plone.schemaeditor.browser.schema.traversal import SchemaContext
-from Products.CMFPlone import PloneMessageFactory as _
 from userdataschema import IUserDataSchemaProvider
-from plone.z3cform.layout import FormWrapper
+from plone.supermodel.utils import syncSchema
+from Products.CMFCore.utils import getToolByName
 
 
-class SchemaEditorPage(FormWrapper):
-    label = _(u'Fields')
+class IMemberSchemaContext(Interface):
+    """
+    """
+
+
+class MemberSchemaContext(SchemaContext):
+    implements(IMemberSchemaContext)
 
     def __init__(self, context, request):
-        self.request = request
         schema = getUtility(IUserDataSchemaProvider).getSchema()
-        self.context = SchemaContext(schema, request, name='@@member-fields')
-        #import pdb; pdb.set_trace( )
+        super(MemberSchemaContext, self).__init__(
+            schema,
+            request,
+            name='member-fields'
+        )
 
-        if self.form is not None:
-            self.form_instance = self.form(
-                aq_inner(self.context), self.request)
-            self.form_instance.__name__ = self.__name__
 
-    @property
-    def form(self):
-        return SchemaListing
+def updateSchema(object, event):
+    pm = getToolByName(object, 'portal_memberdata')
+    syncSchema(object.schema, pm.schema, overwrite=True)
+    import pdb; pdb.set_trace( )
