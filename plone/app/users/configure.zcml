@@ -21,4 +21,10 @@
 
     <adapter factory=".registration.RegistrationControlPanelAdapter"/>
 
+    <browser:page
+      name="member-fields"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".schemaeditor.SchemaEditorPage"
+      permission="cmf.ManagePortal"
+      />
 </configure>
