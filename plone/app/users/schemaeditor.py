@@ -5,9 +5,7 @@ from zope.interface import Interface, implements
 
 from plone.schemaeditor.browser.schema.traversal import SchemaContext
 
-from userdataschema import IUserDataSchemaProvider
-
-SCHEMA_ANNOTATION = "plone.app.users.schema"
+from userdataschema import IUserDataSchemaProvider, SCHEMA_ANNOTATION
 
 
 class IMemberSchemaContext(Interface):

@@ -1,6 +1,8 @@
 from zope.interface import Interface, implements
 from zope import schema
 from zope.component import getUtility
+from zope.component.hooks import getSite
+from zope.annotation.interfaces import IAnnotations
 
 from plone.autoform import directives as form
 from plone.namedfile.field import NamedBlobImage
@@ -10,6 +12,8 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.exceptions import EmailAddressInvalid
 from Products.CMFDefault.formlib.schema import FileUpload
 from Products.CMFPlone import PloneMessageFactory as _
+
+SCHEMA_ANNOTATION = "plone.app.users.schema"
 
 
 class IUserDataSchemaProvider(Interface):
@@ -27,7 +31,14 @@ class UserDataSchemaProvider(object):
     def getSchema(self):
         """
         """
-        return IUserDataZ3CSchema
+        schema = IUserDataZ3CSchema
+        site = getSite()
+        annotations = IAnnotations(site)
+        extra_fields = annotations.get(SCHEMA_ANNOTATION)
+        if extra_fields:
+            for name in extra_fields.keys():
+                schema._InterfaceClass__attrs[name] = extra_fields[name]
+        return schema
 
 
 def checkEmailAddress(value):
@@ -80,6 +91,7 @@ class IUserDataBaseSchema(Interface):
                       "your office is located."),
         required=False)
 
+
 class IUserDataSchema(IUserDataBaseSchema):
 
     portrait = FileUpload(title=_(u'label_portrait', default=u'Portrait'),
@@ -94,6 +106,7 @@ class IUserDataSchema(IUserDataBaseSchema):
         title=_(u'label_delete_portrait', default=u'Delete Portrait'),
         description=u'',
         required=False)
+
 
 class IUserDataZ3CSchema(IUserDataBaseSchema):
     """Overrides to make the schema z3c-compliant"""
