@@ -1,7 +1,7 @@
 from Acquisition import aq_inner
 from AccessControl import Unauthorized
 
-from zope.component import adapter, getMultiAdapter
+from zope.component import adapter, getMultiAdapter, getUtility
 from zope.event import notify
 from zope.interface import implements, implementer, Invalid
 
@@ -28,7 +28,7 @@ from Products.PlonePAS.tools.membership import default_portrait as pas_default_p
 from ZTUtils import make_query
 
 from .account import IAccountPanelForm
-from ..userdataschema import IUserDataZ3CSchema
+from ..userdataschema import IUserDataSchemaProvider
 from .personalpreferences import IPersonalPreferences, IPasswordSchema
 
 class AccountPanelSchemaAdapter(object):
@@ -245,7 +245,10 @@ class PersonalPreferencesPanel(AccountPanelForm):
 class UserDataPanelSchemaAdapter(AccountPanelSchemaAdapter):
     """One does not simply set portrait, email might be used to login with
     """
-    schema = IUserDataZ3CSchema
+    
+    def __init__(self, *args, **kwargs):
+        super(UserDataPanelSchemaAdapter, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
 
     def get_portrait(self):
         """If user has default portrait, return none
@@ -284,7 +287,10 @@ class UserDataPanel(AccountPanelForm):
 
     label = _(u'title_personal_information_form', default=u'Personal Information')
     form_name = _(u'User Data Form')
-    schema = IUserDataZ3CSchema
+
+    def __init__(self, *args, **kwargs):
+        super(UserDataPanel, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
 
     @property
     def description(self):
