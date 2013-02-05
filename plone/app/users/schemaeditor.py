@@ -45,13 +45,11 @@ class MemberFieldAdapter(object):
         self.field = field
 
     def _get_in_registration(self):
-        in_registration = self.field.interface.queryTaggedValue('in_registration', {})
-        return in_registration.get(self.field.__name__)
+        in_registration = self.field.queryTaggedValue('in_registration', False)
+        return in_registration
 
     def _set_in_registration(self, value):
-        in_registration = self.field.interface.queryTaggedValue('in_registration', {})
-        in_registration[self.field.__name__] = value
-        self.field.interface.setTaggedValue('in_registration', in_registration)
+        self.field.setTaggedValue('in_registration', value)
 
     in_registration = property(_get_in_registration, _set_in_registration)
 

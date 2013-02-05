@@ -5,8 +5,10 @@ from zExceptions import Forbidden
 from AccessControl import getSecurityManager
 
 from zope.component import getMultiAdapter, getUtility, getAdapter
-from zope.interface import Invalid, Interface
+from zope.interface import Invalid, Interface, implements
 from zope.schema import getFieldNames
+from zope.component.hooks import getSite
+from zope.annotation.interfaces import IAnnotations
 
 from z3c.form import form, button, field
 from z3c.form.interfaces import IErrorViewSnippet, DISPLAY_MODE
@@ -26,11 +28,12 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 
 from .register import IRegisterSchema, IAddUserSchema
-from ..userdataschema import IUserDataZ3CSchema
+from ..userdataschema import IUserDataZ3CSchema, SCHEMA_ANNOTATION
 
 
 class IZ3CRegisterSchema(IRegisterSchema, IUserDataZ3CSchema):
     """Collect all register fields under the same interface"""
+
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     """Form to be used as base for Register and Add User forms."""
@@ -43,6 +46,18 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
+
+    def __init__(self, *args, **kwargs):
+        super(BaseRegistrationForm, self).__init__(*args, **kwargs)
+        defaultFields = field.Fields(IRegisterSchema)
+        extraFields = field.Fields()
+        site = getSite()
+        annotations = IAnnotations(site)
+        for f in annotations.get(SCHEMA_ANNOTATION).values():
+            if f.queryTaggedValue('in_registration', False):
+                extraFields += field.Fields(f)
+        self.extra_field_ids = extraFields.keys()
+        self.fields = defaultFields + extraFields
 
     def render(self):
         if self._finishedRegister:
@@ -87,10 +102,16 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             registration_fields.insert(
                 registration_fields.index('password') + 1, 'password_ctl')
 
-        # Add email_me after password_ctl
+        # Add extra fields after password_ctl
+        current_index = registration_fields.index('password_ctl')
+        for f in self.extra_field_ids:
+            if f not in registration_fields:
+                current_index += 1
+                registration_fields.insert(current_index, f)
+
+        # Add email_me at the end
         if not 'mail_me' in registration_fields:
-            registration_fields.insert(
-                registration_fields.index('password_ctl') + 1, 'mail_me')
+            registration_fields.insert(current_index + 1, 'mail_me')
 
         # Order/filter schema by registration_fields
         self.schema.setTaggedValue(ORDER_KEY, [
