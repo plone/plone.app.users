@@ -8,6 +8,10 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- Added user timezone selection to user preferecnes and a dependency on
+  plone.app.event for vocabulary for user timezone selection.
+  [seanupton]
+
 - Fix email as login validation in the personalize form (UserDataPanel).
   This is for the case when email is used as login.  It checked that a
   changed email address was valid as user id.  But the user id is
