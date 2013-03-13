@@ -245,7 +245,7 @@ class PersonalPreferencesPanel(AccountPanelForm):
 class UserDataPanelSchemaAdapter(AccountPanelSchemaAdapter):
     """One does not simply set portrait, email might be used to login with
     """
-    
+
     def __init__(self, *args, **kwargs):
         super(UserDataPanelSchemaAdapter, self).__init__(*args, **kwargs)
         self.schema = getUtility(IUserDataSchemaProvider).getSchema()
@@ -351,7 +351,7 @@ class PasswordAccountPanel(AccountPanelForm):
 
     def updateFields(self):
         super(PasswordAccountPanel, self).updateFields()
-        
+
         # Change the password description based on PAS Plugin
         # The user needs a list of instructions on what kind of password is
         # required.

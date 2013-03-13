@@ -28,8 +28,9 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 
 from .register import IRegisterSchema, IAddUserSchema
-from ..userdataschema import IUserDataZ3CSchema, SCHEMA_ANNOTATION
+from ..userdataschema import IUserDataZ3CSchema
 
+from ..schemaeditor import get_ttw_edited_fields
 
 class IZ3CRegisterSchema(IRegisterSchema, IUserDataZ3CSchema):
     """Collect all register fields under the same interface"""
@@ -47,17 +48,13 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
 
-    def __init__(self, *args, **kwargs):
-        super(BaseRegistrationForm, self).__init__(*args, **kwargs)
-        defaultFields = field.Fields(IRegisterSchema)
-        extraFields = field.Fields()
-        site = getSite()
-        annotations = IAnnotations(site)
-        for f in annotations.get(SCHEMA_ANNOTATION).values():
-            if f.queryTaggedValue('in_registration', False):
-                extraFields += field.Fields(f)
+    def __init__(self, *a, **kw):
+        super(BaseRegistrationForm, self).__init__(*a, **kw)
+        extraFields = get_ttw_edited_fields(
+            register = True
+        )
         self.extra_field_ids = extraFields.keys()
-        self.fields = defaultFields + extraFields
+        self.fields += extraFields
 
     def render(self):
         if self._finishedRegister:

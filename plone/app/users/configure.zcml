@@ -34,4 +34,5 @@
              plone.schemaeditor.interfaces.ISchemaModifiedEvent"
         handler=".schemaeditor.updateSchema"
         />
+
 </configure>

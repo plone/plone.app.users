@@ -5,6 +5,9 @@ from zope.schema import getFieldNames
 
 from .browser.z3cregister import RegistrationForm
 from .browser.register import JOIN_CONST
+from plone.i18n.normalizer.base import baseNormalize
+
+from .schemaeditor import get_validators
 
 
 class UserRegistrationFieldsVocabulary(object):
@@ -47,3 +50,19 @@ class UserRegistrationFieldsVocabulary(object):
         return SimpleVocabulary([SimpleTerm(v, v, v) for v in values])
 
 UserRegistrationFieldsVocabularyFactory = UserRegistrationFieldsVocabulary()
+
+
+class AdaptersVocabulary(object):
+    """MemberField validators vocabulary"""
+    implements(IVocabularyFactory)
+    def __call__(self, context, key=None):
+        funcs = get_validators()
+        validators = dict([(a, funcs[a]['doc'])
+                           for a in funcs])
+        terms = [SimpleTerm(baseNormalize(validator),
+                            baseNormalize(validator),
+                            validators[validator])
+                 for validator in validators]
+        return SimpleVocabulary(terms)
+
+AdaptersVocabularyFactory = AdaptersVocabulary()

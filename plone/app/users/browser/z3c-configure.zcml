@@ -8,6 +8,8 @@
 
     <utility component="..vocabularies.UserRegistrationFieldsVocabularyFactory"
              name="plone.app.users.user_registration_fields" />
+    <utility component="..vocabularies.AdaptersVocabularyFactory"
+             name="plone.app.users.validators" />
 
     <adapter
       provides="..userdataschema.IUserDataZ3CSchema"

@@ -4,6 +4,8 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="plone">
 
+    <include package="plone.schemaeditor"/>
+
     <!-- Join form definition -->
     <browser:page
       name="register"
@@ -78,5 +80,10 @@
       /> -->
     <adapter factory=".personalpreferences.PasswordPanelAdapter" />
 
+    <browser:page
+        name="edit"
+        for="plone.app.users.schemaeditor.IMemberSchemaContext"
+        class=".listing.SchemaListingPage"
+        permission="plone.schemaeditor.ManageSchemata" />
 
 </configure>

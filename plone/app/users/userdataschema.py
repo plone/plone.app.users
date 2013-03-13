@@ -32,16 +32,16 @@ class UserDataSchemaProvider(object):
         """
         """
         schema = IUserDataZ3CSchema
-        site = getSite()
-        annotations = IAnnotations(site)
-        extra_fields = annotations.get(SCHEMA_ANNOTATION)
-        if extra_fields:
-            for name in extra_fields.keys():
-                schema._InterfaceClass__attrs[name] = extra_fields[name]
+        # import in time to avoid circular imports errors
+        from .schemaeditor import get_ttw_edited_schema
+        ttwschema = get_ttw_edited_schema()
+        for name in ttwschema:
+            schema._InterfaceClass__attrs[name] = ttwschema[name]
         return schema
 
 
 def checkEmailAddress(value):
+    """Check for the user email address"""
     portal = getUtility(ISiteRoot)
 
     reg_tool = getToolByName(portal, 'portal_registration')

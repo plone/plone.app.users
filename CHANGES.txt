@@ -21,6 +21,7 @@ Changelog
 - Be consistent in using INavigationRoot. (Backport from 1.1.4)
   [do3cc]
 
+- Implement plip #13350 [kiorky, ebrehault]
 
 1.2a1 (2012-06-29)
 ------------------
