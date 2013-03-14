@@ -37,5 +37,17 @@
              *"
         factory=".z3cwidgets.EmptyPrefixFieldWidgets"
         />
+    <browser:page
+        name="edit"
+        for="plone.app.users.schemaeditor.IMemberSchemaContext"
+        class=".listing.SchemaListingPage"
+        permission="plone.schemaeditor.ManageSchemata" />
+    <browser:page
+        name="memberfield_delete"
+        for="plone.schemaeditor.interfaces.IFieldContext"
+        class=".listing.FieldOrderView"
+        attribute="delete"
+        permission="plone.schemaeditor.ManageSchemata"
+        />
 
 </configure>

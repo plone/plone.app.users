@@ -80,10 +80,6 @@
       /> -->
     <adapter factory=".personalpreferences.PasswordPanelAdapter" />
 
-    <browser:page
-        name="edit"
-        for="plone.app.users.schemaeditor.IMemberSchemaContext"
-        class=".listing.SchemaListingPage"
-        permission="plone.schemaeditor.ManageSchemata" />
+
 
 </configure>
