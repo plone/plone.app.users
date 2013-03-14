@@ -1,5 +1,6 @@
 from zope.interface import Interface, implements
 from zope import schema
+from zope.component import provideAdapter
 from zope.component import getUtility
 from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
@@ -12,32 +13,12 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.exceptions import EmailAddressInvalid
 from Products.CMFDefault.formlib.schema import FileUpload
 from Products.CMFPlone import PloneMessageFactory as _
+from plone.supermodel.model import finalizeSchemas, SchemaClass
+
 
 SCHEMA_ANNOTATION = "plone.app.users.schema"
+SCHEMATA_KEY = "member"
 
-
-class IUserDataSchemaProvider(Interface):
-    """
-    """
-
-    def getSchema():
-        """
-        """
-
-
-class UserDataSchemaProvider(object):
-    implements(IUserDataSchemaProvider)
-
-    def getSchema(self):
-        """
-        """
-        schema = IUserDataZ3CSchema
-        # import in time to avoid circular imports errors
-        from .schemaeditor import get_ttw_edited_schema
-        ttwschema = get_ttw_edited_schema()
-        for name in ttwschema:
-            schema._InterfaceClass__attrs[name] = ttwschema[name]
-        return schema
 
 
 def checkEmailAddress(value):
@@ -119,3 +100,33 @@ class IUserDataZ3CSchema(IUserDataBaseSchema):
                       'pixels tall.'),
         required=False)
     form.widget(portrait='plone.app.users.browser.z3cpersonalpreferences.NamedImageFieldWidget')
+
+
+class IUserDataSchemaProvider(Interface):
+    """
+    """
+
+    def getSchema():
+        """
+        Return base user schema + TTW Fields
+        """
+
+
+class UserDataSchemaProvider(object):
+    implements(IUserDataSchemaProvider)
+    baseSchema = IUserDataZ3CSchema
+
+    def getSchema(self):
+        """
+        """
+        schema = self.baseSchema
+        # import in time to avoid circular imports errors
+        from .schemaeditor import get_ttw_edited_schema
+        ttwschema = get_ttw_edited_schema()
+        if ttwschema:
+            schema = SchemaClass(SCHEMATA_KEY,
+                                  bases=(schema,),
+                                  attrs=ttwschema)
+            finalizeSchemas(schema)
+        return schema
+

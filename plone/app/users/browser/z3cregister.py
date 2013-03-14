@@ -31,9 +31,12 @@ from .register import IRegisterSchema, IAddUserSchema
 from ..userdataschema import IUserDataZ3CSchema
 
 from ..schemaeditor import get_ttw_edited_fields
+from plone.app.users.browser.z3cpersonalpreferences import UserDataPanelSchemaAdapter
 
 class IZ3CRegisterSchema(IRegisterSchema, IUserDataZ3CSchema):
     """Collect all register fields under the same interface"""
+
+from zope.component import provideAdapter
 
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
@@ -50,11 +53,18 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
     def __init__(self, *a, **kw):
         super(BaseRegistrationForm, self).__init__(*a, **kw)
-        extraFields = get_ttw_edited_fields(
+        ttw_fields = get_ttw_edited_fields(
             register = True
         )
-        self.extra_field_ids = extraFields.keys()
-        self.fields += extraFields
+        self.extra_field_ids = ttw_fields.keys()
+        self.fields += ttw_fields
+        for f in ttw_fields:
+            schema = ttw_fields[f].field.interface
+            # import in time to avoid circular imports errors
+            # make forms adapters know about ttw fields
+            # we force self.schema as it can be a
+            # generated supermodel with TTw fields
+            provideAdapter(UserDataPanelSchemaAdapter, (Interface,), schema)
 
     def render(self):
         if self._finishedRegister:

@@ -2,6 +2,7 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone.app.users">
 
     <include package="plone.app.controlpanel" />
@@ -10,6 +11,10 @@
     <utility provides=".userdataschema.IUserDataSchemaProvider"
              factory=".userdataschema.UserDataSchemaProvider"/>
 
+    <utility
+        name="plone.app.users.UsersMetadataSchemaExporter"
+        factory=".schemaeditor.UsersMetadataSchemaExporter"
+      />
     <include package=".browser" />
     <include package="plone.app.users.browser" file="z3c-configure.zcml" />
 
@@ -35,4 +40,18 @@
         handler=".schemaeditor.updateSchema"
         />
 
+      <genericsetup:exportStep
+          name="usersschema"
+          title="Export member custom TTW schema"
+          description="Export member custom TTW schema"
+          handler="plone.app.users.setuphandlers.export_schema">
+      </genericsetup:exportStep>
+      <genericsetup:importStep
+          name="usersschema"
+          title="Export member custom TTW schema"
+          description="Import member custom TTW schema"
+          handler="plone.app.users.setuphandlers.import_schema">
+        <depends name="plone-content"/>
+      </genericsetup:importStep>
+      <!-- -->
 </configure>
