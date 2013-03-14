@@ -23,7 +23,7 @@ class SchemaListing(listing.SchemaListing):
     @button.buttonAndHandler(_(u'Save Defaults'))
     def handleSaveDefaults(self, action):
         CheckAuthenticator(self.request)
-        super(SchemaListing, self).handleSaveDefaults(action)
+        listing.SchemaListing.handleSaveDefaults(self, action)
 
 class ReadOnlySchemaListing(SchemaListing):pass
 
