@@ -1,4 +1,4 @@
-from zope.component import queryUtility
+from zope.component import queryUtility, getUtility
 from zope.event import notify
 from zope.interface import implements
 from z3c.form import button, form
@@ -17,7 +17,8 @@ from plone.schemaeditor.browser.schema import listing
 from plone.schemaeditor.browser.field import order
 from plone.protect import CheckAuthenticator
 from ZTUtils import make_query
-from ..schemaeditor import get_ttw_edited_schema
+
+from ..userdataschema import IUserDataSchemaProvider
 
 class NotEditableField(Exception):pass
 
@@ -31,31 +32,24 @@ class SchemaListing(listing.SchemaListing):
         listing.SchemaListing.handleSaveDefaults(self, action)
 
     def render(self):
-        fields = get_ttw_edited_schema()
-        for widget in self._iterateOverWidgets():
-            # disable fields from behaviors
-            if widget.field.__name__ not in fields:
-                widget.disabled = 'disabled'
+        # for widget in self._iterateOverWidgets():
+        #     # disable fields from behaviors
+        #     if widget.field.__name__ not in fields:
+        #         widget.disabled = 'disabled'
         return super(listing.SchemaListing, self).render()
 
     def field_classes(self, field):
-        classes = ['fieldPreview']
-        fields = get_ttw_edited_schema()
-        if field.__name__ in fields:
-            classes.append('orderable')
+        classes = ['fieldPreview', 'orderable']
         return ' '.join(classes)
 
-
     def edit_url(self, field):
-        fields = get_ttw_edited_schema()
-        if field.__name__ in fields:
-            return super(SchemaListing, self).edit_url(field)
+        return super(SchemaListing, self).edit_url(field)
 
     def delete_url(self, field):
-        fields = get_ttw_edited_schema()
-        if field.__name__ in fields:
-            return '%s/%s/@@memberfield_delete' % (self.context.absolute_url(),
-                                                   field.__name__)
+        baseSchema = getUtility(IUserDataSchemaProvider).baseSchema
+        if not field.__name__ in [a for a in baseSchema]:
+            return '%s/%s/@@memberfield_delete' % (
+                self.context.absolute_url(), field.__name__)
 
 class ReadOnlySchemaListing(SchemaListing):pass
 
@@ -70,12 +64,11 @@ class SchemaListingPage(listing.SchemaListingPage):
 
 class FieldOrderView(order.FieldOrderView):
     def checkEditableField(self):
-        fields = get_ttw_edited_schema()
-        if not self.field.__name__ in fields:
+        baseSchema = getUtility(IUserDataSchemaProvider).baseSchema
+        if self.field.__name__ in [a for a in baseSchema]:
             raise NotEditableField("Default field, not editable")
 
     def move(self, pos):
-        self.checkEditableField()
         super(FieldOrderView, self).move(pos)
 
     def delete(self):

@@ -18,6 +18,7 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from plone.autoform.interfaces import OMITTED_KEY, ORDER_KEY
 from plone.autoform.form import AutoExtensibleForm
 from plone.protect import CheckAuthenticator
+from plone.app.layout.navigation.interfaces import INavigationRoot
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import ManagePortal
@@ -26,11 +27,15 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
+from plone.supermodel.model import (
+    SchemaClass,
+)
 
 from .register import IRegisterSchema, IAddUserSchema
 from ..userdataschema import IUserDataZ3CSchema
 
-from ..schemaeditor import get_ttw_edited_fields
+from ..schemaeditor import (get_ttw_edited_schema,
+                            IN_REG_KEY)
 from plone.app.users.browser.z3cpersonalpreferences import UserDataPanelSchemaAdapter
 
 class IZ3CRegisterSchema(IRegisterSchema, IUserDataZ3CSchema):
@@ -46,43 +51,71 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     description = u""
     formErrorsMessage = _('There were errors.')
     ignoreContext = True
-    schema = IZ3CRegisterSchema
+    baseSchema = IZ3CRegisterSchema
 
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
 
+    _schema = None
+    @property
+    def schema(self):
+        """
+        Merge together form fields and fields configured TTW
+        Think also to hide fields configured not to be shown
+        And be sure not to hide fields not configured TTW
+        """
+        if self._schema is None:
+            ttw = get_ttw_edited_schema()
+            ttwd = dict([(a, ttw[a]) for a in ttw])
+            self.ttw_field_ids = [a for a in ttw]
+            self._schema = SchemaClass('',
+                bases=(self.baseSchema,), attrs=ttwd)
+            for fk in self._schema:
+                fl = self._schema[fk]
+                if (
+                    (fl.queryTaggedValue(IN_REG_KEY, None) == True)
+                    or fk not in ttw):
+                    omit = False
+                else:
+                    omit = True
+                self.omits[fk] = (Interface, fk, omit)
+            self._schema.setTaggedValue(OMITTED_KEY, self.omits.values())
+        return self._schema
+
     def __init__(self, *a, **kw):
+        self.omits = {}
         super(BaseRegistrationForm, self).__init__(*a, **kw)
-        ttw_fields = get_ttw_edited_fields(
-            register = True
-        )
-        self.extra_field_ids = ttw_fields.keys()
-        self.fields += ttw_fields
-        for f in ttw_fields:
-            schema = ttw_fields[f].field.interface
-            # import in time to avoid circular imports errors
-            # make forms adapters know about ttw fields
-            # we force self.schema as it can be a
-            # generated supermodel with TTw fields
-            provideAdapter(UserDataPanelSchemaAdapter, (Interface,), schema)
+        # as schema is a generated supermodel, just insert a relevant adapter for it
+        provideAdapter(UserDataPanelSchemaAdapter, (INavigationRoot,), self.schema)
 
     def render(self):
         if self._finishedRegister:
             return self.context.unrestrictedTraverse('registered')()
-
         return super(BaseRegistrationForm, self).render()
 
     def updateFields(self):
         """Fields are dynamic in this form, to be able to handle
         different join styles.
+
+        For the order, first we have those special cases:
+
+            id
+            mail
+            portrait
+
+
+        Then we have all other fields, ordered by the schema hints
+
         """
         portal_props = getToolByName(self.context, 'portal_properties')
         props = portal_props.site_properties
         use_email_as_login = props.getProperty('use_email_as_login')
 
         # Ensure all listed fields are in the schema
-        registration_fields = [f for f in props.getProperty(
-                'user_registration_fields', []) if f in self.schema]
+        registration_fields = [f
+                               for f in props.getProperty(
+                'user_registration_fields', [])
+                               if f in self.schema]
 
         # Check on required join fields
         if not 'username' in registration_fields and not use_email_as_login:
@@ -111,10 +144,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         # Add extra fields after password_ctl
         current_index = registration_fields.index('password_ctl')
-        for f in self.extra_field_ids:
-            if f not in registration_fields:
-                current_index += 1
-                registration_fields.insert(current_index, f)
+
 
         # Add email_me at the end
         if not 'mail_me' in registration_fields:
@@ -122,13 +152,48 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         # Order/filter schema by registration_fields
         self.schema.setTaggedValue(ORDER_KEY, [
-          (registration_fields[i], 'after', registration_fields[i - 1] if i > 0 else '*')
-          for i in range(len(registration_fields))
+            (registration_fields[i], 'after', registration_fields[i - 1]
+             if i > 0
+             else '*')
+            for i in range(len(registration_fields))
         ])
-        self.schema.setTaggedValue(OMITTED_KEY, [
-          (Interface, name, name not in registration_fields)
-          for name in self.schema
-        ])
+
+        # insert fields not handled by ttw editor
+        for f in self.schema:
+            if (not f in registration_fields
+                and not f in self.ttw_field_ids):
+                current_index += 1
+                registration_fields.insert(current_index, f)
+
+        # order ttw fields by their order
+        def sortttw(value):
+            field = self.schema[value]
+            key = '%s_%s' % (
+                getattr(field, 'order', 999),
+                field.__name__,
+            )
+            return key
+
+        self.ttw_field_ids.sort(key=sortttw)
+        for f in self.ttw_field_ids:
+            if f not in registration_fields:
+                current_index += 1
+                registration_fields.insert(current_index, f)
+
+        # Order/filter schema by registration_fields
+        self.schema.setTaggedValue(
+            ORDER_KEY,
+            [(registration_fields[i], 'after',
+              registration_fields[i - 1] if i > 0 else '*')
+             for i in range(len(registration_fields))
+            ])
+
+        for name in self.schema:
+            if not name in self.omits:
+                omit = name not in registration_fields
+                self.omits[name] = (Interface, name, omit)
+        self.schema.setTaggedValue(
+            OMITTED_KEY, self.omits.values())
 
         # Finally, let autoform process the schema and any FormExtenders do
         # their thing

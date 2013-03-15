@@ -15,6 +15,7 @@ from plone.app.controlpanel.events import ConfigurationChangedEvent
 from plone.formwidget.namedfile.widget import NamedImageWidget as BaseNamedImageWidget
 from plone.namedfile.interfaces import INamedImageField
 from plone.protect import CheckAuthenticator
+from plone.app.layout.navigation.interfaces import INavigationRoot
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import SetOwnProperties
@@ -296,6 +297,8 @@ class UserDataPanel(AccountPanelForm):
     def __init__(self, *args, **kwargs):
         super(UserDataPanel, self).__init__(*args, **kwargs)
         self.schema = getUtility(IUserDataSchemaProvider).getSchema()
+        # as schema is a generated supermodel, just insert a relevant adapter for it
+        provideAdapter(UserDataPanelSchemaAdapter, (INavigationRoot,), self.schema)
 
     @property
     def description(self):

@@ -17,8 +17,8 @@ from plone.supermodel.model import finalizeSchemas, SchemaClass
 
 
 SCHEMA_ANNOTATION = "plone.app.users.schema"
-SCHEMATA_KEY = "member"
-
+# must match the browser view name !
+SCHEMATA_KEY = "member-fields"
 
 
 def checkEmailAddress(value):
@@ -119,14 +119,31 @@ class UserDataSchemaProvider(object):
     def getSchema(self):
         """
         """
-        schema = self.baseSchema
         # import in time to avoid circular imports errors
-        from .schemaeditor import get_ttw_edited_schema
+        from .schemaeditor import (
+            get_ttw_edited_schema,
+            IN_REG_KEY,
+        )
+        p = getSite()
+        portal_props = getToolByName(p, 'portal_properties')
+        props = portal_props.site_properties
+        reg_fields = props.getProperty(
+            'user_registration_fields', [])
+        # be sure to have default fields configured to be
+        # shown in register form registered as-is
+        # when they are overriden TTW
+        for i in self.baseSchema:
+            if i in reg_fields:
+                self.baseSchema[i].setTaggedValue(
+                    IN_REG_KEY, True)
+        attrs = dict([(n, self.baseSchema[n])
+                      for n in self.baseSchema])
         ttwschema = get_ttw_edited_schema()
         if ttwschema:
-            schema = SchemaClass(SCHEMATA_KEY,
-                                  bases=(schema,),
-                                  attrs=ttwschema)
-            finalizeSchemas(schema)
+            attrs.update(dict([(a, ttwschema[a]) for a in ttwschema]))
+        schema = SchemaClass(SCHEMATA_KEY,
+                             bases=(self.baseSchema,),
+                             attrs=attrs)
+        finalizeSchemas(schema)
         return schema
 

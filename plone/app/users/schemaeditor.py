@@ -1,4 +1,4 @@
-import types
+import re
 import logging
 import hashlib
 import copy
@@ -9,28 +9,23 @@ from zope.component import (
     provideAdapter,
     adapter,
     adapts,
-    queryUtility,
     provideUtility,
-    getAllUtilitiesRegisteredFor,
-    getUtilitiesFor)
+    getUtilitiesFor,
+)
 from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import Interface, implements
-from zope import schema
-from zope.schema.interfaces import IField, IVocabularyFactory
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
-
-from z3c.form import form, button, field, validator
+from zope import schema as mschema
+from zope.schema.interfaces import IField
 
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
 
-from plone.i18n.normalizer.base import baseNormalize
 from plone.memoize import ram
 from plone.schemaeditor.browser.schema.traversal import SchemaContext
 from plone.schemaeditor.interfaces import IFieldEditorExtender
 from plone.supermodel.model import Model, finalizeSchemas, SchemaClass
-from plone.supermodel.parser import IFieldMetadataHandler, parse
+from plone.supermodel.parser import IFieldMetadataHandler
 from plone.supermodel.serializer import serialize
 from plone.supermodel.utils import ns
 from plone.supermodel import loadString
@@ -40,36 +35,55 @@ from userdataschema import (
     SCHEMA_ANNOTATION,
     checkEmailAddress,
     SCHEMATA_KEY,
-    IUserDataBaseSchema)
+)
+
 
 USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
 USERS_PREFIX = 'users'
-BOOLS = {'1':True, '0':False}
+IN_REG_KEY = 'in_registration'
+VALIDATORS_KEY = 'validators'
 SPLITTER = '_//_'
 
-logger = logging.getLogger('plone.app.users.schemaeditor')
+
+field_type_mapping = {
+    "ASCIILine": 'text',
+    "TextLine": 'text',
+    "Text": 'lines',
+    "Int": 'int',
+    "Float": 'float',
+    "Bool": 'boolean',
+    "Datetime": 'date',
+    "Date": 'date',
+    "Choice": 'text',
+    "List": 'text',
+}
 
 
-def log(message, level='info'):
+re_flags = re.S|re.U|re.X
+
+
+def log(message,
+        level='info', id='plone.app.users.schemaeditor'):
+    logger = logging.getLogger(id)
     getattr(logger, level)(message)
 
 
 class IMemberField(Interface):
 
-    in_registration = schema.Bool(
+    in_registration = mschema.Bool(
         title=_(
             u'label_also_in_registration',
             default=u'Display in registration form'),
         description=u'',
         required=False)
 
-    validators = schema.Set(
+    validators = mschema.Set(
         title=_("Validators"),
         description=_(
             u"help_userfield_validators",
             default=u'Select the validators to use on this field'),
         required=False,
-        value_type=schema.Choice(
+        value_type=mschema.Choice(
             vocabulary="plone.app.users.validators"),
     )
 
@@ -90,8 +104,6 @@ provideAdapter(
     name='plone.app.users.memberfield')
 
 
-IN_REGISTRATION_KEY = 'in_registration'
-VALIDATORS_KEY = 'validators'
 class MemberFieldAdapter(object):
     adapts(IField)
 
@@ -99,11 +111,11 @@ class MemberFieldAdapter(object):
         self.field = field
 
     def _get_in_registration(self):
-        in_registration = self.field.queryTaggedValue(IN_REGISTRATION_KEY, False)
+        in_registration = self.field.queryTaggedValue(IN_REG_KEY, False)
         return in_registration
 
     def _set_in_registration(self, value):
-        self.field.setTaggedValue(IN_REGISTRATION_KEY, value)
+        self.field.setTaggedValue(IN_REG_KEY, value)
 
     in_registration = property(_get_in_registration, _set_in_registration)
 
@@ -118,16 +130,34 @@ class MemberFieldAdapter(object):
 
 provideAdapter(MemberFieldAdapter, provides=IMemberField)
 
+
+def copy_schema(schema, filter_serializable=False):
+    fields = {}
+    for item in schema:
+        if (filter_serializable
+            and not is_serialisable_field(schema[item])):
+            continue
+        fields[item] = schema[item]
+    oschema = SchemaClass(SCHEMATA_KEY, attrs=fields)
+    # copy base tagged values
+    for i in schema.getTaggedValueTags():
+        oschema.setTaggedValue(
+            item, schema.queryTaggedValue(i))
+    finalizeSchemas(oschema)
+    return oschema
+
 class MemberSchemaContext(SchemaContext):
     implements(IMemberSchemaContext)
 
     def __init__(self, context, request):
-        schema = getUtility(IUserDataSchemaProvider).getSchema()
+        self.baseSchema = getUtility(IUserDataSchemaProvider).getSchema()
+        schema = copy_schema(self.baseSchema, filter_serializable=True)
         super(MemberSchemaContext, self).__init__(
             schema,
             request,
-            name='member-fields'
+            name=SCHEMATA_KEY
         )
+
 
     def label(self):
         return _("Edit member fields")
@@ -148,34 +178,27 @@ def updateSchema(object, event):
 
     # update portal_memberdata properties
     pm = getToolByName(site, "portal_memberdata")
-    field_type_mapping = {
-        "TextLine": 'text',
-        "Text": 'lines',
-        "Int": 'int',
-        "Float": 'float',
-        "Bool": 'boolean',
-        "Datetime": 'date',
-        "Date": 'date',
-        "Choice": 'text',
-        "List": 'text',
-    }
+
     existing = pm.propertyIds()
-    for field_id in new_schema.keys():
+    for field_id in [a for a in new_schema]:
         field_type = field_type_mapping.get(
             new_schema[field_id].__class__.__name__,
             None)
         if not field_type:
+            log('Unsupported field: %s (%s)' % (
+                field_id,
+                new_schema[field_id].__class__.__name__))
             continue
         if field_id in existing:
             pm._delProperty(field_id)
         pm._setProperty(field_id, '', field_type)
 
-    to_remove = [field_id
-                 for field_id in old_schema.keys()
-                 if field_id not in new_schema.keys()]
-    for field_id in to_remove:
-        pm._delProperty(field_id)
-
+    if old_schema:
+        to_remove = [field_id
+                     for field_id in [a for a in old_schema]
+                     if field_id not in [a for a in new_schema]]
+        for field_id in to_remove:
+            pm._delProperty(field_id)
 
 
 def get_validators(site=None):
@@ -204,35 +227,28 @@ def chain_validators(vals):
     return validate
 
 def model_key(*a, **kw):
-    register = kw.get('register', False)
     site = getSite()
     psite = '/'.join(site.getPhysicalPath())
     annotations = IAnnotations(site)
     schema = annotations.get(SCHEMA_ANNOTATION, '')
-    key = hashlib.sha224(schema).hexdigest() 
-    return (psite, key, register)
+    key = hashlib.sha224(schema).hexdigest()
+    return (psite, key)
 
 
 @ram.cache(model_key)
-def get_ttw_edited_schema(register=False):
-    schema = {}
+def get_ttw_edited_schema():
     site = getSite()
     annotations = IAnnotations(site)
     funcs = get_validators(site)
     data = ''
+    oschema = None
     try:
         data = get_schema()
         oschema = load_ttw_schema(data)
-        bschema = getUtility(IUserDataSchemaProvider).baseSchema
-        bfields = [a for a in bschema]
         for name in oschema:
             f = oschema[name]
-            if name in bfields: continue
-            if (register
-                and not f.queryTaggedValue(IN_REGISTRATION_KEY, False)):
-                continue
-            schema[name] = f
-            validators = f.queryTaggedValue(VALIDATORS_KEY, [])
+            validators = f.queryTaggedValue(
+                VALIDATORS_KEY, [])
             if not validators: validators = []
             vfuncs = []
             for v in validators:
@@ -245,64 +261,120 @@ def get_ttw_edited_schema(register=False):
                 val = chain_validators(vfuncs)
                 f.constraint = val
     except Exception, e:
+        oschema = None
         if data:
-            logger.info(traceback.format_exc())
-    return schema
-
-
-def get_ttw_edited_fields(register=False):
-    extraFields = field.Fields()
-    schema = get_ttw_edited_schema(register=register)
-    for name in schema:
-        extraFields += field.Fields(schema[name])
-    return extraFields
+            log(traceback.format_exc())
+    return oschema
 
 
 class UsersMetadataSchemaExporter(object):
     """Support the security: namespace in model definitions.
     """
     implements(IFieldMetadataHandler)
-
-    namespace = USERS_NAMESPACE
+    namespace = ns = USERS_NAMESPACE
     prefix = USERS_PREFIX
+    if_attrs = (
+        'min', 'max', 'order',
+        'min_length', 'max_length',
+        'required',
+    )
 
     def read(self, fieldNode, schema, field):
-        reg = BOOLS.get(
-            fieldNode.get(
-                ns('registration', self.namespace),
-                '0'), False)
-        val = fieldNode.get(ns('validators', self.namespace))
-        regs = field.queryTaggedValue(IN_REGISTRATION_KEY, False)
-        vals = field.queryTaggedValue(VALIDATORS_KEY, [])
-        if reg != regs:
-            field.setTaggedValue(IN_REGISTRATION_KEY, reg)
-        if val:
-            val = val.split(SPLITTER)
-            field.setTaggedValue(VALIDATORS_KEY, val)
+        try:
+            reg = self.load(
+                fieldNode.get(ns(IN_REG_KEY, self.ns),
+                              'bool:false'))
+        except:
+            reg = False
+        try:
+            val = self.load(
+                fieldNode.get(
+                    ns(VALIDATORS_KEY, self.ns), []))
+        except:
+            val = []
+        field.setTaggedValue(IN_REG_KEY, reg)
+        field.setTaggedValue(VALIDATORS_KEY, val)
+        for attr in self.if_attrs:
+            value = self.load(
+                fieldNode.get(ns(attr, self.ns),
+                                  None))
+            if value is not None:
+                setattr(field, attr, value)
 
     def write(self, fieldNode, schema, field):
-        reg = bool(field.queryTaggedValue(IN_REGISTRATION_KEY, False)) and '1' or '0'
+        reg = field.queryTaggedValue(IN_REG_KEY, None)
         val = field.queryTaggedValue(VALIDATORS_KEY, [])
-        fieldNode.set(ns('registration', self.namespace), reg)
+        for attr in self.if_attrs:
+            value = getattr(field, attr, None)
+            if value is not None:
+                v = self.serialize(value)
+                fieldNode.set(ns(attr, self.ns), v)
+        if reg is not None:
+            fieldNode.set(ns(IN_REG_KEY, self.ns),
+                          self.serialize(reg))
         if val:
-            fieldNode.set(ns('validators', self.namespace), SPLITTER.join(val))
+            fieldNode.set(ns(VALIDATORS_KEY, self.ns),
+                          self.serialize(val))
+
+    def load(self, value):
+        listre = re.compile('(?P<type>list|set|tuple)'
+                            ':(?P<list>.*)', re_flags)
+        ltypes = {
+            'list': list,
+            'set': set,
+            'tuple': tuple,
+        }
+        if isinstance(value, basestring):
+            listm = listre.search(value)
+            if value.startswith("int:"):
+                value = int(value.split('int:')[1])
+            elif listm:
+                i = listm.groupdict()
+                try:
+                    tp = i["type"]
+                    value = i["list"].split(SPLITTER)
+                    if tp not in ['list']:
+                        value = ltypes[tp](value)
+                except:
+                    value = []
+            else:
+                value = {"bool:true":True,
+                         "bool:false":False}.get(
+                             value.lower(), value)
+        return value
+
+    def serialize(self, value):
+        if isinstance(value, bool):
+            value = value  and "bool:true" or "bool:false"
+        elif isinstance(value, (list, set, tuple)):
+            value = u"%s:%s" % (type(value).__name__,
+                                 SPLITTER.join(value))
+        elif value is not None:
+            value = u"int:%s" % unicode(value)
+        return value
+
+def is_serialisable_field(field):
+    ret = False
+    if field.__class__.__name__ in field_type_mapping:
+        ret = True
+    return ret
 
 
 def serialize_ttw_schema(schema=None):
     if not schema:
-        schema = copy.deepcopy(get_ttw_edited_schema())
-    bfields = IUserDataBaseSchema.names()
+        schema = get_ttw_edited_schema()
+    bschema = getUtility(IUserDataSchemaProvider).baseSchema
+    bfields = [a for a in bschema]
     attrs = {}
     for name in schema:
         f = schema[name]
-        if name in bfields: continue
-        attrs[name] = f
+        if is_serialisable_field(f):
+            attrs[name] = f
     smember = SchemaClass(SCHEMATA_KEY, attrs=attrs)
     finalizeSchemas(smember)
     model = Model({SCHEMATA_KEY:smember})
     sschema = serialize(model)
     return sschema
-
 
 
 def load_ttw_schema(string = None):
@@ -316,6 +388,9 @@ def get_schema(site=None):
     if site is None: site = getSite()
     annotations = IAnnotations(site)
     schema = annotations.get(SCHEMA_ANNOTATION, '')
+    # be sure to have something serialized in storage
+    if not isinstance(schema, basestring):
+        schema = ""
     return schema
 
 
