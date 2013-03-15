@@ -4,7 +4,15 @@ import hashlib
 import copy
 import traceback
 
-from zope.component import getUtility, provideAdapter, adapter, adapts, queryUtility, provideUtility, getAllUtilitiesRegisteredFor, getUtilitiesFor
+from zope.component import (
+    getUtility,
+    provideAdapter,
+    adapter,
+    adapts,
+    queryUtility,
+    provideUtility,
+    getAllUtilitiesRegisteredFor,
+    getUtilitiesFor)
 from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import Interface, implements
@@ -27,7 +35,12 @@ from plone.supermodel.serializer import serialize
 from plone.supermodel.utils import ns
 from plone.supermodel import loadString
 
-from userdataschema import IUserDataSchemaProvider, SCHEMA_ANNOTATION, checkEmailAddress, SCHEMATA_KEY
+from userdataschema import (
+    IUserDataSchemaProvider,
+    SCHEMA_ANNOTATION,
+    checkEmailAddress,
+    SCHEMATA_KEY,
+    IUserDataBaseSchema)
 
 USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
 USERS_PREFIX = 'users'
@@ -278,8 +291,7 @@ class UsersMetadataSchemaExporter(object):
 def serialize_ttw_schema(schema=None):
     if not schema:
         schema = copy.deepcopy(get_ttw_edited_schema())
-    bschema = getUtility(IUserDataSchemaProvider).baseSchema
-    bfields = [a for a in bschema]
+    bfields = IUserDataBaseSchema.names()
     attrs = {}
     for name in schema:
         f = schema[name]
