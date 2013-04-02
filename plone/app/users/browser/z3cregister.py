@@ -66,6 +66,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         """
         if self._schema is None:
             ttw = get_ttw_edited_schema()
+            if not ttw:
+                ttw = []
             ttwd = dict([(a, ttw[a]) for a in ttw])
             self.ttw_field_ids = [a for a in ttw]
             self._schema = SchemaClass('',
