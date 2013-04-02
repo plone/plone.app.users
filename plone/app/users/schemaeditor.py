@@ -158,19 +158,20 @@ class MemberSchemaContext(SchemaContext):
             name=SCHEMATA_KEY
         )
 
-
     def label(self):
         return _("Edit member fields")
 
 
 def updateSchema(object, event):
     site = getSite()
+    import pdb; pdb.set_trace( )
+    # get the old schema (currently stored in the annotation)
     old_schema = get_ttw_edited_schema()
 
-    # serialise
+    # serialize the current schema
     snew_schema = serialize_ttw_schema(object.schema)
 
-    # store the extra schema in an annotation
+    # store the current schema in the annotation
     set_schema(snew_schema)
 
     # load the new schema
@@ -178,7 +179,6 @@ def updateSchema(object, event):
 
     # update portal_memberdata properties
     pm = getToolByName(site, "portal_memberdata")
-
     existing = pm.propertyIds()
     for field_id in [a for a in new_schema]:
         field_type = field_type_mapping.get(
