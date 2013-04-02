@@ -31,7 +31,7 @@ from plone.supermodel.model import (
     SchemaClass,
 )
 
-from .register import IRegisterSchema, IAddUserSchema
+from .register import IRegisterSchema, IAddUserSchema, JOIN_CONST
 from ..userdataschema import IUserDataZ3CSchema
 
 from ..schemaeditor import (get_ttw_edited_schema,
@@ -74,12 +74,15 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 bases=(self.baseSchema,), attrs=ttwd)
             for fk in self._schema:
                 fl = self._schema[fk]
-                if (
-                    (fl.queryTaggedValue(IN_REG_KEY, None) == True)
-                    or fk not in ttw):
+                if fk in JOIN_CONST:
                     omit = False
                 else:
-                    omit = True
+                    if fl.queryTaggedValue(IN_REG_KEY, None) == True:
+                        omit = False
+                    elif fk not in ttw and fk in IRegisterSchema:
+                        omit = False
+                    else:
+                        omit = True
                 self.omits[fk] = (Interface, fk, omit)
             self._schema.setTaggedValue(OMITTED_KEY, self.omits.values())
         return self._schema
