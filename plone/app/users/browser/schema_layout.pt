@@ -7,31 +7,34 @@
   i18n:domain="plone">
   <body>
     <div metal:fill-slot="prefs_configlet_content">
-      <div id="edit-bar"
-        tal:define="view_name view/__name__;
-        userquery python:view.makeQuery()">
-        <ul class="contentViews" id="content-views">
-          <li tal:define="selected python:view_name=='user-information'"
-            tal:attributes="class python:selected and 'selected' or 'plain'">
-            <a href=""
-              tal:attributes="href string:$portal_url/@@user-information${userquery}"
-              i18n:translate="title_personal_information_form">Personal Information</a>
-          </li>
-          <li tal:define="selected python:view_name=='user-preferences'"
-            tal:attributes="class python:selected and 'selected' or 'plain'">
-            <a href=""
-              tal:attributes="href string:$portal_url/@@user-preferences${userquery}"
-              i18n:translate="">Personal Preferences</a>
-          </li>
-
-          <li>
-            <a href=""
-              tal:attributes="href string:$portal_url/@@usergroup-usermembership${userquery}"
-              i18n:translate="label_group_memberships">Group Memberships</a>
-          </li>
-        </ul>
-        <div class="contentActions">&nbsp;</div>
+      <div id="edit-bar">
+          <ul class="contentViews" id="content-views">
+            <li>
+              <a href=""
+                 tal:attributes="href string:$portal_url/@@usergroup-userprefs"
+                 i18n:translate="label_users">Users</a>
+            </li>
+            <li>
+              <a href=""
+                 tal:attributes="href string:$portal_url/@@usergroup-groupprefs"
+                 i18n:translate="label_groups">Groups</a>
+            </li>
+            <li>
+              <a href=""
+                 tal:attributes="href string:$portal_url/@@usergroup-controlpanel"
+                 i18n:translate="label_usergroup_settings">Settings</a>
+            </li>
+            <li class="selected">
+              <a href=""
+                   tal:attributes="href string:$portal_url/@@member-fields"
+                   i18n:translate="label_member_fields">Member fields</a>
+            </li>
+          </ul>
+          <div class="contentActions">
+            &nbsp;
+          </div>
       </div>
+      
       <div id="content">
         <div metal:use-macro="context/global_statusmessage/macros/portal_message">
           Portal status message
