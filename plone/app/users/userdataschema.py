@@ -120,22 +120,8 @@ class UserDataSchemaProvider(object):
         """
         """
         # import in time to avoid circular imports errors
-        from .schemaeditor import (
-            get_ttw_edited_schema,
-            IN_REG_KEY,
-        )
-        p = getSite()
-        portal_props = getToolByName(p, 'portal_properties')
-        props = portal_props.site_properties
-        reg_fields = props.getProperty(
-            'user_registration_fields', [])
-        # be sure to have default fields configured to be
-        # shown in register form registered as-is
-        # when they are overriden TTW
-        for i in self.baseSchema:
-            if i in reg_fields:
-                self.baseSchema[i].setTaggedValue(
-                    IN_REG_KEY, True)
+        from .schemaeditor import get_ttw_edited_schema
+
         attrs = dict([(n, self.baseSchema[n])
                       for n in self.baseSchema])
         ttwschema = get_ttw_edited_schema()

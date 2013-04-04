@@ -2,19 +2,20 @@ from zope.interface import implements
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from zope.schema import getFieldNames
+from zope.component import getUtility
 
-from .browser.z3cregister import RegistrationForm
 from .browser.register import JOIN_CONST
 from plone.i18n.normalizer.base import baseNormalize
 
 from .schemaeditor import get_validators
+from .userdataschema import IUserDataSchemaProvider
 
 
 class UserRegistrationFieldsVocabulary(object):
     """Returns list of fields available for registration form.
 
-    It gets fields from z3c.form adopted Registration form schema.
-    FormExtender fields are not included.
+    It gets fields from UserDataSchemaProvider (which includes
+    TTW defined fields).
 
       >>> from zope.component import queryUtility
       >>> from zope.schema.interfaces import IVocabularyFactory
@@ -39,8 +40,10 @@ class UserRegistrationFieldsVocabulary(object):
     implements(IVocabularyFactory)
 
     def __call__(self, context):
-        # default list of Registration Form fields
-        values = getFieldNames(RegistrationForm.schema)
+        # complete list of user data form fields
+        util = getUtility(IUserDataSchemaProvider)
+        schema = util.getSchema()
+        values = getFieldNames(schema)
 
         # make sure required minimum number of fields is present
         for val in JOIN_CONST:

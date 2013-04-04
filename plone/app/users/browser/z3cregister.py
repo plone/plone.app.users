@@ -34,8 +34,7 @@ from plone.supermodel.model import (
 from .register import IRegisterSchema, IAddUserSchema, JOIN_CONST
 from ..userdataschema import IUserDataZ3CSchema
 
-from ..schemaeditor import (get_ttw_edited_schema,
-                            IN_REG_KEY)
+from ..schemaeditor import get_ttw_edited_schema
 from plone.app.users.browser.z3cpersonalpreferences import UserDataPanelSchemaAdapter
 
 class IZ3CRegisterSchema(IRegisterSchema, IUserDataZ3CSchema):
@@ -61,8 +60,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     def schema(self):
         """
         Merge together form fields and fields configured TTW
-        Think also to hide fields configured not to be shown
-        And be sure not to hide fields not configured TTW
         """
         if self._schema is None:
             ttw = get_ttw_edited_schema()
@@ -72,19 +69,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             self.ttw_field_ids = [a for a in ttw]
             self._schema = SchemaClass('',
                 bases=(self.baseSchema,), attrs=ttwd)
-            for fk in self._schema:
-                fl = self._schema[fk]
-                if fk in JOIN_CONST:
-                    omit = False
-                else:
-                    if fl.queryTaggedValue(IN_REG_KEY, None) == True:
-                        omit = False
-                    elif fk not in ttw and fk in IRegisterSchema:
-                        omit = False
-                    else:
-                        omit = True
-                self.omits[fk] = (Interface, fk, omit)
-            self._schema.setTaggedValue(OMITTED_KEY, self.omits.values())
         return self._schema
 
     def __init__(self, *a, **kw):
@@ -162,28 +146,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
              else '*')
             for i in range(len(registration_fields))
         ])
-
-        # insert fields not handled by ttw editor
-        for f in self.schema:
-            if (not f in registration_fields
-                and not f in self.ttw_field_ids):
-                current_index += 1
-                registration_fields.insert(current_index, f)
-
-        # order ttw fields by their order
-        def sortttw(value):
-            field = self.schema[value]
-            key = '%s_%s' % (
-                getattr(field, 'order', 999),
-                field.__name__,
-            )
-            return key
-
-        self.ttw_field_ids.sort(key=sortttw)
-        for f in self.ttw_field_ids:
-            if f not in registration_fields:
-                current_index += 1
-                registration_fields.insert(current_index, f)
 
         # Order/filter schema by registration_fields
         self.schema.setTaggedValue(

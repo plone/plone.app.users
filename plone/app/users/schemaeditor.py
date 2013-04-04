@@ -40,7 +40,6 @@ from userdataschema import (
 
 USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
 USERS_PREFIX = 'users'
-IN_REG_KEY = 'in_registration'
 VALIDATORS_KEY = 'validators'
 SPLITTER = '_//_'
 
@@ -69,13 +68,6 @@ def log(message,
 
 
 class IMemberField(Interface):
-
-    in_registration = mschema.Bool(
-        title=_(
-            u'label_also_in_registration',
-            default=u'Display in registration form'),
-        description=u'',
-        required=False)
 
     validators = mschema.Set(
         title=_("Validators"),
@@ -109,15 +101,6 @@ class MemberFieldAdapter(object):
 
     def __init__(self, field):
         self.field = field
-
-    def _get_in_registration(self):
-        in_registration = self.field.queryTaggedValue(IN_REG_KEY, False)
-        return in_registration
-
-    def _set_in_registration(self, value):
-        self.field.setTaggedValue(IN_REG_KEY, value)
-
-    in_registration = property(_get_in_registration, _set_in_registration)
 
     def _get_validators(self):
         validators = self.field.queryTaggedValue(VALIDATORS_KEY, {})
@@ -164,7 +147,7 @@ class MemberSchemaContext(SchemaContext):
 
 def updateSchema(object, event):
     site = getSite()
-    import pdb; pdb.set_trace( )
+
     # get the old schema (currently stored in the annotation)
     old_schema = get_ttw_edited_schema()
 
@@ -281,18 +264,11 @@ class UsersMetadataSchemaExporter(object):
 
     def read(self, fieldNode, schema, field):
         try:
-            reg = self.load(
-                fieldNode.get(ns(IN_REG_KEY, self.ns),
-                              'bool:false'))
-        except:
-            reg = False
-        try:
             val = self.load(
                 fieldNode.get(
                     ns(VALIDATORS_KEY, self.ns), []))
         except:
             val = []
-        field.setTaggedValue(IN_REG_KEY, reg)
         field.setTaggedValue(VALIDATORS_KEY, val)
         for attr in self.if_attrs:
             value = self.load(
@@ -302,16 +278,12 @@ class UsersMetadataSchemaExporter(object):
                 setattr(field, attr, value)
 
     def write(self, fieldNode, schema, field):
-        reg = field.queryTaggedValue(IN_REG_KEY, None)
         val = field.queryTaggedValue(VALIDATORS_KEY, [])
         for attr in self.if_attrs:
             value = getattr(field, attr, None)
             if value is not None:
                 v = self.serialize(value)
                 fieldNode.set(ns(attr, self.ns), v)
-        if reg is not None:
-            fieldNode.set(ns(IN_REG_KEY, self.ns),
-                          self.serialize(reg))
         if val:
             fieldNode.set(ns(VALIDATORS_KEY, self.ns),
                           self.serialize(val))
@@ -368,7 +340,7 @@ def serialize_ttw_schema(schema=None):
     attrs = {}
     for name in schema:
         f = schema[name]
-        if is_serialisable_field(f):
+        if is_serialisable_field(f) and name not in bfields:
             attrs[name] = f
     smember = SchemaClass(SCHEMATA_KEY, attrs=attrs)
     finalizeSchemas(smember)
