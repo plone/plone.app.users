@@ -32,7 +32,7 @@ from plone.supermodel.model import (
 )
 
 from .register import IRegisterSchema, IAddUserSchema, JOIN_CONST
-from ..userdataschema import IUserDataZ3CSchema
+from ..userdataschema import IUserDataZ3CSchema, SCHEMATA_KEY
 
 from ..schemaeditor import get_ttw_edited_schema
 from plone.app.users.browser.z3cpersonalpreferences import UserDataPanelSchemaAdapter
@@ -67,15 +67,13 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 ttw = []
             ttwd = dict([(a, ttw[a]) for a in ttw])
             self.ttw_field_ids = [a for a in ttw]
-            self._schema = SchemaClass('',
+            self._schema = SchemaClass(SCHEMATA_KEY,
                 bases=(self.baseSchema,), attrs=ttwd)
         return self._schema
 
     def __init__(self, *a, **kw):
         self.omits = {}
         super(BaseRegistrationForm, self).__init__(*a, **kw)
-        # as schema is a generated supermodel, just insert a relevant adapter for it
-        provideAdapter(UserDataPanelSchemaAdapter, (INavigationRoot,), self.schema)
 
     def render(self):
         if self._finishedRegister:
@@ -485,6 +483,14 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if schema in adapters:
                 adapter = adapters[schema]
             else:
+                # as the ttw schema is a generated supermodel,
+                # just insert a relevant adapter for it
+                if schema.__name__ == SCHEMATA_KEY:
+                    provideAdapter(
+                        UserDataPanelSchemaAdapter,
+                        (INavigationRoot,),
+                        schema
+                    )
                 adapters[schema] = adapter = getAdapter(portal, schema)
                 adapter.context = member
 
