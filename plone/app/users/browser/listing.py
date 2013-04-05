@@ -1,24 +1,16 @@
-from zope.component import queryUtility, getUtility
-from zope.event import notify
-from zope.interface import implements
+from zope.component import getUtility
 from z3c.form import button, form
-from z3c.form.interfaces import IEditForm, DISPLAY_MODE
 
-from plone.z3cform.layout import FormWrapper
-from plone.memoize.instance import memoize
-from plone.autoform.form import AutoExtensibleForm
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from plone.schemaeditor import SchemaEditorMessageFactory as _
-from plone.schemaeditor.interfaces import IFieldFactory
-from plone.schemaeditor.utils import SchemaModifiedEvent
-
 from plone.schemaeditor.browser.schema import listing
 from plone.schemaeditor.browser.field import order
 from plone.protect import CheckAuthenticator
 from ZTUtils import make_query
 
-from ..userdataschema import IUserDataSchemaProvider
+from ..userdataschema import IUserDataSchemaProvider, SCHEMATA_KEY
+from ..schemaeditor import get_ttw_edited_schema
 
 class NotEditableField(Exception):pass
 
@@ -32,9 +24,12 @@ class SchemaListing(listing.SchemaListing):
         listing.SchemaListing.handleSaveDefaults(self, action)
 
     def render(self):
+        # By disabling non-ttw fields, we loose the ability to insert ttw fields
+        # wherever we want.
+        # ttw_fields = get_ttw_edited_schema().names()
         # for widget in self._iterateOverWidgets():
-        #     # disable fields from behaviors
-        #     if widget.field.__name__ not in fields:
+        #     # disable non ttw fields
+        #     if widget.field.__name__ not in ttw_fields:
         #         widget.disabled = 'disabled'
         return super(listing.SchemaListing, self).render()
 
