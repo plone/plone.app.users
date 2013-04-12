@@ -37,3 +37,5 @@ def test_suite():
             package="plone.app.users.tests",
             test_class=DocTestCase))
     return suite
+
+

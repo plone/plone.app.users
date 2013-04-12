@@ -28,9 +28,9 @@ class UserRegistrationFieldsVocabulary(object):
       <zope.schema.vocabulary.SimpleVocabulary object at ...>
 
       >>> len(fields.by_token)
-      10
+      9
       >>> [k.value for k in fields]
-      ['username', 'description', 'home_page', 'email', 'password_ctl', 'portrait', 'fullname', 'password', 'mail_me', 'location']
+      ['description', 'home_page', 'location', 'portrait', 'fullname', 'email', 'username', 'password', 'mail_me']
 
       >>> email = fields.by_token['email']
       >>> email.title, email.token, email.value

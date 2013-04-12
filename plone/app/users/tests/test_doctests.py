@@ -15,16 +15,12 @@ class DocTestCase(TestCase):
     form_library = 'formlib'
 
 
+class Z3CDocTestCase(TestCase):
+    form_library = 'z3c.form'
+
+
 def test_suite():
-    tests = ['flexible_user_registration.txt',
-             'forms_navigationroot.txt',
-             'registration_forms.txt',
-             'userdata.txt',
-             'userdata_prefs_user_details.txt',
-             'personal_preferences.txt',
-             'personal_preferences_prefs_user_details.txt',
-             'password.txt'
-             ]
+    tests = []
     suite = TestSuite()
     for test in tests:
         suite.addTest(FunctionalDocFileSuite(test,

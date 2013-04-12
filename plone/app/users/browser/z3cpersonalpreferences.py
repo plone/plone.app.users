@@ -50,6 +50,8 @@ class AccountPanelSchemaAdapter(object):
 
     def _getProperty(self, name):
         value = self.context.getProperty(name, '')
+        if value == '':
+            value = None
         if value:
             # PlonePAS encodes all unicode coming from PropertySheets.
             return safe_unicode(value)

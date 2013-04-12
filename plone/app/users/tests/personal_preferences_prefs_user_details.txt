@@ -3,9 +3,10 @@ Admin modifies personal preferences thru 'Users and groups'
 
 The empty marker varies depends on form library:
     >>> empty_marker = '--NOVALUE--' if self.form_library == 'z3c.form' else ''
+    >>> empty_markers = empty_marker, [empty_marker]
     >>> def isEmptyMarker(v):
     ...     if len(v) != 1: return False
-    ...     return v[0] == empty_marker
+    ...     return v in empty_markers
 
 An admin can modify user preferences thru the @@user-preferences form in
 Users and Groups config page.
