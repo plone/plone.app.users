@@ -35,7 +35,7 @@ register it in the ZCML::
 Where the `customschemachema.py` contains::
 
     from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-    from zope.component import adapts
+    from zope.component import adapter
     from zope.interface import Interface
 
     from z3c.form.field import Fields
@@ -48,8 +48,8 @@ Where the `customschemachema.py` contains::
         . . . all the custom fields to add . . .
 
 
+    @adapter(Interface, IDefaultBrowserLayer, UserDataPanel)
     class UserDataPanelExtender(extensible.FormExtender):
-        adapts(Interface, IDefaultBrowserLayer, UserDataPanel)
         def update(self):
             fields = field.Fields(IEnhancedUserDataSchema)
             self.add(fields, prefix="IEnhancedUserDataSchema")
