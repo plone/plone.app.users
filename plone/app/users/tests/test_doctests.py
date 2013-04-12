@@ -15,10 +15,6 @@ class DocTestCase(TestCase):
     form_library = 'formlib'
 
 
-class Z3CDocTestCase(TestCase):
-    form_library = 'z3c.form'
-
-
 def test_suite():
     tests = []
     suite = TestSuite()
