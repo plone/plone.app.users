@@ -35,12 +35,13 @@ from .register import IRegisterSchema, IAddUserSchema, JOIN_CONST
 from ..userdataschema import IUserDataZ3CSchema, SCHEMATA_KEY
 
 from ..schemaeditor import get_ttw_edited_schema
+from ..userdataschema import IUserDataSchemaProvider
 from plone.app.users.browser.z3cpersonalpreferences import UserDataPanelSchemaAdapter
 
 class IZ3CRegisterSchema(IRegisterSchema, IUserDataZ3CSchema):
     """Collect all register fields under the same interface"""
 
-from zope.component import provideAdapter
+from zope.component import provideAdapter, queryAdapter
 
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
@@ -48,7 +49,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
     label = u""
     description = u""
-    formErrorsMessage = _('There were errors.')
+    formErrorsMessage = _('There were errors')
     ignoreContext = True
     baseSchema = IZ3CRegisterSchema
 
@@ -466,12 +467,16 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         mt = getToolByName(self.context, 'portal_membership')
         member = mt.getMemberById(userid)
+        memberfields = getFieldNames(getUtility(IUserDataSchemaProvider).getSchema())
 
         # cache adapters
         adapters = {}
 
-        register_fields = getFieldNames(IRegisterSchema) + \
-            getFieldNames(IAddUserSchema)
+        register_fields = [
+            a for a in
+            (getFieldNames(IRegisterSchema) +
+             getFieldNames(IAddUserSchema))
+             if not a in memberfields]
         for k, value in data.items():
             # skip fields that are handled exclusively on user registration and
             # are not part of personal information form
@@ -480,22 +485,21 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
             # get schema adapter
             schema = self.fields[k].field.interface
-            if schema in adapters:
-                adapter = adapters[schema]
-            else:
+            if not schema in adapters:
                 # as the ttw schema is a generated supermodel,
                 # just insert a relevant adapter for it
-                if schema.__name__ == SCHEMATA_KEY:
-                    provideAdapter(
-                        UserDataPanelSchemaAdapter,
-                        (INavigationRoot,),
-                        schema
-                    )
-                adapters[schema] = adapter = getAdapter(portal, schema)
-                adapter.context = member
+                if INavigationRoot.providedBy(self.context):
+                    if not queryAdapter(self.context, self.schema):
+                        provideAdapter(
+                            UserDataPanelSchemaAdapter,
+                            (INavigationRoot,),
+                            schema
+                        )
+                adapters[schema] = getAdapter(portal, schema)
+                adapters[schema].context = member
 
             # finally set value
-            setattr(adapter, k, value)
+            setattr(adapters[schema], k, value)
 
 class RegistrationForm(BaseRegistrationForm):
     """ Dynamically get fields from user data, through admin
