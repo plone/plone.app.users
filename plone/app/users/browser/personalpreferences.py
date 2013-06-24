@@ -436,8 +436,8 @@ class PasswordAccountPanel(AccountPanelForm):
         registration = getToolByName(self.context, 'portal_registration')
         err_str = registration.testPasswordValidity('')
         if err_str:
-            all_fields['new_password'].field.description = \
-            _(u'Enter your new password. ') + err_str
+            msg = _(u'Enter your new password. ${errors}', mapping=dict(errors=err_str))
+            all_fields['new_password'].field.description = msg
 
         # Pass the list of join form fields as a reference to the
         # Fields constructor, and return.

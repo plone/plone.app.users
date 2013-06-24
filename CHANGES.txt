@@ -8,9 +8,12 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
-- Added user timezone selection to user preferecnes and a dependency on
+- Added user timezone selection to user preferences and a dependency on
   plone.app.event for vocabulary for user timezone selection.
   [seanupton]
+
+- Fixed i18n of new_password field in change-password view.
+  [vincentfretin]
 
 - Fix email as login validation in the personalize form (UserDataPanel).
   This is for the case when email is used as login.  It checked that a
