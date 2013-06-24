@@ -4,6 +4,9 @@ Changelog
 1.2a2 (unreleased)
 ------------------
 
+- Fixed i18n of new_password field in change-password view.
+  [vincentfretin]
+
 - Fix email as login validation in the personalize form (UserDataPanel).
   This is for the case when email is used as login.  It checked that a
   changed email address was valid as user id.  But the user id is
