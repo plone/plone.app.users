@@ -249,7 +249,8 @@ class BaseRegistrationForm(PageForm):
             registration = getToolByName(self.context, 'portal_registration')
             err_str = registration.testPasswordValidity('')
             if err_str:
-                msg = _(u'Enter your new password. ${errors}', mapping=dict(errors=err_str))
+                msg = _(u'help_password_creation_with_errors',
+                        default=u'Enter your new password. ${errors}', mapping=dict(errors=err_str))
                 all_fields['password'].field.description = msg
 
         # Pass the list of join form fields as a reference to the
