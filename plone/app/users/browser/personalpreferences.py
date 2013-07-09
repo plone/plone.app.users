@@ -16,12 +16,11 @@ from Products.CMFCore.utils import getToolByName
 
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
+from plone.app.users.browser.formlib import FileUploadWidget
 from plone.app.users.userdataschema import IUserDataSchemaProvider
 
 from plone.app.layout.navigation.interfaces import INavigationRoot
 
-from Products.CMFDefault.formlib.schema import SchemaAdapterBase
-from Products.CMFDefault.formlib.widgets import FileUploadWidget
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import set_own_login_name, safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -376,7 +375,7 @@ class IPasswordSchema(Interface):
             )
 
 
-class PasswordPanelAdapter(SchemaAdapterBase):
+class PasswordPanelAdapter(object):
 
     adapts(INavigationRoot)
     implements(IPasswordSchema)

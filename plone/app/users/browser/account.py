@@ -10,7 +10,6 @@ from plone.fieldsets.form import FieldsetsEditForm
 from plone.protect import CheckAuthenticator
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.formlib.schema import SchemaAdapterBase
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.Five.browser import BrowserView
@@ -20,13 +19,13 @@ from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.app.users.browser.interfaces import IAccountPanelView
 
 
-class AccountPanelSchemaAdapter(SchemaAdapterBase):
+class AccountPanelSchemaAdapter(object):
 
     def __init__(self, context):
         mt = getToolByName(context, 'portal_membership')
         userid = context.REQUEST.form.get('userid')
         if (userid and mt.checkPermission('Plone Site Setup: Users and Groups',
-                                           context)):
+                                          context)):
             self.context = mt.getMemberById(userid)
         else:
             self.context = mt.getAuthenticatedMember()

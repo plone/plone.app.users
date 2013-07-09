@@ -2,6 +2,7 @@ Testing the flexible user registration
 ======================================
 
     >>> browser = self.browser
+    >>> browser.handleErrors = False
 
 First things first... turn on self-registration so that we can see the
 @@register form. Also, let users select their own password so we don't

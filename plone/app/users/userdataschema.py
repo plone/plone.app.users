@@ -1,11 +1,10 @@
 from zope.interface import Interface, implements
 from zope import schema
 from zope.component import getUtility
-
+from plone.app.users.browser.interfaces import EmailAddressInvalid
+from plone.app.users.browser.formlib import FileUpload
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.exceptions import EmailAddressInvalid
-from Products.CMFDefault.formlib.schema import FileUpload
 from Products.CMFPlone import PloneMessageFactory as _
 
 

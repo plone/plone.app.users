@@ -1,5 +1,11 @@
 from plone.app.controlpanel.interfaces import IPloneControlPanelView
 from plone.app.controlpanel.interfaces import IPloneControlPanelForm
+from Products.CMFPlone import PloneMessageFactory as _
+from zope.schema import ValidationError
+
+
+class EmailAddressInvalid(ValidationError):
+    __doc__ = _(u'Invalid email address.')
 
 
 class IAccountPanelView(IPloneControlPanelView):

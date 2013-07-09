@@ -4,7 +4,6 @@ from zope.i18nmessageid import MessageFactory
 from zope.interface import implements
 
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.formlib.schema import SchemaAdapterBase
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 
 from plone.app.controlpanel.form import ControlPanelForm
@@ -16,13 +15,13 @@ USER_REGISTRATION_FIELDS = 'user_registration_fields'
 
 _ = MessageFactory('plone')
 
-class RegistrationControlPanelAdapter(SchemaAdapterBase):
+
+class RegistrationControlPanelAdapter(object):
 
     adapts(IPloneSiteRoot)
     implements(IRegistrationSchema)
 
     def __init__(self, context):
-        super(RegistrationControlPanelAdapter, self).__init__(context)
         pprop = getToolByName(context, 'portal_properties')
         self.context = pprop.site_properties
 
@@ -30,13 +29,12 @@ class RegistrationControlPanelAdapter(SchemaAdapterBase):
 
         self.context._updateProperty(USER_REGISTRATION_FIELDS, value)
 
-
     def get_userRegistrationfields(self):
 
-        return self.context.getProperty(USER_REGISTRATION_FIELDS,[])
+        return self.context.getProperty(USER_REGISTRATION_FIELDS, [])
 
-    user_registration_fields = property(get_userRegistrationfields, set_userRegistrationfields)
-
+    user_registration_fields = property(
+        get_userRegistrationfields, set_userRegistrationfields)
 
 
 class RegistrationControlPanel(ControlPanelForm):
