@@ -47,7 +47,7 @@ SPLITTER = '_//_'
 field_type_mapping = {
     "ASCIILine": 'text',
     "TextLine": 'text',
-    "Text": 'lines',
+    "Text": 'text',
     "Int": 'int',
     "Float": 'float',
     "Bool": 'boolean',
