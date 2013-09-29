@@ -1,5 +1,5 @@
 from zope.interface import Interface
-from zope.component import getUtility, getAdapter
+from zope.component import getUtility, queryUtility, getAdapter
 from zope.schema import getFieldNamesInOrder
 
 from five.formlib.formbase import PageForm
@@ -36,9 +36,16 @@ from plone.protect import CheckAuthenticator
 
 import logging
 
+from plone.app.users.browser.interfaces import IUserIdGenerator
+from plone.app.users.browser.interfaces import ILoginNameGenerator
+from plone.app.users.utils import uuid_userid_generator
+
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
 JOIN_CONST = ['username', 'password', 'email', 'mail_me']
+
+# Number of retries for creating a user id like bob-jones-42:
+RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 
 class IRegisterSchema(Interface):
@@ -260,18 +267,149 @@ class BaseRegistrationForm(PageForm):
     def generate_user_id(self, data):
         """Generate a user id from data.
 
-        The data is the data passed in the form.  Note that when email
-        is used as login, the data will not have a username.
+        We try a few options for coming up with a good user id:
 
-        There are plans to add some more options and add a hook here
-        so it is possible to use a different scheme here, for example
-        creating a uuid or creating bob-jones-1 based on the fullname.
+        1. We query a utility, so integrators can register a hook to
+           generate a user id using their own logic.
 
-        This will update the 'username' key of the data that is passed.
+        2. If use_uuid_as_userid is set in the site_properties, we
+           generate a uuid.
+
+        3. If a username is given and we do not use email as login,
+           then we simply return that username as the user id.
+
+        4. We create a user id based on the full name, if that is
+           passed.  This may result in an id like bob-jones-2.
+
+        When the email address is used as login name, we originally
+        used the email address as user id as well.  This has a few
+        possible downsides, which are the main reasons for the new,
+        pluggable approach:
+
+        - It does not work for some valid email addresses.
+
+        - Exposing the email address in this way may not be wanted.
+
+        - When the user later changes his email address, the user id
+          will still be his old address.  It works, but may be
+          confusing.
+
+        Another possibility would be to simply generate a uuid, but that
+        is ugly.  We could certainly try that though: the big plus here
+        would be that you then cannot create a new user with the same user
+        id as a previously existing user if this ever gets removed.  If
+        you would get the same id, this new user would get the same global
+        and local roles, if those have not been cleaned up.
+
+        When a user id is chosen, the 'user_id' key of the data gets
+        set and the user id is returned.
         """
+        generator = queryUtility(IUserIdGenerator)
+        if generator:
+            userid = generator(data)
+            if userid:
+                data['user_id'] = userid
+                return userid
+
+        portal_props = getToolByName(self.context, 'portal_properties')
+        props = portal_props.site_properties
+        if props.getProperty('use_uuid_as_userid'):
+            userid = uuid_userid_generator()
+            data['user_id'] = userid
+            return userid
+
+        # We may have a username already.
+        userid = data.get('username')
+        if userid:
+            # If we are not using email as login, then this user name is fine.
+            if not props.getProperty('use_email_as_login'):
+                data['user_id'] = userid
+                return userid
+
+        # First get a default value that we can return if we cannot
+        # find anything better.
         default = data.get('username') or data.get('email') or ''
-        data['username'] = default
+        data['user_id'] = default
+        fullname = data.get('fullname')
+        if not fullname:
+            return default
+        userid = normalizeString(fullname)
+        # First check that this is a valid member id, regardless of
+        # whether a member with this id already exists or not.  We
+        # access an underscore attribute of the registration tool, so
+        # we take a precaution in case this is ever removed as an
+        # implementation detail.
+        registration = getToolByName(self.context, 'portal_registration')
+        if hasattr(registration, '_ALLOWED_MEMBER_ID_PATTERN'):
+            if not registration._ALLOWED_MEMBER_ID_PATTERN.match(userid):
+                # If 'bob-jones' is not good then 'bob-jones-1' will not
+                # be good either.
+                return default
+        if registration.isMemberIdAllowed(userid):
+            data['user_id'] = userid
+            return userid
+        # Try bob-jones-1, bob-jones-2, etc.
+        idx = 1
+        while idx <= RENAME_AFTER_CREATION_ATTEMPTS:
+            new_id = "%s-%d" % (userid, idx)
+            if registration.isMemberIdAllowed(new_id):
+                data['user_id'] = new_id
+                return new_id
+            idx += 1
+
+        # We cannot come up with a nice id, so we simply return the default.
         return default
+
+    def generate_login_name(self, data):
+        """Generate a login name from data.
+
+        Usually the login name and user id are the same, but this is
+        not necessarily true.  When using the email address as login
+        name, we may have a different user id, generated by calling
+        the generate_user_id method.
+
+        We try a few options for coming up with a good login name:
+
+        1. We query a utility, so integrators can register a hook to
+           generate a login name using their own logic.
+
+        2. If a username is given and we do not use email as login,
+           then we simply return that username as the login name.
+
+        3. When using email as login, we use the email address.
+
+        In all cases, we call PAS.applyTransform on the login name, if
+        that is defined.  This is a recent addition to PAS, currently
+        under development.
+
+        When a login name is chosen, the 'login_name' key of the data gets
+        set and the login name is returned.
+        """
+        pas = getToolByName(self.context, 'acl_users')
+        generator = queryUtility(ILoginNameGenerator)
+        if generator:
+            login_name = generator(data)
+            if login_name:
+                login_name = pas.applyTransform(login_name)
+                data['login_name'] = login_name
+                return login_name
+
+        # We may have a username already.
+        login_name = data.get('username')
+        login_name = pas.applyTransform(login_name)
+        data['login_name'] = login_name
+        portal_props = getToolByName(self.context, 'portal_properties')
+        props = portal_props.site_properties
+        use_email_as_login = props.getProperty('use_email_as_login')
+        # If we are not using email as login, then this user name is fine.
+        if not use_email_as_login:
+            return login_name
+
+        # We use email as login.
+        login_name = data.get('email')
+        login_name = pas.applyTransform(login_name)
+        data['login_name'] = login_name
+        return login_name
 
     # Actions validators
     def validate_registration(self, action, data):
@@ -303,7 +441,7 @@ class BaseRegistrationForm(PageForm):
         if 'password' in form_field_names:
             assert('password_ctl' in form_field_names)
             # Skip this check if password fields already have an error
-            if not ('password' in error_keys or \
+            if not ('password' in error_keys or
                     'password_ctl' in error_keys):
                 password = self.widgets['password'].getInputValue()
                 password_ctl = self.widgets['password_ctl'].getInputValue()
@@ -329,8 +467,6 @@ class BaseRegistrationForm(PageForm):
                                       u'label_password', err_str))
                         self.widgets['password'].error = err_str
 
-
-        username = ''
         email = ''
         try:
             email = self.widgets['email'].getInputValue()
@@ -342,22 +478,36 @@ class BaseRegistrationForm(PageForm):
         else:
             username_field = 'username'
 
-        # Generate a nice user id and store that in the data.
-        username = self.generate_user_id(data)
+        # The term 'username' is not clear.  It may be the user id or
+        # the login name.  So here we try to be explicit.
 
-        # check if username is valid
-        # Skip this check if username was already in error list
+        # Generate a nice user id and store that in the data.
+        user_id = self.generate_user_id(data)
+        # Generate a nice login name and store that in the data.
+        login_name = self.generate_login_name(data)
+
+        # Do several checks to see if the user id and the login name
+        # are valid.
+        #
+        # Skip these checks if username was already in error list.
+        #
+        # Note that if we cannot generate a unique user id, it is not
+        # necessarily the fault of the username field, but it
+        # certainly is the most likely cause in a standard Plone
+        # setup.
+
         if not username_field in error_keys:
-            if username == portal.getId():
+            # user id may not be the same as the portal id.
+            if user_id == portal.getId():
                 err_str = _(u"This username is reserved. Please choose a "
                             "different name.")
                 errors.append(WidgetInputError(
                         username_field, u'label_username', err_str))
                 self.widgets[username_field].error = err_str
 
-        # check if username is allowed
         if not username_field in error_keys:
-            if not registration.isMemberIdAllowed(username):
+            # Check if user id is allowed by the member id pattern.
+            if not registration.isMemberIdAllowed(user_id):
                 err_str = _(u"The login name you selected is already in use "
                             "or is not valid. Please choose another.")
                 errors.append(WidgetInputError(
@@ -373,16 +523,17 @@ class BaseRegistrationForm(PageForm):
                             'email', u'label_email', err_str))
                     self.widgets['email'].error = err_str
 
-        if use_email_as_login and not 'email' in error_keys:
+        if not username_field in error_keys:
+            # Check the uniqueness of the login name, not only when
+            # use_email_as_login is true, but always.
             pas = getToolByName(self, 'acl_users')
-            # TODO: maybe search for lowercase as well.
-            results = pas.searchUsers(login=email, exact_match=True)
+            results = pas.searchUsers(name=login_name, exact_match=True)
             if results:
                 err_str = _(u"The login name you selected is already in use "
                             "or is not valid. Please choose another.")
                 errors.append(WidgetInputError(
-                        'email', u'label_email', err_str))
-                self.widgets['email'].error = err_str
+                        username_field, u'label_username', err_str))
+                self.widgets[username_field].error = err_str
 
         if 'password' in form_field_names and not 'password' in error_keys:
             # Admin can either set a password or mail the user (or both).
@@ -418,26 +569,30 @@ class BaseRegistrationForm(PageForm):
         # adapter below
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         registration = getToolByName(self.context, 'portal_registration')
-        portal_props = getToolByName(self.context, 'portal_properties')
         mt = getToolByName(self.context, 'portal_membership')
-        props = portal_props.site_properties
-        use_email_as_login = props.getProperty('use_email_as_login')
 
-        if use_email_as_login:
-            # The username field is not shown as the email is going to
-            # be the username, but the field *is* needed further down
-            # the line.  A username probably has already been set in
-            # the data by calling generate_user_id earlier on, but
-            # let's be safe.
-            if not data.get('username'):
-                # No username given yet, so take the email.
-                data['username'] = data['email']
-            # Set username in the form; at least needed for logging in
-            # immediately when password reset is bypassed.  We need
-            # the email address here, not the user id.
-            self.request.form['form.username'] = data['email']
+        # user_id and login_name should be in the data, but let's be safe.
+        user_id = data.get('user_id', data.get('username'))
+        login_name = data.get('login_name', data.get('username'))
+        # I have seen a unicode user id.  I cannot reproduce it, but
+        # let's make them strings, otherwise you run into trouble with
+        # plone.session when trying to login.
+        if isinstance(user_id, unicode):
+            user_id = user_id.encode('utf8')
+        if isinstance(login_name, unicode):
+            login_name = login_name.encode('utf8')
 
-        user_id = data['username']
+        # Set the username for good measure, as some code may expect
+        # it to exist and contain the user id.
+        data['username'] = user_id
+
+        # The login name may already be in the form, but not
+        # necessarily, for example when using email as login.  This is
+        # at least needed for logging in immediately when password
+        # reset is bypassed.  We need the login name here, not the
+        # user id.
+        self.request.form['form.username'] = login_name
+
         password = data.get('password') or registration.generatePassword()
         if isinstance(password, unicode):
             password = password.encode('utf8')
@@ -449,19 +604,11 @@ class BaseRegistrationForm(PageForm):
             IStatusMessage(self.request).addStatusMessage(err, type="error")
             return
 
-        if use_email_as_login and user_id != data['email']:
-            # The user id differs from the login name.  Set the email
-            # as the login name.
-            acl_users = getToolByName(self.context, 'acl_users')
-            for plugin_id, userfolder in acl_users.plugins.listPlugins(IUserManagement):
-                if not hasattr(userfolder, 'updateUser'):
-                    continue
-                try:
-                    userfolder.updateUser(user_id, data['email'])
-                except KeyError:
-                    continue
-                else:
-                    break
+        if user_id != login_name:
+            # The user id differs from the login name.  Set the login
+            # name correctly.
+            pas = getToolByName(self.context, 'acl_users')
+            pas.updateLoginName(user_id, login_name)
 
         # set additional properties using the user schema adapter
         schema = getUtility(IUserDataSchemaProvider).getSchema()
@@ -523,7 +670,6 @@ class BaseRegistrationForm(PageForm):
                     return
 
         return
-
 
 
 class RegistrationForm(BaseRegistrationForm):
@@ -616,7 +762,7 @@ class AddUserForm(BaseRegistrationForm):
         super(AddUserForm, self).handle_join_success(data)
 
         portal_groups = getToolByName(self.context, 'portal_groups')
-        user_id = data['username']
+        user_id = data['user_id']
         is_zope_manager = getSecurityManager().checkPermission(
             ManagePortal, self.context)
 

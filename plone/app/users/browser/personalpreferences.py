@@ -218,7 +218,12 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
             value = ''
         props = getToolByName(self, 'portal_properties').site_properties
         if props.getProperty('use_email_as_login'):
-            set_own_login_name(self.context, value)
+            mt = getToolByName(self.context, 'portal_membership')
+            if self.context.getId() == mt.getAuthenticatedMember().getId():
+                set_own_login_name(self.context, value)
+            else:
+                pas = getToolByName(self.context, 'acl_users')
+                pas.updateLoginName(self.context.getId(), value)
         return self.context.setMemberProperties({'email': value})
 
     email = property(get_email, set_email)
@@ -298,14 +303,15 @@ class UserDataPanel(AccountPanelForm):
                 else:
                     member = membership.getAuthenticatedMember()
                 email = data['email']
+                pas = getToolByName(context, 'acl_users')
+                email = pas.applyTransform(email)
                 if email not in (member.getId(), member.getUserName()):
                     # Our email has changed and is not the same as our
                     # user id or login name, so we need to check if
                     # this email is already in use by another user.
                     pas = getToolByName(context, 'acl_users')
-                    # TODO: maybe search for lowercase as well.
                     if (membership.getMemberById(email) or
-                            pas.searchUsers(login=email, exact_match=True)):
+                            pas.searchUsers(name=email, exact_match=True)):
                         err_str = _(
                             'message_email_in_use',
                             default=(
