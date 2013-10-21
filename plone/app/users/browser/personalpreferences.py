@@ -1,5 +1,4 @@
 from Acquisition import aq_inner
-from AccessControl import Unauthorized
 
 from zope.component import getUtility
 from zope.component import adapts
@@ -73,6 +72,13 @@ class IPersonalPreferences(Interface):
         required=False
         )
 
+    timezone = Choice(
+        title=_(u'label_timezone', default=u'Time zone'),
+        description=_(u'help_timezone', default=u'Your time zone'),
+        vocabulary='plone.app.event.AvailableTimezones',
+        required=False,
+        )
+
 
 class PersonalPreferencesPanelAdapter(AccountPanelSchemaAdapter):
 
@@ -115,6 +121,16 @@ class PersonalPreferencesPanelAdapter(AccountPanelSchemaAdapter):
 
     language = property(get_language, set_language)
 
+    def get_timezone(self):
+        return self.context.getProperty('timezone', '')
+
+    def set_timezone(self, value):
+        if value is None:
+            value = ''
+        return self.context.setMemberProperties({'timezone': value})
+
+    timezone = property(get_timezone, set_timezone)
+
 
 def LanguageWidget(field, request):
     """ Create selector with languages vocab """
@@ -135,6 +151,14 @@ def WysiwygEditorWidget(field, request):
     return widget
 
 
+def TimezoneWidget(field, request):
+    """ Timezone selection widget, vocabulary from plone.app.event"""
+    widget = DropdownWidget(field, field.vocabulary, request)
+    widget._messageNoValue = _(u'vocabulary-avilable-editor-novalue',
+                               u'Use site default')
+    return widget
+
+
 class PersonalPreferencesPanel(AccountPanelForm):
     """ Implementation of personalize form that uses formlib """
 
@@ -146,6 +170,7 @@ class PersonalPreferencesPanel(AccountPanelForm):
     form_fields = form.FormFields(IPersonalPreferences)
     form_fields['language'].custom_widget = LanguageWidget
     form_fields['wysiwyg_editor'].custom_widget = WysiwygEditorWidget
+    form_fields['timezone'].custom_widget = TimezoneWidget
 
     def setUpWidgets(self, ignore_request=False):
         """ Hide the visible_ids field based on portal_properties.
@@ -193,7 +218,12 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
             value = ''
         props = getToolByName(self, 'portal_properties').site_properties
         if props.getProperty('use_email_as_login'):
-            set_own_login_name(self.context, value)
+            mt = getToolByName(self.context, 'portal_membership')
+            if self.context.getId() == mt.getAuthenticatedMember().getId():
+                set_own_login_name(self.context, value)
+            else:
+                pas = getToolByName(self.context, 'acl_users')
+                pas.updateLoginName(self.context.getId(), value)
         return self.context.setMemberProperties({'email': value})
 
     email = property(get_email, set_email)
@@ -262,40 +292,35 @@ class UserDataPanel(AccountPanelForm):
         errors = super(UserDataPanel, self).validate(action, data)
 
         if not self.widgets['email'].error():
-            reg_tool = getToolByName(context, 'portal_registration')
             props = getToolByName(context, 'portal_properties')
             if props.site_properties.getProperty('use_email_as_login'):
-                err_str = ''
-                try:
-                    id_allowed = reg_tool.isMemberIdAllowed(data['email'])
-                except Unauthorized:
-                    err_str = _('message_email_cannot_change',
-                                default=(u"Sorry, you are not allowed to "
-                                         u"change your email address."))
+                # Keeping your email the same (which happens when you
+                # change something else on the personalize form) or
+                # changing it back to your original user id, is fine.
+                membership = getToolByName(context, 'portal_membership')
+                if self.userid:
+                    member = membership.getMemberById(self.userid)
                 else:
-                    if not id_allowed:
-                        # Keeping your email the same (which happens when you
-                        # change something else on the personalize form) or
-                        # changing it back to your login name, is fine.
-                        membership = getToolByName(context,
-                                                   'portal_membership')
-                        if self.userid:
-                            member = membership.getMemberById(self.userid)
-                        else:
-                            member = membership.getAuthenticatedMember()
-                        if data['email'] not in (member.getId(),
-                                                 member.getUserName()):
-                            err_str = _(
-                                'message_email_in_use',
-                                default=(
-                                    u"The email address you selected is "
-                                    u"already in use or is not valid as login "
-                                    u"name. Please choose another."))
-
-                if err_str:
-                    errors.append(WidgetInputError(
-                        'email', u'label_email', err_str))
-                    self.widgets['email'].error = err_str
+                    member = membership.getAuthenticatedMember()
+                email = data['email']
+                pas = getToolByName(context, 'acl_users')
+                email = pas.applyTransform(email)
+                if email not in (member.getId(), member.getUserName()):
+                    # Our email has changed and is not the same as our
+                    # user id or login name, so we need to check if
+                    # this email is already in use by another user.
+                    pas = getToolByName(context, 'acl_users')
+                    if (membership.getMemberById(email) or
+                            pas.searchUsers(name=email, exact_match=True)):
+                        err_str = _(
+                            'message_email_in_use',
+                            default=(
+                                u"The email address you selected is "
+                                u"already in use or is not valid as login "
+                                u"name. Please choose another."))
+                        errors.append(WidgetInputError(
+                                'email', u'label_email', err_str))
+                        self.widgets['email'].error = err_str
 
         return errors
 
@@ -417,8 +442,8 @@ class PasswordAccountPanel(AccountPanelForm):
         registration = getToolByName(self.context, 'portal_registration')
         err_str = registration.testPasswordValidity('')
         if err_str:
-            all_fields['new_password'].field.description = \
-            _(u'Enter your new password. ') + err_str
+            msg = _(u'Enter your new password. ${errors}', mapping=dict(errors=err_str))
+            all_fields['new_password'].field.description = msg
 
         # Pass the list of join form fields as a reference to the
         # Fields constructor, and return.

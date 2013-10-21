@@ -23,7 +23,8 @@ def test_suite():
              'userdata_prefs_user_details.txt',
              'personal_preferences.txt',
              'personal_preferences_prefs_user_details.txt',
-             'password.txt'
+             'password.txt',
+             'email_login.txt',
              ]
     suite = TestSuite()
     for test in tests:
