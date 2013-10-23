@@ -3,7 +3,7 @@ Testing the flexible user registration
 
     >>> browser = self.browser
     >>> browser.open('http://nohost/plone')
-    >>> list_widget_suffix = ':list' if self.form_library == 'z3c.form' else ''
+    >>> list_widget_suffix = ':list'
 
     Self-registration is disabled, user does not see 'Register' link.
     >>> 'Register' in browser.contents

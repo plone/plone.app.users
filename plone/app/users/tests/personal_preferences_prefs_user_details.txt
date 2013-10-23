@@ -1,8 +1,7 @@
 Admin modifies personal preferences thru 'Users and groups'
 ---------------------------------------------------------------------
 
-The empty marker varies depends on form library:
-    >>> empty_marker = '--NOVALUE--' if self.form_library == 'z3c.form' else ''
+    >>> empty_marker = '--NOVALUE--'
     >>> def isEmptyMarker(v):
     ...     if len(v) != 1: return False
     ...     return v[0] == empty_marker

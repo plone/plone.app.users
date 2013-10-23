@@ -6,13 +6,10 @@ without the PloneTestCase.setupPloneSite() side effects.
 """
 
 from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
-from Products.PloneTestCase.layer import PloneSite
-
 from Acquisition import aq_base
 from zope.component import getSiteManager
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
-from Products.CMFCore.utils import getToolByName
 
 # BBB Zope 2.12
 try:
@@ -22,21 +19,12 @@ except ImportError:
 
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from OFS.Cache import Cacheable
-from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin, IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
 from Products.CMFCore.interfaces import ISiteRoot
-from zope.component import getUtility, getAdapter
+from zope.component import getUtility
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
-
-
-class Z3CFormLayer(PloneSite):
-    @classmethod
-    def setUp(cls):
-        from Zope2.App import zcml
-        import plone.app.users.browser
-        zcml.load_config('z3c-configure.zcml', plone.app.users.browser)
-        zcml.load_config('z3c-overrides.zcml', plone.app.users.browser)
 
 
 class TestCase(FunctionalTestCase):

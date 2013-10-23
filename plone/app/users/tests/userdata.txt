@@ -1,10 +1,6 @@
 Testing the personal information form
 =====================================
 
-The portrait widget varies between form libaries.
-
-    >>> delete_control = 'Remove existing image' if self.form_library == 'z3c.form' else 'Delete Portrait'
-
 Viewing the  personal information
 ---------------------------------
 
@@ -180,7 +176,7 @@ Set the full name again:
 
 Can we delete the Image using the checkbox?
 
-    >>> self.browser.getControl(delete_control).selected = True
+    >>> self.browser.getControl('Remove existing image').selected = True
     >>> self.browser.getControl('Save').click()
     >>> 'Changes saved.' in self.browser.contents
     True

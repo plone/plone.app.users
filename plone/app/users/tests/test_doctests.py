@@ -1,18 +1,12 @@
 import doctest
 from unittest import TestSuite
-
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 from Products.PloneTestCase.PloneTestCase import setupPloneSite
+from plone.app.users.tests.base import TestCase
 
-from plone.app.users.tests import TestCase
 
 setupPloneSite()
-
 OPTIONFLAGS = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
-
-
-class DocTestCase(TestCase):
-    form_library = 'formlib'
 
 
 def test_suite():
@@ -25,11 +19,14 @@ def test_suite():
              'personal_preferences_prefs_user_details.txt',
              'password.txt',
              'email_login.txt',
+             '../vocabularies.py'
              ]
     suite = TestSuite()
     for test in tests:
-        suite.addTest(FunctionalDocFileSuite(test,
+        suite.addTest(FunctionalDocFileSuite(
+            test,
             optionflags=OPTIONFLAGS,
             package="plone.app.users.tests",
-            test_class=DocTestCase))
+            test_class=TestCase
+        ))
     return suite
