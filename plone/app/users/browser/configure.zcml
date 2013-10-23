@@ -4,6 +4,17 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="plone">
 
+    <include package="plone.autoform" />
+    <include package="plone.app.controlpanel" />
+    
+    
+    <browser:page
+      name="member-registration"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".registration.RegistrationControlPanel"
+      permission="plone.app.controlpanel.UsersAndGroups"
+      />
+ 
     <!-- Join form definition -->
     <browser:page
       name="register"
@@ -24,14 +35,6 @@
       name="change-password"
       class=".personalpreferences.PasswordAccountPanel"
       permission="cmf.SetOwnPassword"
-      />
-
-    <browser:page
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      name="account-macro"
-      class=".account.AccountPanelView"
-      attribute="getMacro"
-      permission="cmf.SetOwnProperties"
       />
 
     <browser:page
@@ -62,10 +65,6 @@
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
-    <utility provides="zope.schema.interfaces.IVocabularyFactory"
-             component=".register.getGroupIds"
-             name="Group Ids"/>
-
     <adapter
       provides=".personalpreferences.IPersonalPreferences"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
@@ -76,7 +75,26 @@
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       factory=".personalpreferences.UserDataPanelAdapter"
       />
-    <adapter factory=".personalpreferences.PasswordPanelAdapter" />
 
+    <!-- Set empty widgets prefix for our z3c forms to have form field names the
+         same as former formlib forms -->
+    <adapter
+        for=".registration.RegistrationControlPanel
+             z3c.form.interfaces.IFormLayer
+             *"
+        factory=".z3cwidgets.EmptyPrefixFieldWidgets"
+        />
+    <adapter
+        for=".register.BaseRegistrationForm
+             z3c.form.interfaces.IFormLayer
+             *"
+        factory=".z3cwidgets.EmptyPrefixFieldWidgets"
+        />
+    <adapter
+        for=".personalpreferences.AccountPanelForm
+             z3c.form.interfaces.IFormLayer
+             *"
+        factory=".z3cwidgets.EmptyPrefixFieldWidgets"
+        />
 
 </configure>

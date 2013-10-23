@@ -1,12 +1,5 @@
 from zope.interface import Interface
-
-from plone.app.controlpanel.interfaces import IPloneControlPanelView
 from plone.app.controlpanel.interfaces import IPloneControlPanelForm
-
-
-class IAccountPanelView(IPloneControlPanelView):
-    """A marker interface for views showing an account panel.
-    """
 
 
 class IAccountPanelForm(IPloneControlPanelForm):

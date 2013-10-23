@@ -1,5 +1,5 @@
-from zope.component import getUtility
 from plone.uuid.interfaces import IUUIDGenerator
+from zope.component import getUtility
 
 
 def uuid_userid_generator(data=None):

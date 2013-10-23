@@ -1,10 +1,9 @@
+from plone.app.users.browser.register import JOIN_CONST
+from plone.app.users.browser.register import RegistrationForm
 from zope.interface import implements
+from zope.schema import getFieldNames
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
-from zope.schema import getFieldNames
-
-from .browser.z3cregister import RegistrationForm
-from .browser.register import JOIN_CONST
 
 
 class UserRegistrationFieldsVocabulary(object):
