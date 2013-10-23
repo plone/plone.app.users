@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.3a1.dev0'
+version = '2.0.dev0'
 
 setup(name='plone.app.users',
       version=version,
