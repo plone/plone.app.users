@@ -1,5 +1,5 @@
-Changelog
-=========
+CHANGES
+=======
 
 2.0 (unreleased)
 ----------------
