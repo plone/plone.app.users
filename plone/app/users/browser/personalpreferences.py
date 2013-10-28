@@ -1,25 +1,26 @@
-from Products.CMFPlone import PloneMessageFactory as _
-from z3c.form import button
-from z3c.form.interfaces import IErrorViewSnippet
-from zope.component import getMultiAdapter
-from zope.interface import Invalid
 from Acquisition import aq_inner
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
+from Products.CMFDefault.formlib.schema import SchemaAdapterBase
+from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import set_own_login_name
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.PlonePAS.tools.membership import default_portrait
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
+from plone.app.users.userdataschema import IUserDataSchema
+from z3c.form import button
+from z3c.form.interfaces import HIDDEN_MODE
+from z3c.form.interfaces import IErrorViewSnippet
 from zope import schema
+from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.interface import Interface
+from zope.interface import Invalid
 from zope.schema import Bool
 from zope.schema import Choice
 from zope.schema import ValidationError
-from z3c.form.interfaces import HIDDEN_MODE
-from Products.PlonePAS.tools.membership import default_portrait
-from plone.app.users.userdataschema import IUserDataSchema
 
 
 class IPersonalPreferences(Interface):
@@ -86,6 +87,7 @@ class PersonalPreferencesPanel(AccountPanelForm):
 
     label = _(u"heading_my_preferences", default=u"Personal Preferences")
     form_name = _(u'legend_personal_details', u'Personal Details')
+    schema = IPersonalPreferences
 
     @property
     def description(self):
@@ -104,8 +106,6 @@ class PersonalPreferencesPanel(AccountPanelForm):
                 u'description_my_preferences',
                 default='Your personal settings.'
             )
-
-    schema = IPersonalPreferences
 
     def updateWidgets(self):
         """ Hide the visible_ids field based on portal_properties.
@@ -304,15 +304,32 @@ class IPasswordSchema(Interface):
         )
 
 
-class PasswordAccountPanel(AccountPanelForm):
-    """ Implementation of password reset form that uses z3c.form"""
+class PasswordPanelAdapter(SchemaAdapterBase):
+
+    def __init__(self, context):
+        self.context = getToolByName(context, 'portal_membership')
+
+    def get_dummy(self):
+        """ We don't actually need to 'get' anything ..."""
+        return ''
+
+    current_password = property(get_dummy)
+
+    new_password = property(get_dummy)
+
+    new_password_ctl = property(get_dummy)
+
+
+class PasswordPanel(AccountPanelForm):
+    """Implementation of password reset form that uses z3c.form."""
+
     label = _(u'listingheader_reset_password', default=u'Reset Password')
     description = _(u"Change Password")
     form_name = _(u'legend_password_details', default=u'Password Details')
     schema = IPasswordSchema
 
     def updateFields(self):
-        super(PasswordAccountPanel, self).updateFields()
+        super(PasswordPanel, self).updateFields()
         # Change the password description based on PAS Plugin The user needs a
         # list of instructions on what kind of password is required.  We'll
         # reuse password errors as instructions e.g. "Must contain a letter and

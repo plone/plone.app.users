@@ -6,15 +6,14 @@
 
     <include package="plone.autoform" />
     <include package="plone.app.controlpanel" />
-    
-    
+
     <browser:page
       name="member-registration"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       class=".registration.RegistrationControlPanel"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
- 
+
     <!-- Join form definition -->
     <browser:page
       name="register"
@@ -33,7 +32,7 @@
     <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="change-password"
-      class=".personalpreferences.PasswordAccountPanel"
+      class=".personalpreferences.PasswordPanel"
       permission="cmf.SetOwnPassword"
       />
 
@@ -75,6 +74,11 @@
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       factory=".personalpreferences.UserDataPanelAdapter"
       />
+    <adapter
+      provides=".personalpreferences.IPasswordSchema"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      factory=".personalpreferences.PasswordPanelAdapter"
+      />
 
     <!-- Set empty widgets prefix for our z3c forms to have form field names the
          same as former formlib forms -->
@@ -91,7 +95,7 @@
         factory=".z3cwidgets.EmptyPrefixFieldWidgets"
         />
     <adapter
-        for=".personalpreferences.AccountPanelForm
+        for=".account.AccountPanelForm
              z3c.form.interfaces.IFormLayer
              *"
         factory=".z3cwidgets.EmptyPrefixFieldWidgets"
