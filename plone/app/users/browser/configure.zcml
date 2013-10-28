@@ -10,11 +10,10 @@
     <browser:page
       name="member-registration"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      class=".registration.RegistrationControlPanel"
+      class=".register.RegistrationControlPanel"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
-    <!-- Join form definition -->
     <browser:page
       name="register"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
@@ -83,7 +82,7 @@
     <!-- Set empty widgets prefix for our z3c forms to have form field names the
          same as former formlib forms -->
     <adapter
-        for=".registration.RegistrationControlPanel
+        for=".register.RegistrationControlPanel
              z3c.form.interfaces.IFormLayer
              *"
         factory=".z3cwidgets.EmptyPrefixFieldWidgets"
