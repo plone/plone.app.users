@@ -27,12 +27,11 @@ from zope.component import getUtility
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 
 
-class TestCase(FunctionalTestCase):
+class BaseTestCase(FunctionalTestCase):
     """base test case which adds amin user"""
 
-
     def afterSetUp(self):
-        super(TestCase, self).afterSetUp()
+        super(BaseTestCase, self).afterSetUp()
         self.browser = Browser()
         self.portal.acl_users._doAddUser('admin', 'secret', ['Manager'], [])
 
@@ -62,27 +61,26 @@ class TestCase(FunctionalTestCase):
 
     def activateDefaultPasswordPolicy(self):
         uf = self.portal.acl_users
-        plugins = uf._getOb('plugins')
         for policy in uf.objectIds(['Default Plone Password Policy']):
             activatePluginInterfaces(self.portal, policy)
-            validators = plugins.listPlugins(IValidationPlugin)
-            #assert policy in validators
 
     def beforeTearDown(self):
         self.portal.MailHost = self.portal._original_MailHost
         sm = getSiteManager(context=self.portal)
         sm.unregisterUtility(provided=IMailHost)
-        sm.registerUtility(aq_base(self.portal._original_MailHost), provided=IMailHost)
+        sm.registerUtility(
+            aq_base(self.portal._original_MailHost),
+            provided=IMailHost
+        )
 
         portal = getUtility(ISiteRoot)
         pas_instance = portal.acl_users
-        plugin = getattr(pas_instance,'test', None)
+        plugin = getattr(pas_instance, 'test', None)
         if plugin is not None:
             plugins = pas_instance._getOb('plugins')
             plugins.deactivatePlugin(IValidationPlugin, 'test')
             #plugins.deactivatePlugin(IPropertiesPlugin, 'test')
             pas_instance.manage_delObjects('test')
-
 
     def setMailHost(self):
         self.portal.MailHost.smtp_host = 'localhost'
@@ -95,7 +93,6 @@ class TestCase(FunctionalTestCase):
 # Dummy password validation PAS plugin
 
 
-
 class DeadParrotPassword(BasePlugin, Cacheable):
     meta_type = 'Test Password Strength Plugin'
     security = ClassSecurityInfo()
@@ -105,18 +102,16 @@ class DeadParrotPassword(BasePlugin, Cacheable):
         self.title = title
 
     security.declarePrivate('validateUserInfo')
-    def validateUserInfo(self, user, set_id, set_info ):
 
+    def validateUserInfo(self, user, set_id, set_info):
         errors = []
-
         if set_info and set_info.get('password', None) is not None:
             password = set_info['password']
             if password.count('dead') or password == '':
-                errors = [{'id':'password','error':u'Must not be dead'}]
+                errors = [{'id': 'password', 'error': u'Must not be dead'}]
             else:
                 errors = []
         return errors
 
 
-classImplements(DeadParrotPassword,
-                IValidationPlugin)
+classImplements(DeadParrotPassword, IValidationPlugin)

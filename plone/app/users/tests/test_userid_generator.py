@@ -3,11 +3,11 @@ from zope.component import getSiteManager
 
 from plone.app.users.browser.interfaces import IUserIdGenerator
 from plone.app.users.browser.register import BaseRegistrationForm
-from plone.app.users.tests.base import TestCase
+from plone.app.users.tests.base import BaseTestCase
 from plone.app.users.utils import uuid_userid_generator
 
 
-class TestGenerateUserId(TestCase):
+class TestGenerateUserId(BaseTestCase):
 
     def test_standard_generate_user_id(self):
         form = BaseRegistrationForm(self.portal, {})
@@ -96,7 +96,7 @@ class TestGenerateUserId(TestCase):
                             form.generate_user_id(data))
 
 
-class TestGenerateUUIDUserId(TestCase):
+class TestGenerateUUIDUserId(BaseTestCase):
 
     def afterSetUp(self):
         super(TestGenerateUUIDUserId, self).afterSetUp()

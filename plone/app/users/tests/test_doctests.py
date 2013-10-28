@@ -2,7 +2,7 @@ import doctest
 from unittest import TestSuite
 from Testing.ZopeTestCase import FunctionalDocFileSuite
 from Products.PloneTestCase.PloneTestCase import setupPloneSite
-from plone.app.users.tests.base import TestCase
+from plone.app.users.tests.base import BaseTestCase
 
 
 setupPloneSite()
@@ -27,6 +27,6 @@ def test_suite():
             test,
             optionflags=OPTIONFLAGS,
             package="plone.app.users.tests",
-            test_class=TestCase
+            test_class=BaseTestCase
         ))
     return suite
