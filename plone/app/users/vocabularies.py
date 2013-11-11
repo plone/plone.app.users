@@ -24,8 +24,9 @@ class UserRegistrationFieldsVocabulary(object):
 
       >>> len(fields.by_token)
       10
-      >>> [k.value for k in fields]
-      ['username', 'description', 'home_page', 'email', 'password_ctl', 'portrait', 'fullname', 'password', 'mail_me', 'location']
+      >>> [k.value for k in fields] # doctest: +NORMALIZE_WHITESPACE
+      ['username', 'description', 'home_page', 'email', 'password_ctl',
+      'portrait', 'fullname', 'password', 'mail_me', 'location']
 
       >>> email = fields.by_token['email']
       >>> email.title, email.token, email.value

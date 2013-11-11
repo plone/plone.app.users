@@ -6,7 +6,7 @@ from plone.autoform import directives as form
 from plone.namedfile.field import NamedBlobImage
 from zope import schema
 from zope.component import getUtility
-from zope.interface import Interface, implements
+from zope.interface import Interface
 from plone.formwidget.namedfile.widget import NamedImageWidget
 from plone.namedfile.interfaces import INamedImageField
 from ZTUtils import make_query
