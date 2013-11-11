@@ -5,8 +5,6 @@
     <include package="Products.CMFCore" file="permissions.zcml" />
     <include package=".browser" />
 
-    <utility provides=".userdataschema.IUserDataSchemaProvider"
-             factory=".userdataschema.UserDataSchemaProvider"/>
     <utility component=".vocabularies.UserRegistrationFieldsVocabularyFactory"
              name="plone.app.users.user_registration_fields" />
     <utility provides="zope.schema.interfaces.IVocabularyFactory"

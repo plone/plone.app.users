@@ -16,24 +16,6 @@ from zope.component import adapter
 from zope.interface import implementer
 
 
-class IUserDataSchemaProvider(Interface):
-    """
-    """
-
-    def getSchema():
-        """
-        """
-
-
-class UserDataSchemaProvider(object):
-    implements(IUserDataSchemaProvider)
-
-    def getSchema(self):
-        """
-        """
-        return IUserDataSchema
-
-
 def checkEmailAddress(value):
     portal = getUtility(ISiteRoot)
 
