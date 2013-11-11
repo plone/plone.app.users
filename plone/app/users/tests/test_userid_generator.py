@@ -103,9 +103,10 @@ class TestGenerateUUIDUserId(BaseTestCase):
         # If use_uuid_as_userid is set in the site_properties, we
         # generate a uuid.
         self.ptool = ptool = getattr(self.portal, 'portal_properties')
-        ptool.site_properties.manage_addProperty(
-            'use_uuid_as_userid', False, 'boolean'
-        )  # Try to add it.
+        if not ptool.site_properties.hasProperty('use_uuid_as_userid'):
+            ptool.site_properties.manage_addProperty(
+                'use_uuid_as_userid', False, 'boolean'
+            )  # Try to add it.
         ptool.site_properties.manage_changeProperties(
             use_uuid_as_userid=True
         )  # Change it.
