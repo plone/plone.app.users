@@ -6,7 +6,6 @@ Z3C Forms TODOs
 - The raising of errors during validation can be simplified by raising
   WidgetActionExecutionError (see
   https://dexterity-developer-manual.readthedocs.org/en/latest/schema-driven-forms/customising-form-behaviour/validation.html#validating-in-action-handlers)
-- Death to EmptyPrefixFieldWidgets
 - Can we simplify by removing user_registration_fields, and relying on
   the schemaeditor (which isn't far behind) doing this work?
 
