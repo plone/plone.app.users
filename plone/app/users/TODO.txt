@@ -1,9 +1,6 @@
 Z3C Forms TODOs
 ---------------
 
-- "Wysiwyg editor" and "Language" fields show "Missing:" for newly added user::
-- The Language and Wysywyg editor fields on the Preferences form aren't
-  getting valid defaults.
 - Inline validation isn't working for the form fields (probably need
   to adjust something to deal with z3c.form fields with no prefix).
 - The "Member Registration" field doesn't seem to have any effect on
