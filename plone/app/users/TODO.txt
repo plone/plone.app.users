@@ -1,8 +1,42 @@
 Z3C Forms TODOs
 ---------------
 
+- "Wysiwyg editor" and "Language" fields show "Missing:" for newly added user::
+- The Language and Wysywyg editor fields on the Preferences form aren't
+  getting valid defaults.
+- Inline validation isn't working for the form fields (probably need
+  to adjust something to deal with z3c.form fields with no prefix).
+- The "Member Registration" field doesn't seem to have any effect on
+  the @@register form
+- The raising of errors during validation can be simplified by raising
+  WidgetActionExecutionError (see https://dexterity-developer-manual.readthedocs.org/en/latest/schema-driven-forms/customising-form-behaviour/validation.html#validating-in-action-handlers)
+- Death to EmptyPrefixFieldWidgets to fix Inline validation
+- Move EmptyPrefixFieldWidgets to plone.z3cform or plone.app.z3cform
+- Can we simplify by removing user_registration_fields, and relying on
+  the schemaeditor (which isn't far behind) doing this work?
+
+Post-merging (p.a.users and c.e.userdata)
+-----------------------------------------
+
 [ ] when this PLIP merged into master, then we need to update
     Products.CMFPlone csrf.txt doc test to work for z3c.form version of
     'register' form; one small change required: change button name from
     form.actions.register to form.buttons.register; actually we'll make it
     work for both versions
+
+- Add collective.examples.userdata to packages tested in coredev
+- Add notes to upgrade guide on what integrators need to pay attention to
+- Make sure p.a.users' readme is linked to an appropriate place
+  in developer.plone.org
+
+- Some forms are neither z3c.form nor formlib:
+
+  * @@usergroup-userprefs
+  * @@usergroup-usermembership
+  * @@usergroup-groupdetails
+  * @@usergroup-groupmembership
+  * @@manage-group-portlets
+  * @@manage-group-dashboard
+  * @@usergroup-groupprefs
+
+  Fine for this PLIP, but worth noting
