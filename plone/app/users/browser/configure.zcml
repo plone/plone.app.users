@@ -78,26 +78,4 @@
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       factory=".personalpreferences.PasswordPanelAdapter"
       />
-
-    <!-- Set empty widgets prefix for our z3c forms to have form field names the
-         same as former formlib forms -->
-    <adapter
-        for=".register.RegistrationControlPanel
-             z3c.form.interfaces.IFormLayer
-             *"
-        factory=".z3cwidgets.EmptyPrefixFieldWidgets"
-        />
-    <adapter
-        for=".register.BaseRegistrationForm
-             z3c.form.interfaces.IFormLayer
-             *"
-        factory=".z3cwidgets.EmptyPrefixFieldWidgets"
-        />
-    <adapter
-        for=".account.AccountPanelForm
-             z3c.form.interfaces.IFormLayer
-             *"
-        factory=".z3cwidgets.EmptyPrefixFieldWidgets"
-        />
-
 </configure>

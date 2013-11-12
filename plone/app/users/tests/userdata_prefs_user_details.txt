@@ -29,7 +29,7 @@ We have these controls in the form:
     ''
     >>> self.browser.getControl('Biography').value
     ''
-    >>> self.browser.getControl(name='form.portrait').value
+    >>> self.browser.getControl(name='form.widgets.portrait').value
 
 
 Modifying user data
@@ -52,7 +52,7 @@ Modifying user data
 
     >>> from pkg_resources import resource_stream
     >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
-    >>> self.browser.getControl(name='form.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
+    >>> self.browser.getControl(name='form.widgets.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
 
     >>> self.browser.getControl('Save').click()
     >>> 'Required input is missing.' in self.browser.contents

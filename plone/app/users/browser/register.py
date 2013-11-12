@@ -459,7 +459,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                         self.widgets.errors += (err_view,)
                         errors += (err_view,)
 
-        email = data.get('email', '')
         if use_email_as_login:
             username_field = 'email'
         else:
@@ -520,24 +519,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 widget.error = err_view
                 self.widgets.errors += (err_view,)
                 errors += (err_view,)
-
-        # Skip this check if email was already in error list
-        if not 'email' in error_keys:
-            if 'email' in form_field_names:
-                if not registration.isValidEmail(email):
-                    err_str = _(u'You must enter a valid email address.')
-                    widget = self.widgets['email']
-                    err_view = getMultiAdapter(
-                        (Invalid(err_str),
-                         self.request,
-                         widget,
-                         widget.field,
-                         self,
-                         self.context), IErrorViewSnippet)
-                    err_view.update()
-                    widget.error = err_view
-                    self.widgets.errors += (err_view,)
-                    errors += (err_view,)
 
         if not username_field in error_keys:
             # Check the uniqueness of the login name, not only when
