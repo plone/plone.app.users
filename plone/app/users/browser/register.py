@@ -459,7 +459,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                         self.widgets.errors += (err_view,)
                         errors += (err_view,)
 
-        email = data.get('email', '')
         if use_email_as_login:
             username_field = 'email'
         else:
@@ -520,7 +519,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 widget.error = err_view
                 self.widgets.errors += (err_view,)
                 errors += (err_view,)
-
 
         if not username_field in error_keys:
             # Check the uniqueness of the login name, not only when
