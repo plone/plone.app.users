@@ -64,6 +64,14 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...There were errors...User Name...Required input is missing...E-mail...Required input is missing...'
+
+    We have to provide a valid email address
+    >>> browser.open('http://nohost/plone/@@register')
+    >>> browser.getControl('User Name').value = 'user1'
+    >>> browser.getControl('E-mail').value = 'user1-AT-example.com'
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...There were errors...Invalid email address...'
     
     Fill out the form. 
     >>> browser.getControl('User Name').value = 'user1'
@@ -92,9 +100,6 @@ Testing the flexible user registration
     >>> browser.getControl('Save').click()
     >>> 'Changes saved' in browser.contents
     True
-    
-    
-    
     >>> browser.getLink(url='http://nohost/plone/logout').click()
     >>> 'Log in' in browser.contents
     True
@@ -181,7 +186,18 @@ Testing the flexible user registration
     >>> 'Send a confirmation mail with a link to set the password' in browser.contents
     False
 
+    We have to provide a valid email address
+    >>> browser.open('http://nohost/plone/@@new-user')
+    >>> browser.getControl('User Name').value = 'user2a'
+    >>> browser.getControl('E-mail').value = 'user2a-AT-example.com'
+    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Confirm password').value = 'secret'
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...There were errors...Invalid email address...'
+
     Fill out the form.
+    >>> browser.open('http://nohost/plone/@@new-user')
     >>> browser.getControl('User Name').value = 'user3'
     >>> browser.getControl('E-mail').value = 'user3@example.com'
     >>> browser.getControl('Password').value = 'secret'
