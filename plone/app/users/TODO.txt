@@ -12,12 +12,6 @@ Z3C Forms TODOs
 Post-merging (p.a.users and c.e.userdata)
 -----------------------------------------
 
-[ ] when this PLIP merged into master, then we need to update
-    Products.CMFPlone csrf.txt doc test to work for z3c.form version of
-    'register' form; one small change required: change button name from
-    form.actions.register to form.buttons.register; actually we'll make it
-    work for both versions
-
 - Add collective.examples.userdata to packages tested in coredev
 - Add notes to upgrade guide on what integrators need to pay attention to
 - Make sure p.a.users' readme is linked to an appropriate place
