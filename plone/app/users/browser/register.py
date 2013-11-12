@@ -34,6 +34,7 @@ import logging
 from plone.app.users.registrationschema import IRegistrationSchema
 from z3c.form.browser.orderedselect import OrderedSelectFieldWidget
 
+from ..utils import notifyWidgetActionExecutionError
 
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
@@ -378,7 +379,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         return login_name
 
     # Actions validators
-    def validate_registration(self, errors, data):
+    def validate_registration(self, action, data):
         """Specific business logic for this join form.  Note: all this logic
         was taken directly from the old validate_registration.py script in
         Products/CMFPlone/skins/plone_login/join_form_validate.vpy
@@ -389,7 +390,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         registration = getToolByName(self.context, 'portal_registration')
 
-        error_keys = [error.field.getName() for error in errors]
+        error_keys = [error.field.getName() for error in action.form.widgets.errors]
 
         form_field_names = [f for f in self.fields]
 
@@ -407,35 +408,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 password_ctl = data.get('password_ctl')
                 if password != password_ctl:
                     err_str = _(u'Passwords do not match.')
-
-                    # set error on password field
-                    widget = self.widgets['password']
-                    err_view = getMultiAdapter(
-                        (Invalid(err_str),
-                         self.request,
-                         widget,
-                         widget.field,
-                         self,
-                         self.context), IErrorViewSnippet
-                    )
-                    err_view.update()
-                    widget.error = err_view
-                    self.widgets.errors += (err_view,)
-                    errors += (err_view,)
-
-                    # set error on password_ctl field
-                    widget = self.widgets['password_ctl']
-                    err_view = getMultiAdapter(
-                        (Invalid(err_str),
-                         self.request,
-                         widget,
-                         widget.field,
-                         self,
-                         self.context), IErrorViewSnippet)
-                    err_view.update()
-                    widget.error = err_view
-                    self.widgets.errors += (err_view,)
-                    errors += (err_view,)
+                    notifyWidgetActionExecutionError(action, 'password', err_str)
+                    notifyWidgetActionExecutionError(action, 'password_ctl', err_str)
 
         # Password field checked against RegistrationTool
         if 'password' in form_field_names:
@@ -446,18 +420,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                     # Use PAS to test validity
                     err_str = registration.testPasswordValidity(password)
                     if err_str:
-                        widget = self.widgets['password']
-                        err_view = getMultiAdapter(
-                            (Invalid(err_str),
-                             self.request,
-                             widget,
-                             widget.field,
-                             self,
-                             self.context), IErrorViewSnippet)
-                        err_view.update()
-                        widget.error = err_view
-                        self.widgets.errors += (err_view,)
-                        errors += (err_view,)
+                        notifyWidgetActionExecutionError(action, 'password', err_str)
 
         if use_email_as_login:
             username_field = 'email'
@@ -489,36 +452,14 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if user_id == portal.getId():
                 err_str = _(u"This username is reserved. Please choose a "
                             "different name.")
-                widget = self.widgets[username_field]
-                err_view = getMultiAdapter(
-                    (Invalid(err_str),
-                     self.request,
-                     widget,
-                     widget.field,
-                     self,
-                     self.context), IErrorViewSnippet)
-                err_view.update()
-                widget.error = err_view
-                self.widgets.errors += (err_view,)
-                errors += (err_view,)
+                notifyWidgetActionExecutionError(action, username_field, err_str)
 
         # Check if user id is allowed by the member id pattern.
         if not username_field in error_keys:
             if not registration.isMemberIdAllowed(user_id):
                 err_str = _(u"The login name you selected is already in use "
                             "or is not valid. Please choose another.")
-                widget = self.widgets[username_field]
-                err_view = getMultiAdapter(
-                    (Invalid(err_str),
-                     self.request,
-                     widget,
-                     widget.field,
-                     self,
-                     self.context), IErrorViewSnippet)
-                err_view.update()
-                widget.error = err_view
-                self.widgets.errors += (err_view,)
-                errors += (err_view,)
+                notifyWidgetActionExecutionError(action, username_field, err_str)
 
         if not username_field in error_keys:
             # Check the uniqueness of the login name, not only when
@@ -528,18 +469,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if results:
                 err_str = _(u"The login name you selected is already in use "
                             "or is not valid. Please choose another.")
-                widget = self.widgets[username_field]
-                err_view = getMultiAdapter(
-                    (Invalid(err_str),
-                     self.request,
-                     widget,
-                     widget.field,
-                     self,
-                     self.context), IErrorViewSnippet)
-                err_view.update()
-                widget.error = err_view
-                self.widgets.errors += (err_view,)
-                errors += (err_view,)
+                notifyWidgetActionExecutionError(action, username_field, err_str)
 
         if 'password' in form_field_names and not 'password' in error_keys:
             # Admin can either set a password or mail the user (or both).
@@ -549,34 +479,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                             "send an email.")
 
                 # set error on password field
-                widget = self.widgets['password']
-                err_view = getMultiAdapter(
-                    (Invalid(err_str),
-                     self.request,
-                     widget,
-                     widget.field,
-                     self,
-                     self.context), IErrorViewSnippet)
-                err_view.update()
-                widget.error = err_view
-                self.widgets.errors += (err_view,)
-                errors += (err_view,)
-
-                # set error on mail_me field
-                widget = self.widgets['mail_me']
-                err_view = getMultiAdapter(
-                    (Invalid(err_str),
-                     self.request,
-                     widget,
-                     widget.field,
-                     self,
-                     self.context), IErrorViewSnippet)
-                err_view.update()
-                widget.error = err_view
-                self.widgets.errors += (err_view,)
-                errors += (err_view,)
-
-        return errors
+                notifyWidgetActionExecutionError(action, 'password', err_str)
+                notifyWidgetActionExecutionError(action, 'mail_me', err_str)
 
     @button.buttonAndHandler(
         _(u'label_register', default=u'Register'), name='register'
@@ -585,11 +489,10 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         data, errors = self.extractData()
 
         # extra password validation
-        errors = self.validate_registration(errors, data)
+        self.validate_registration(action, data)
 
-        if errors:
-            IStatusMessage(self.request).addStatusMessage(
-                self.formErrorsMessage, type='error')
+        if action.form.widgets.errors:
+            self.status = self.formErrorsMessage
             return
 
         self.handle_join_success(data)
@@ -868,11 +771,10 @@ class AddUserForm(BaseRegistrationForm):
         data, errors = self.extractData()
 
         # extra password validation
-        errors = self.validate_registration(errors, data)
+        self.validate_registration(action, data)
 
-        if errors:
-            IStatusMessage(self.request).addStatusMessage(
-                self.formErrorsMessage, type='error')
+        if action.form.widgets.errors:
+            self.status = self.formErrorsMessage
             return
 
         self.handle_join_success(data)
