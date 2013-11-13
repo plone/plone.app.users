@@ -19,6 +19,18 @@ from zope.interface import Invalid
 from z3c.form.interfaces import IErrorViewSnippet
 
 
+MESSAGE_EMAIL_CANNOT_CHANGE = \
+    _('message_email_cannot_change',
+      default=(u"Sorry, you are not allowed to "
+               u"change your email address."))
+
+MESSAGE_EMAIL_IN_USE = \
+    _('message_email_in_use',
+      default=(u"The email address you selected is "
+               u"already in use or is not valid as login "
+               u"name. Please choose another."))
+
+
 class AccountPanelSchemaAdapter(object):
     """Data manager that gets and sets any property mentioned
        in the schema to the property sheet
@@ -76,6 +88,21 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     successMessage = _("Changes saved.")
     noChangesMessage = _("No changes made.")
 
+    def _differentEmail(self, email):
+        """Check if the submitted form email address differs from the existing
+        one.
+
+        Keeping your email the same (which happens when you change something
+        else on the personalize form) or changing it back to your login name,
+        is fine.
+        """
+        membership = getToolByName(self.context, 'portal_membership')
+        if self.request.get('userid'):
+            member = membership.getMemberById(self.request.get('userid'))
+        else:
+            member = membership.getAuthenticatedMember()
+        return email not in (member.getId(), member.getUserName())
+
     def makeQuery(self):
         if hasattr(self.request, 'userid'):
             return '?' + make_query({
@@ -89,39 +116,20 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     def validate_email(self, errors, data):
         context = aq_inner(self.context)
         error_keys = [error.field.getName() for error in errors]
-
         if 'email' not in error_keys:
-            reg_tool = getToolByName(context, 'portal_registration')
-            props = getToolByName(context, 'portal_properties')
-            if props.site_properties.getProperty('use_email_as_login'):
+            registration = getToolByName(context, 'portal_registration')
+            properties = getToolByName(context, 'portal_properties')
+            if properties.site_properties.getProperty('use_email_as_login'):
                 err_str = ''
                 try:
-                    id_allowed = reg_tool.isMemberIdAllowed(data['email'])
+                    id_allowed = registration.isMemberIdAllowed(data['email'])
                 except Unauthorized:
-                    err_str = _('message_email_cannot_change',
-                                default=(u"Sorry, you are not allowed to "
-                                         u"change your email address."))
+                    err_str = MESSAGE_EMAIL_CANNOT_CHANGE
                 else:
                     if not id_allowed:
-                        # Keeping your email the same (which happens when you
-                        # change something else on the personalize form) or
-                        # changing it back to your login name, is fine.
-                        membership = getToolByName(context,
-                                                   'portal_membership')
-                        if self.request.get('userid'):
-                            member = membership.getMemberById(
-                                self.request.get('userid'))
-                        else:
-                            member = membership.getAuthenticatedMember()
-                        if data['email'] not in (member.getId(),
-                                                 member.getUserName()):
-                            err_str = _(
-                                'message_email_in_use',
-                                default=(
-                                    u"The email address you selected is "
-                                    u"already in use or is not valid as login "
-                                    u"name. Please choose another."))
-
+                        # only allow if unchanged
+                        if self._differentEmail(data['email']):
+                            err_str = MESSAGE_EMAIL_IN_USE
                 if err_str:
                     widget = self.widgets['email']
                     err_view = getMultiAdapter((
