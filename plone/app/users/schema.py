@@ -123,7 +123,7 @@ class IAddUserSchema(Interface):
                 default=u'Add to the following groups:'),
         description=u'',
         required=False,
-        value_type=schema.Choice(vocabulary='Group Ids'))
+        value_type=schema.Choice(vocabulary='plone.app.users.group_ids'))
 
 
 class PortraitWidget(NamedImageWidget):

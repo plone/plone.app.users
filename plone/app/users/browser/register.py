@@ -3,7 +3,7 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.utils import normalizeString, safe_unicode
+from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZODB.POSException import ConflictError
@@ -24,45 +24,13 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility, queryUtility, getAdapter
 from zope.interface import Interface
 from zope.schema import getFieldNames
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
-from zope.site.hooks import getSite
 import logging
 
 from ..schema import IRegisterSchema, ICombinedRegisterSchema, IAddUserSchema
 from ..utils import notifyWidgetActionExecutionError
 
-# Define constants from the Join schema that should be added to the
-# vocab of the join fields setting in usergroupssettings controlpanel.
-JOIN_CONST = ['username', 'password', 'email', 'mail_me']
-
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
-
-
-def getGroupIds(context):
-    site = getSite()
-    groups_tool = getToolByName(site, 'portal_groups')
-    groups = groups_tool.listGroups()
-    # Get group id, title tuples for each, omitting virtual group
-    # 'AuthenticatedUsers'
-    terms = []
-    for g in groups:
-        if g.id == 'AuthenticatedUsers':
-            continue
-        is_zope_manager = getSecurityManager().checkPermission(
-            ManagePortal, context)
-        if 'Manager' in g.getRoles() and not is_zope_manager:
-            continue
-
-        group_title = safe_unicode(g.getGroupTitleOrName())
-        if group_title != g.id:
-            title = u'%s (%s)' % (group_title, g.id)
-        else:
-            title = group_title
-        terms.append(SimpleTerm(g.id, g.id, title))
-    # Sort by title
-    terms.sort(key=lambda x: normalizeString(x.title))
-    return SimpleVocabulary(terms)
 
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
@@ -335,7 +303,11 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         registration = getToolByName(self.context, 'portal_registration')
 
-        error_keys = [error.field.getName() for error in action.form.widgets.errors]
+        error_keys = [
+            error.field.getName()
+            for error
+            in action.form.widgets.errors
+        ]
 
         form_field_names = [f for f in self.fields]
 
@@ -353,8 +325,10 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 password_ctl = data.get('password_ctl')
                 if password != password_ctl:
                     err_str = _(u'Passwords do not match.')
-                    notifyWidgetActionExecutionError(action, 'password', err_str)
-                    notifyWidgetActionExecutionError(action, 'password_ctl', err_str)
+                    notifyWidgetActionExecutionError(action,
+                                                     'password', err_str)
+                    notifyWidgetActionExecutionError(action,
+                                                     'password_ctl', err_str)
 
         # Password field checked against RegistrationTool
         if 'password' in form_field_names:
@@ -365,7 +339,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                     # Use PAS to test validity
                     err_str = registration.testPasswordValidity(password)
                     if err_str:
-                        notifyWidgetActionExecutionError(action, 'password', err_str)
+                        notifyWidgetActionExecutionError(action,
+                                                         'password', err_str)
 
         if use_email_as_login:
             username_field = 'email'
@@ -397,14 +372,16 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if user_id == portal.getId():
                 err_str = _(u"This username is reserved. Please choose a "
                             "different name.")
-                notifyWidgetActionExecutionError(action, username_field, err_str)
+                notifyWidgetActionExecutionError(action,
+                                                 username_field, err_str)
 
         # Check if user id is allowed by the member id pattern.
         if not username_field in error_keys:
             if not registration.isMemberIdAllowed(user_id):
                 err_str = _(u"The login name you selected is already in use "
                             "or is not valid. Please choose another.")
-                notifyWidgetActionExecutionError(action, username_field, err_str)
+                notifyWidgetActionExecutionError(action,
+                                                 username_field, err_str)
 
         if not username_field in error_keys:
             # Check the uniqueness of the login name, not only when
@@ -414,7 +391,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if results:
                 err_str = _(u"The login name you selected is already in use "
                             "or is not valid. Please choose another.")
-                notifyWidgetActionExecutionError(action, username_field, err_str)
+                notifyWidgetActionExecutionError(action,
+                                                 username_field, err_str)
 
         if 'password' in form_field_names and not 'password' in error_keys:
             # Admin can either set a password or mail the user (or both).
@@ -560,6 +538,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         # cache adapters
         adapters = {}
 
+        # Set any fields that are simply properties for the new user, rather
+        # than fields to help create the new user
         register_fields = getFieldNames(IRegisterSchema) + \
             getFieldNames(IAddUserSchema)
         for k, value in data.items():

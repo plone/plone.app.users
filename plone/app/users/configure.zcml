@@ -8,7 +8,7 @@
     <utility component=".vocabularies.UserRegistrationFieldsVocabularyFactory"
              name="plone.app.users.user_registration_fields" />
     <utility provides="zope.schema.interfaces.IVocabularyFactory"
-             component=".browser.register.getGroupIds"
-             name="Group Ids"/>
+             component=".vocabularies.GroupIdVocabularyFactory"
+             name="plone.app.users.group_ids"/>
 
 </configure>
