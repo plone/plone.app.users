@@ -76,7 +76,7 @@ class GroupIdVocabulary(object):
       ...     description="Group Description",
       ... )
       True
-      
+
       >>> name = 'plone.app.users.group_ids'
       >>> util = queryUtility(IVocabularyFactory, name)
 
