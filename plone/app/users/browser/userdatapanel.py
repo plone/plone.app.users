@@ -7,9 +7,6 @@ from Products.PlonePAS.tools.membership import default_portrait
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.schema import IUserDataSchema
-from z3c.form.interfaces import IErrorViewSnippet
-from zope.component import getMultiAdapter
-from zope.interface import Invalid
 
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
