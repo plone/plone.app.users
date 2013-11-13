@@ -31,7 +31,7 @@
     <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="change-password"
-      class=".personalpreferences.PasswordPanel"
+      class=".passwordpanel.PasswordPanel"
       permission="cmf.SetOwnPassword"
       />
 
@@ -52,14 +52,14 @@
     <browser:page
         for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="personal-information"
-      class=".personalpreferences.UserDataPanel"
+      class=".userdatapanel.UserDataPanel"
       permission="cmf.SetOwnProperties"
       />
 
     <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="user-information"
-      class=".personalpreferences.UserDataConfiglet"
+      class=".userdatapanel.UserDataConfiglet"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
@@ -71,11 +71,11 @@
     <adapter
       provides="..schema.IUserDataSchema"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      factory=".personalpreferences.UserDataPanelAdapter"
+      factory=".userdatapanel.UserDataPanelAdapter"
       />
     <adapter
-      provides=".personalpreferences.IPasswordSchema"
+      provides=".passwordpanel.IPasswordSchema"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      factory=".personalpreferences.PasswordPanelAdapter"
+      factory=".passwordpanel.PasswordPanelAdapter"
       />
 </configure>
