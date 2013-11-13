@@ -4,8 +4,10 @@ Changelog
 1.1.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Add userid to cancel url
+  Fixes error on pressing cancel and clicking next tab
+  https://dev.plone.org/ticket/12821
+  [maartenkling]
 
 1.1.5 (2013-01-13)
 ------------------

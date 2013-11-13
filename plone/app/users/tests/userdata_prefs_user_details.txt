@@ -1,4 +1,4 @@
-Admin modifies user information thru 'Users and groups' 
+Admin modifies user information thru 'Users and groups'
 ---------------------------------------------------------------------
 
 An admin can modify user information thru the @@user-information form in Users and Groups
@@ -117,3 +117,12 @@ slightly depending on which Plone version you have.  Products.PlonePAS
     >>> portrait_value = self.membership.getPersonalPortrait('test_user_1_')
     >>> portrait_value
     <FSImage at /plone/defaultUser...>
+
+Finally let's see if Cancel button still leaves us on selected user Personal
+Information form::
+
+    >>> self.browser.getControl('Cancel').click()
+    >>> 'Changes canceled.' in self.browser.contents
+    True
+    >>> 'Change personal information for test_user_1_' in self.browser.contents
+    True

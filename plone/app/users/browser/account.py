@@ -77,7 +77,12 @@ class AccountPanelForm(FieldsetsEditForm):
         IStatusMessage(self.request).addStatusMessage(_("Changes canceled."),
                                                       type="info")
 
-        self.request.response.redirect(self.request['ACTUAL_URL'])
+        query = ''
+        if self.userid:
+            query = '?' + self.makeQuery(userid=self.userid)
+
+        self.request.response.redirect('%s%s' % (self.request['ACTUAL_URL'],
+                                                 query))
         return ''
 
     def _on_save(self, data=None):
