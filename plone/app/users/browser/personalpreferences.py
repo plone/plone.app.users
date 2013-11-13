@@ -9,7 +9,7 @@ from Products.PlonePAS.tools.membership import default_portrait
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from plone.app.users.userdataschema import IUserDataSchema
+from plone.app.users.schema import IUserDataSchema
 from z3c.form import button
 from z3c.form.interfaces import HIDDEN_MODE
 from z3c.form.interfaces import IErrorViewSnippet

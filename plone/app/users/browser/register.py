@@ -9,7 +9,6 @@ from Products.statusmessages.interfaces import IStatusMessage
 from ZODB.POSException import ConflictError
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.interfaces import IUserIdGenerator
-from plone.app.users.userdataschema import IUserDataSchema
 from plone.app.users.utils import uuid_userid_generator
 from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.interfaces import OMITTED_KEY
@@ -20,20 +19,16 @@ from z3c.form import field
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import DISPLAY_MODE
-from z3c.form.interfaces import IErrorViewSnippet
 from zExceptions import Forbidden
-from zope import schema
 from zope.component import getMultiAdapter
 from zope.component import getUtility, queryUtility, getAdapter
 from zope.interface import Interface
-from zope.interface import Invalid
 from zope.schema import getFieldNames
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
 from zope.site.hooks import getSite
 import logging
-from plone.app.users.registrationschema import IRegistrationSchema
-from z3c.form.browser.orderedselect import OrderedSelectFieldWidget
 
+from ..schema import IRegisterSchema, ICombinedRegisterSchema, IAddUserSchema
 from ..utils import notifyWidgetActionExecutionError
 
 # Define constants from the Join schema that should be added to the
@@ -42,52 +37,6 @@ JOIN_CONST = ['username', 'password', 'email', 'mail_me']
 
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
-
-# Property as it is named in portal_properties
-USER_REGISTRATION_FIELDS = 'user_registration_fields'
-
-
-class IRegisterSchema(Interface):
-
-    username = schema.ASCIILine(
-        title=_(u'label_user_name', default=u'User Name'),
-        description=_(
-            u'help_user_name_creation_casesensitive',
-            default=u"Enter a user name, usually something like 'jsmith'. "
-                    u"No spaces or special characters. Usernames and "
-                    u"passwords are case sensitive, make sure the caps lock "
-                    u"key is not enabled. This is the name used to log in."
-        )
-    )
-
-    password = schema.Password(
-        title=_(u'label_password', default=u'Password'),
-        description=_(u'help_password_creation',
-                      default=u'Enter your new password.'))
-
-    password_ctl = schema.Password(
-        title=_(u'label_confirm_password',
-                default=u'Confirm password'),
-        description=_(u'help_confirm_password',
-                      default=u"Re-enter the password. "
-                      "Make sure the passwords are identical."))
-
-    mail_me = schema.Bool(
-        title=_(u'label_mail_password',
-                default=u"Send a confirmation mail with a link to set the "
-                u"password"),
-        required=False,
-        default=False)
-
-
-class IAddUserSchema(Interface):
-
-    groups = schema.List(
-        title=_(u'label_add_to_groups',
-                default=u'Add to the following groups:'),
-        description=u'',
-        required=False,
-        value_type=schema.Choice(vocabulary='Group Ids'))
 
 
 def getGroupIds(context):
@@ -114,10 +63,6 @@ def getGroupIds(context):
     # Sort by title
     terms.sort(key=lambda x: normalizeString(x.title))
     return SimpleVocabulary(terms)
-
-
-class ICombinedRegisterSchema(IRegisterSchema, IUserDataSchema):
-    """Collect all register fields under the same interface"""
 
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
@@ -804,61 +749,3 @@ class AddUserForm(BaseRegistrationForm):
             '/@@usergroup-userprefs?searchstring=' + user_id)
 
         self._finishedRegister = True
-
-
-class RegistrationControlPanel(form.Form):
-    label = _(u"Registration settings")
-    description = _(u"Registration settings for this site.")
-    form_name = _(u"Registration settings")
-
-    formErrorsMessage = _('There were errors.')
-    template = ViewPageTemplateFile('memberregistration.pt')
-
-    fields = field.Fields(IRegistrationSchema)
-    fields['user_registration_fields'].widgetFactory = OrderedSelectFieldWidget
-
-    def getContent(self):
-        props = self.props()
-        return {'user_registration_fields': props.getProperty(
-            USER_REGISTRATION_FIELDS, [])}
-
-    @button.buttonAndHandler(_(u'label_save', default=u'Save'), name='save')
-    def action_save(self, action):
-        # CSRF protection
-        CheckAuthenticator(self.request)
-
-        data, errors = self.extractData()
-        if errors:
-            IStatusMessage(self.request).addStatusMessage(
-                self.formErrorsMessage, type='error')
-            return
-
-        # save property
-        if data['user_registration_fields'] != \
-                self.getContent()['user_registration_fields']:
-            props = self.props()
-            props._updateProperty(
-                USER_REGISTRATION_FIELDS,
-                data['user_registration_fields']
-            )
-            msg = _("Changes saved.")
-        else:
-            msg = _("No changes made.")
-        IStatusMessage(self.request).addStatusMessage(msg, type="info")
-
-    @button.buttonAndHandler(
-        _(u'label_cancel', default=u'Cancel'), name='cancel'
-    )
-    def action_cancel(self, action):
-        IStatusMessage(self.request).addStatusMessage(
-            _("Changes canceled."), type="info"
-        )
-        url = getMultiAdapter(
-            (self.context, self.request),
-            name='absolute_url'
-        )()
-        self.request.response.redirect(url + '/plone_control_panel')
-
-    def props(self):
-        pprop = getToolByName(self.context, 'portal_properties')
-        return pprop.site_properties

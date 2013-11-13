@@ -10,7 +10,7 @@
     <browser:page
       name="member-registration"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
-      class=".register.RegistrationControlPanel"
+      class=".registersettingspanel.RegistrationControlPanel"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
@@ -69,7 +69,7 @@
       factory=".personalpreferences.PersonalPreferencesPanelAdapter"
       />
     <adapter
-      provides="..userdataschema.IUserDataSchema"
+      provides="..schema.IUserDataSchema"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       factory=".personalpreferences.UserDataPanelAdapter"
       />

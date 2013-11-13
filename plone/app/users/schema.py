@@ -76,7 +76,54 @@ class IUserDataSchema(Interface):
                     u'image size is 75 pixels wide by 100 pixels tall.'
         ),
         required=False)
-    form.widget(portrait='plone.app.users.userdataschema.PortraitFieldWidget')
+    form.widget(portrait='plone.app.users.schema.PortraitFieldWidget')
+
+
+class IRegisterSchema(Interface):
+
+    username = schema.ASCIILine(
+        title=_(u'label_user_name', default=u'User Name'),
+        description=_(
+            u'help_user_name_creation_casesensitive',
+            default=u"Enter a user name, usually something like 'jsmith'. "
+                    u"No spaces or special characters. Usernames and "
+                    u"passwords are case sensitive, make sure the caps lock "
+                    u"key is not enabled. This is the name used to log in."
+        )
+    )
+
+    password = schema.Password(
+        title=_(u'label_password', default=u'Password'),
+        description=_(u'help_password_creation',
+                      default=u'Enter your new password.'))
+
+    password_ctl = schema.Password(
+        title=_(u'label_confirm_password',
+                default=u'Confirm password'),
+        description=_(u'help_confirm_password',
+                      default=u"Re-enter the password. "
+                      "Make sure the passwords are identical."))
+
+    mail_me = schema.Bool(
+        title=_(u'label_mail_password',
+                default=u"Send a confirmation mail with a link to set the "
+                u"password"),
+        required=False,
+        default=False)
+
+
+class ICombinedRegisterSchema(IRegisterSchema, IUserDataSchema):
+    """Collect all register fields under the same interface"""
+
+
+class IAddUserSchema(Interface):
+
+    groups = schema.List(
+        title=_(u'label_add_to_groups',
+                default=u'Add to the following groups:'),
+        description=u'',
+        required=False,
+        value_type=schema.Choice(vocabulary='Group Ids'))
 
 
 class PortraitWidget(NamedImageWidget):
@@ -107,3 +154,24 @@ class PortraitWidget(NamedImageWidget):
 @adapter(INamedImageField, IFormLayer)
 def PortraitFieldWidget(field, request):
     return FieldWidget(field, PortraitWidget(request))
+
+
+class IRegistrationSettingsSchema(Interface):
+
+    user_registration_fields = schema.Tuple(
+        title=_(
+            u'title_user_registration_fields',
+            default=u'User registration fields'
+        ),
+        description=_(
+            u"description_user_registration_fields",
+            default=(u"Select the fields for the join form. Fields in the "
+                     u"right box will be shown on the form, fields on the "
+                     u"left are disabled. Use the left/right buttons to move "
+                     u"a field from right to left (to disable it) and vice "
+                     u"versa. Use the up/down buttons to change the order in "
+                     u"which the fields appear on the form."),
+        ),
+        value_type=schema.Choice(
+            vocabulary='plone.app.users.user_registration_fields'),
+    )
