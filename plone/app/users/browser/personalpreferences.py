@@ -38,7 +38,7 @@ class IPersonalPreferences(Interface):
                      u'Names are not displayed, they will be generated '
                      u'automatically.')),
             required=False
-        )
+    )
 
     wysiwyg_editor = Choice(
         title=_(u'label_wysiwyg_editor', default=u'Wysiwyg editor'),
@@ -48,7 +48,7 @@ class IPersonalPreferences(Interface):
         ),
         vocabulary="plone.app.vocabularies.AvailableEditors",
         required=False,
-        )
+    )
 
     ext_editor = Bool(
         title=_(u'label_ext_editor', default=u'Enable external editing'),
@@ -68,14 +68,14 @@ class IPersonalPreferences(Interface):
         description=_(u'help_preferred_language', u'Your preferred language.'),
         vocabulary="plone.app.vocabularies.AvailableContentLanguages",
         required=False
-        )
+    )
 
     timezone = Choice(
         title=_(u'label_timezone', default=u'Time zone'),
         description=_(u'help_timezone', default=u'Your time zone'),
         vocabulary='plone.app.event.AvailableTimezones',
         required=False,
-        )
+    )
 
 
 class PersonalPreferencesPanelAdapter(AccountPanelSchemaAdapter):
@@ -240,14 +240,14 @@ class IPasswordSchema(Interface):
             u'help_current_password',
             default=u'Enter your current password.'),
         #constraint=checkCurrentPassword,
-        )
+    )
 
     new_password = schema.Password(
         title=_(u'label_new_password', default=u'New password'),
         description=_(
             u'help_new_password',
             default=u"Enter your new password."),
-        )
+    )
 
     new_password_ctl = schema.Password(
         title=_(u'label_confirm_password', default=u'Confirm password'),
@@ -255,7 +255,7 @@ class IPasswordSchema(Interface):
             u'help_confirm_password',
             default=u"Re-enter the password. "
             u"Make sure the passwords are identical."),
-        )
+    )
 
 
 class PasswordPanelAdapter(SchemaAdapterBase):
