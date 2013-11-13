@@ -5,11 +5,10 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.users.browser.account import AccountPanelForm
 from z3c.form import button
-from z3c.form.interfaces import IErrorViewSnippet
 from zope import schema
-from zope.component import getMultiAdapter
 from zope.interface import Interface
-from zope.interface import Invalid
+
+from ..utils import notifyWidgetActionExecutionError
 
 
 class IPasswordSchema(Interface):
@@ -78,7 +77,7 @@ class PasswordPanel(AccountPanelForm):
             )
             self.fields['new_password'].field.description = msg
 
-    def validate_password(self, errors, data):
+    def validate_password(self, action, data):
         context = aq_inner(self.context)
         registration = getToolByName(context, 'portal_registration')
         membertool = getToolByName(context, 'portal_membership')
@@ -91,56 +90,22 @@ class PasswordPanel(AccountPanelForm):
             if not membertool.testCurrentPassword(current_password):
                 # add error to current_password widget
                 err_str = _(u"Incorrect value for current password")
-                widget = self.widgets['current_password']
-                err_view = getMultiAdapter((
-                    Invalid(err_str),
-                    self.request,
-                    widget,
-                    widget.field,
-                    self,
-                    self.context), IErrorViewSnippet)
-                err_view.update()
-                widget.error = err_view
-                self.widgets.errors += (err_view,)
-                errors += (err_view,)
+                notifyWidgetActionExecutionError(action,
+                                                 'current_password', err_str)
 
         # check if passwords are same and valid according to plugin
         new_password = data.get('new_password')
         new_password_ctl = data.get('new_password_ctl')
         if new_password and new_password_ctl:
-            failMessage = registration.testPasswordValidity(new_password,
-                                                            new_password_ctl)
+            err_str = registration.testPasswordValidity(new_password,
+                                                        new_password_ctl)
 
-            if failMessage:
+            if err_str:
                 # add error to new_password widget
-                widget = self.widgets['new_password']
-                err_view = getMultiAdapter((
-                    Invalid(failMessage),
-                    self.request,
-                    widget,
-                    widget.field,
-                    self,
-                    self.context), IErrorViewSnippet)
-                err_view.update()
-                widget.error = err_view
-                self.widgets.errors += (err_view,)
-                errors += (err_view,)
-
-                # add error to new_password_ctl widget
-                widget = self.widgets['new_password_ctl']
-                err_view = getMultiAdapter((
-                    Invalid(failMessage),
-                    self.request,
-                    widget,
-                    widget.field,
-                    self,
-                    self.context), IErrorViewSnippet)
-                err_view.update()
-                widget.error = err_view
-                self.widgets.errors += (err_view,)
-                errors += (err_view,)
-
-        return errors
+                notifyWidgetActionExecutionError(action,
+                                                 'new_password', err_str)
+                notifyWidgetActionExecutionError(action,
+                                                 'new_password_ctl', err_str)
 
     @button.buttonAndHandler(
         _(u'label_change_password', default=u'Change Password'),
@@ -150,11 +115,10 @@ class PasswordPanel(AccountPanelForm):
         data, errors = self.extractData()
 
         # extra password validation
-        errors = self.validate_password(errors, data)
+        self.validate_password(action, data)
 
-        if errors:
-            IStatusMessage(self.request).addStatusMessage(
-                self.formErrorsMessage, type='error')
+        if action.form.widgets.errors:
+            self.status = self.formErrorsMessage
             return
 
         membertool = getToolByName(self.context, 'portal_membership')

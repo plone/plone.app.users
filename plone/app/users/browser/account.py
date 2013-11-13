@@ -11,12 +11,11 @@ from plone.app.controlpanel.events import ConfigurationChangedEvent
 from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.autoform.form import AutoExtensibleForm
 from plone.protect import CheckAuthenticator
-from zope.component import getMultiAdapter
 from zope.event import notify
-from zope.interface import Invalid
 from zope.interface import implements
 from z3c.form import form, button
-from z3c.form.interfaces import IErrorViewSnippet
+
+from ..utils import notifyWidgetActionExecutionError
 
 
 MESSAGE_EMAIL_CANNOT_CHANGE = \
@@ -113,9 +112,13 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     def action(self):
         return self.request.getURL() + self.makeQuery()
 
-    def validate_email(self, errors, data):
+    def validate_email(self, action, data):
         context = aq_inner(self.context)
-        error_keys = [error.field.getName() for error in errors]
+        error_keys = [
+            error.field.getName()
+            for error
+            in action.form.widgets.errors
+        ]
         if 'email' not in error_keys:
             registration = getToolByName(context, 'portal_registration')
             properties = getToolByName(context, 'portal_properties')
@@ -131,20 +134,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
                         if self._differentEmail(data['email']):
                             err_str = MESSAGE_EMAIL_IN_USE
                 if err_str:
-                    widget = self.widgets['email']
-                    err_view = getMultiAdapter((
-                        Invalid(err_str),
-                        self.request,
-                        widget,
-                        widget.field,
-                        self, self.context
-                    ), IErrorViewSnippet)
-                    err_view.update()
-                    widget.error = err_view
-                    self.widgets.errors += (err_view,)
-                    errors += (err_view,)
-
-        return errors
+                    notifyWidgetActionExecutionError(action, 'email', err_str)
 
     @button.buttonAndHandler(_(u'Save'))
     def handleSave(self, action):
@@ -153,11 +143,10 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         data, errors = self.extractData()
 
         # extra validation for email
-        errors = self.validate_email(errors, data)
+        self.validate_email(action, data)
 
-        if errors:
-            IStatusMessage(self.request).addStatusMessage(
-                self.formErrorsMessage, type='error')
+        if action.form.widgets.errors:
+            self.status = self.formErrorsMessage
             return
 
         if self.applyChanges(data):
