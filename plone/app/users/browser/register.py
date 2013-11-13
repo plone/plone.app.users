@@ -303,7 +303,11 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         registration = getToolByName(self.context, 'portal_registration')
 
-        error_keys = [error.field.getName() for error in action.form.widgets.errors]
+        error_keys = [
+            error.field.getName()
+            for error
+            in action.form.widgets.errors
+        ]
 
         form_field_names = [f for f in self.fields]
 
@@ -321,8 +325,10 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 password_ctl = data.get('password_ctl')
                 if password != password_ctl:
                     err_str = _(u'Passwords do not match.')
-                    notifyWidgetActionExecutionError(action, 'password', err_str)
-                    notifyWidgetActionExecutionError(action, 'password_ctl', err_str)
+                    notifyWidgetActionExecutionError(action,
+                                                     'password', err_str)
+                    notifyWidgetActionExecutionError(action,
+                                                     'password_ctl', err_str)
 
         # Password field checked against RegistrationTool
         if 'password' in form_field_names:
@@ -333,7 +339,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                     # Use PAS to test validity
                     err_str = registration.testPasswordValidity(password)
                     if err_str:
-                        notifyWidgetActionExecutionError(action, 'password', err_str)
+                        notifyWidgetActionExecutionError(action,
+                                                         'password', err_str)
 
         if use_email_as_login:
             username_field = 'email'
@@ -365,14 +372,16 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if user_id == portal.getId():
                 err_str = _(u"This username is reserved. Please choose a "
                             "different name.")
-                notifyWidgetActionExecutionError(action, username_field, err_str)
+                notifyWidgetActionExecutionError(action,
+                                                 username_field, err_str)
 
         # Check if user id is allowed by the member id pattern.
         if not username_field in error_keys:
             if not registration.isMemberIdAllowed(user_id):
                 err_str = _(u"The login name you selected is already in use "
                             "or is not valid. Please choose another.")
-                notifyWidgetActionExecutionError(action, username_field, err_str)
+                notifyWidgetActionExecutionError(action,
+                                                 username_field, err_str)
 
         if not username_field in error_keys:
             # Check the uniqueness of the login name, not only when
@@ -382,7 +391,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if results:
                 err_str = _(u"The login name you selected is already in use "
                             "or is not valid. Please choose another.")
-                notifyWidgetActionExecutionError(action, username_field, err_str)
+                notifyWidgetActionExecutionError(action,
+                                                 username_field, err_str)
 
         if 'password' in form_field_names and not 'password' in error_keys:
             # Admin can either set a password or mail the user (or both).
@@ -528,6 +538,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         # cache adapters
         adapters = {}
 
+        # Set any fields that are simply properties for the new user, rather
+        # than fields to help create the new user
         register_fields = getFieldNames(IRegisterSchema) + \
             getFieldNames(IAddUserSchema)
         for k, value in data.items():
