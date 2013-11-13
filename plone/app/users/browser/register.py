@@ -3,7 +3,7 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.utils import normalizeString, safe_unicode
+from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZODB.POSException import ConflictError
@@ -24,45 +24,13 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility, queryUtility, getAdapter
 from zope.interface import Interface
 from zope.schema import getFieldNames
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
-from zope.site.hooks import getSite
 import logging
 
 from ..schema import IRegisterSchema, ICombinedRegisterSchema, IAddUserSchema
 from ..utils import notifyWidgetActionExecutionError
 
-# Define constants from the Join schema that should be added to the
-# vocab of the join fields setting in usergroupssettings controlpanel.
-JOIN_CONST = ['username', 'password', 'email', 'mail_me']
-
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
-
-
-def getGroupIds(context):
-    site = getSite()
-    groups_tool = getToolByName(site, 'portal_groups')
-    groups = groups_tool.listGroups()
-    # Get group id, title tuples for each, omitting virtual group
-    # 'AuthenticatedUsers'
-    terms = []
-    for g in groups:
-        if g.id == 'AuthenticatedUsers':
-            continue
-        is_zope_manager = getSecurityManager().checkPermission(
-            ManagePortal, context)
-        if 'Manager' in g.getRoles() and not is_zope_manager:
-            continue
-
-        group_title = safe_unicode(g.getGroupTitleOrName())
-        if group_title != g.id:
-            title = u'%s (%s)' % (group_title, g.id)
-        else:
-            title = group_title
-        terms.append(SimpleTerm(g.id, g.id, title))
-    # Sort by title
-    terms.sort(key=lambda x: normalizeString(x.title))
-    return SimpleVocabulary(terms)
 
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
