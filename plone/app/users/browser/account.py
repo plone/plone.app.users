@@ -1,21 +1,21 @@
+from AccessControl import Unauthorized
 from Acquisition import aq_inner
-from zope.interface import implements
-from ZTUtils import make_query
-from plone.app.controlpanel.events import ConfigurationChangedEvent
-from plone.protect import CheckAuthenticator
+from Products.CMFCore.permissions import SetOwnProperties
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
+from ZTUtils import make_query
+from plone.app.controlpanel.events import ConfigurationChangedEvent
 from plone.app.users.browser.interfaces import IAccountPanelForm
-from z3c.form import form, button
 from plone.autoform.form import AutoExtensibleForm
-from Products.CMFPlone.utils import safe_unicode
-from Products.CMFCore.permissions import SetOwnProperties
-from zope.event import notify
-from AccessControl import Unauthorized
+from plone.protect import CheckAuthenticator
 from zope.component import getMultiAdapter
+from zope.event import notify
 from zope.interface import Invalid
+from zope.interface import implements
+from z3c.form import form, button
 from z3c.form.interfaces import IErrorViewSnippet
 
 
