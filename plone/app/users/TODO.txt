@@ -3,11 +3,6 @@ Z3C Forms TODOs
 
 - The "Member Registration" field doesn't seem to have any effect on
   the @@register form
-- The raising of errors during validation can be simplified by raising
-  WidgetActionExecutionError (see
-  https://dexterity-developer-manual.readthedocs.org/en/latest/schema-driven-forms/customising-form-behaviour/validation.html#validating-in-action-handlers)
-- Can we simplify by removing user_registration_fields, and relying on
-  the schemaeditor (which isn't far behind) doing this work?
 
 Post-merging (p.a.users and c.e.userdata)
 -----------------------------------------
