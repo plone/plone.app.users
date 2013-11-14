@@ -1,9 +1,6 @@
 Z3C Forms TODOs
 ---------------
 
-- The "Member Registration" field doesn't seem to have any effect on
-  the @@register form
-
 Post-merging (p.a.users and c.e.userdata)
 -----------------------------------------
 
