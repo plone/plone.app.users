@@ -15,6 +15,7 @@ class RegistrationControlPanel(form.Form):
     label = _(u"Registration settings")
     description = _(u"Registration settings for this site.")
     form_name = _(u"Registration settings")
+    enableCSRFProtection = True
 
     formErrorsMessage = _('There were errors.')
     template = ViewPageTemplateFile('memberregistration.pt')

@@ -60,6 +60,7 @@ class UserDataPanel(AccountPanelForm):
               default=u'Personal Information')
     form_name = _(u'User Data Form')
     schema = IUserDataSchema
+    enableCSRFProtection = True
 
     @property
     def description(self):

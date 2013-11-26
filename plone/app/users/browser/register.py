@@ -40,6 +40,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     formErrorsMessage = _('There were errors.')
     ignoreContext = True
     schema = ICombinedRegisterSchema
+    enableCSRFProtection = True
 
     # this attribute indicates if user was successfully registered
     _finishedRegister = False

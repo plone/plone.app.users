@@ -34,6 +34,11 @@ We have these controls in the form:
     >>> isEmptyMarker(self.browser.getControl('Language', index=0).value)
     True
 
+The form should be using CSRF protection:
+
+    >>> self.browser.getControl(name='_authenticator')
+    <Control name='_authenticator' type='hidden'>
+
 
 Modifying values
 ----------------

@@ -26,7 +26,6 @@
                            type="hidden"
                            name="came_from"
                            tal:attributes="value came_from" />
-                    <input tal:replace="structure context/@@authenticator/authenticator" />
                   </metal:bottom>
                 </metal:block>
             </div>

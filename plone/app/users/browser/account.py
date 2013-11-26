@@ -82,6 +82,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     implements(IAccountPanelForm)
     schema = IAccountPanelForm
     template = ViewPageTemplateFile('account-panel.pt')
+    enableCSRFProtection = True
 
     hidden_widgets = []
     successMessage = _("Changes saved.")

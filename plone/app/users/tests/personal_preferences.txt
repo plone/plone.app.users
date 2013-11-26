@@ -43,6 +43,11 @@ We have two controls, one for the start page and one for the language:
     >>> isEmptyMarker(self.browser.getControl('Language', index=0).value)
     True
 
+The form should be using CSRF protection:
+
+    >>> self.browser.getControl(name='_authenticator')
+    <Control name='_authenticator' type='hidden'>
+
 Now we click the cancel button:
 
     >>> self.browser.getControl('Cancel').click()
