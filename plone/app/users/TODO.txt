@@ -1,0 +1,22 @@
+Z3C Forms TODOs
+---------------
+
+Post-merging (p.a.users and c.e.userdata)
+-----------------------------------------
+
+- Add collective.examples.userdata to packages tested in coredev
+- Add notes to upgrade guide on what integrators need to pay attention to
+- Make sure p.a.users' readme is linked to an appropriate place
+  in developer.plone.org
+
+- Some forms are neither z3c.form nor formlib:
+
+  * @@usergroup-userprefs
+  * @@usergroup-usermembership
+  * @@usergroup-groupdetails
+  * @@usergroup-groupmembership
+  * @@manage-group-portlets
+  * @@manage-group-dashboard
+  * @@usergroup-groupprefs
+
+  Fine for this PLIP, but worth noting

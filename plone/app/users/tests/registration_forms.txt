@@ -3,6 +3,7 @@ Testing the flexible user registration
 
     >>> browser = self.browser
     >>> browser.open('http://nohost/plone')
+    >>> list_widget_suffix = ':list'
 
     Self-registration is disabled, user does not see 'Register' link.
     >>> 'Register' in browser.contents
@@ -63,6 +64,14 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...There were errors...User Name...Required input is missing...E-mail...Required input is missing...'
+
+    We have to provide a valid email address
+    >>> browser.open('http://nohost/plone/@@register')
+    >>> browser.getControl('User Name').value = 'user1'
+    >>> browser.getControl('E-mail').value = 'user1-AT-example.com'
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...There were errors...Invalid email address...'
     
     Fill out the form. 
     >>> browser.getControl('User Name').value = 'user1'
@@ -91,9 +100,6 @@ Testing the flexible user registration
     >>> browser.getControl('Save').click()
     >>> 'Changes saved' in browser.contents
     True
-    
-    
-    
     >>> browser.getLink(url='http://nohost/plone/logout').click()
     >>> 'Log in' in browser.contents
     True
@@ -180,7 +186,18 @@ Testing the flexible user registration
     >>> 'Send a confirmation mail with a link to set the password' in browser.contents
     False
 
+    We have to provide a valid email address
+    >>> browser.open('http://nohost/plone/@@new-user')
+    >>> browser.getControl('User Name').value = 'user2a'
+    >>> browser.getControl('E-mail').value = 'user2a-AT-example.com'
+    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Confirm password').value = 'secret'
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...There were errors...Invalid email address...'
+
     Fill out the form.
+    >>> browser.open('http://nohost/plone/@@new-user')
     >>> browser.getControl('User Name').value = 'user3'
     >>> browser.getControl('E-mail').value = 'user3@example.com'
     >>> browser.getControl('Password').value = 'secret'
@@ -226,10 +243,18 @@ Testing the flexible user registration
     >>> browser.getControl('E-mail').value = 'user4@example.com'
     >>> browser.getControl('Reviewers').selected = True
 
-    As we want to validate emails, by default mail_me is checked.  The
-    password fields have become optional.
-    >>> browser.getControl(name='form.mail_me').value
+    But, at first, let's try to check form validation a bit. Do not set 'mail me' and 'password' fields.
+    
+    By Default Mail Me is checked.
+    >>> browser.getControl(name='form.widgets.mail_me' + list_widget_suffix).value in (True, ['selected'])
     True
+    >>> browser.getControl(name='form.widgets.mail_me' + list_widget_suffix).value = False
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...You must set a password or choose to send an email...'
+
+    As we want to validate emails. The password fields have become optional.
+    >>> browser.getControl(name='form.widgets.mail_me' + list_widget_suffix).value = True
     >>> browser.getControl('Register').click()
     >>> print browser.url
     http://...@@usergroup-userprefs...
@@ -299,7 +324,7 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
 
     >>> print browser.contents
-    <...<div class="fieldErrorBox">Must not be dead</div>...
+    <...<div class="fieldErrorBox">...Must not be dead...</div>...
 
 
     Now try a valid password
@@ -334,7 +359,7 @@ Testing the flexible user registration
 
     Check that we are given instructions on what is a valid password
 
-    >>> print browser.getControl(name="form.password").mech_control.get_labels()[0]._text
+    >>> print browser.getControl("Password").mech_control.get_labels()[0]._text
     Password...Enter your new password. Must not be dead. Minimum 5 characters...
     
     We'll enter an invalid password
@@ -347,7 +372,7 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
 
     >>> print browser.contents
-    <...<div class="fieldErrorBox">Must not be dead. Your password must contain at least 5 characters.</div>...
+    <...<div class="fieldErrorBox">...Must not be dead. Your password must contain at least 5 characters....</div>...
 
     Now try a valid password -- and we'll make sure non-ASCII characters are
     handled too.
@@ -367,3 +392,5 @@ Testing the flexible user registration
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user6pas' in browser.contents
     True
+
+

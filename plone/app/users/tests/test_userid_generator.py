@@ -3,11 +3,11 @@ from zope.component import getSiteManager
 
 from plone.app.users.browser.interfaces import IUserIdGenerator
 from plone.app.users.browser.register import BaseRegistrationForm
-from plone.app.users.tests.base import TestCase
+from plone.app.users.tests.base import BaseTestCase
 from plone.app.users.utils import uuid_userid_generator
 
 
-class TestGenerateUserId(TestCase):
+class TestGenerateUserId(BaseTestCase):
 
     def test_standard_generate_user_id(self):
         form = BaseRegistrationForm(self.portal, {})
@@ -96,20 +96,26 @@ class TestGenerateUserId(TestCase):
                             form.generate_user_id(data))
 
 
-class TestGenerateUUIDUserId(TestCase):
+class TestGenerateUUIDUserId(BaseTestCase):
 
     def afterSetUp(self):
         super(TestGenerateUUIDUserId, self).afterSetUp()
         # If use_uuid_as_userid is set in the site_properties, we
-        # generate a uuid.  We install our product so this property is
-        # added.
-        qi = getattr(self.portal, 'portal_quickinstaller')
-        qi.installProduct('collective.emaillogin4')
-        # Enable uuid as user id.
-        ptool = getattr(self.portal, 'portal_properties')
-        ptool.site_properties.manage_changeProperties(use_uuid_as_userid=True)
+        # generate a uuid.
+        self.ptool = ptool = getattr(self.portal, 'portal_properties')
+        if not ptool.site_properties.hasProperty('use_uuid_as_userid'):
+            ptool.site_properties.manage_addProperty(
+                'use_uuid_as_userid', False, 'boolean'
+            )  # Try to add it.
+        ptool.site_properties.manage_changeProperties(
+            use_uuid_as_userid=True
+        )  # Change it.
+        ptool.site_properties.getProperty('use_uuid_as_userid')
 
     def test_generate_uuid_user_id(self):
+        self.assertTrue(
+            self.ptool.site_properties.getProperty('use_uuid_as_userid')
+        )
         form = BaseRegistrationForm(self.portal, {})
         data = {'username': 'joe',
                 'fullname': 'Joe User',

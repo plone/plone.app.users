@@ -33,6 +33,10 @@ Testing email address as login name
     >>> 'User Name' in browser.contents
     False
 
+    The form should be using CSRF protection
+    >>> self.browser.getControl(name='_authenticator')
+    <Control name='_authenticator' type='hidden'>
+
     Fill out the form, using an odd email address that should not give problems.
     >>> browser.getControl('Full Name').value = 'Bob Jones'
     >>> browser.getControl('E-mail').value = 'bob-jones+test@example.com'
@@ -72,6 +76,10 @@ Testing email address as login name
     >>> browser.getControl('Add New User').click()
     >>> '@@new-user' in browser.url
     True
+
+    The form should be using CSRF protection
+    >>> self.browser.getControl(name='_authenticator')
+    <Control name='_authenticator' type='hidden'>
 
     Check that user name is not displayed.
     >>> 'User Name' in browser.contents

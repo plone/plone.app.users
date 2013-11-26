@@ -43,7 +43,6 @@
       </div>
 
       <div id="content">
-          <metal:block use-macro="view/base_template/macros/header" />
 
           <a href=""
              id="setup-link"
@@ -56,8 +55,8 @@
               i18n:translate="heading_usergroup_settings">User/Groups Settings</h1>
 
           <div id="content-core">
-
-              <metal:block use-macro="view/base_template/macros/master" />
+                <metal:block use-macro="context/@@ploneform-macros/titlelessform">
+                </metal:block>
           </div>
       </div>
 </metal:main>

@@ -4,7 +4,16 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="plone">
 
-    <!-- Join form definition -->
+    <include package="plone.autoform" />
+    <include package="plone.app.controlpanel" />
+
+    <browser:page
+      name="member-registration"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      class=".registersettingspanel.RegistrationControlPanel"
+      permission="plone.app.controlpanel.UsersAndGroups"
+      />
+
     <browser:page
       name="register"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
@@ -22,16 +31,8 @@
     <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="change-password"
-      class=".personalpreferences.PasswordAccountPanel"
+      class=".passwordpanel.PasswordPanel"
       permission="cmf.SetOwnPassword"
-      />
-
-    <browser:page
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      name="account-macro"
-      class=".account.AccountPanelView"
-      attribute="getMacro"
-      permission="cmf.SetOwnProperties"
       />
 
     <browser:page
@@ -51,20 +52,16 @@
     <browser:page
         for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="personal-information"
-      class=".personalpreferences.UserDataPanel"
+      class=".userdatapanel.UserDataPanel"
       permission="cmf.SetOwnProperties"
       />
 
     <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="user-information"
-      class=".personalpreferences.UserDataConfiglet"
+      class=".userdatapanel.UserDataConfiglet"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
-
-    <utility provides="zope.schema.interfaces.IVocabularyFactory"
-             component=".register.getGroupIds"
-             name="Group Ids"/>
 
     <adapter
       provides=".personalpreferences.IPersonalPreferences"
@@ -72,11 +69,13 @@
       factory=".personalpreferences.PersonalPreferencesPanelAdapter"
       />
     <adapter
-      provides="..userdataschema.IUserDataSchema"
+      provides="..schema.IUserDataSchema"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      factory=".personalpreferences.UserDataPanelAdapter"
+      factory=".userdatapanel.UserDataPanelAdapter"
       />
-    <adapter factory=".personalpreferences.PasswordPanelAdapter" />
-
-
+    <adapter
+      provides=".passwordpanel.IPasswordSchema"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      factory=".passwordpanel.PasswordPanelAdapter"
+      />
 </configure>

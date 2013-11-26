@@ -1,5 +1,12 @@
-Changelog
-=========
+CHANGES
+=======
+
+2.0 (unreleased)
+----------------
+
+- Migrate plone.app.users to use z3c.form instead of zope.formlib.
+  [lentinj, vipod, thet]
+
 
 1.3a1 (unreleased)
 ------------------
@@ -21,6 +28,10 @@ Changelog
 
 1.2a2 (unreleased)
 ------------------
+
+- Update tests. We now check if the user can add and delete the portrait
+  himself.
+  [tschanzt]
 
 - Added user timezone selection to user preferences and a dependency on
   plone.app.event for vocabulary for user timezone selection.
