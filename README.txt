@@ -29,7 +29,7 @@ add a componentregistry.xml file::
 and declare your utility in a configure.zcml file::
 
     <utility
-      interface="plone.app.users.userdataschema.IUserDataSchemaProvider"
+      provides="plone.app.users.userdataschema.IUserDataSchemaProvider"
       factory="collective.examples.userdata.userdataschema.UserDataSchemaProvider"
 
 A ``userdataschema.py`` file should contains::
