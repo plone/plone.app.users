@@ -21,43 +21,45 @@ Let's see if we can navigate to the user information form in Users and groups
 
 We have these controls in the form:
 
-    >>> self.browser.getControl(name='form.fullname').value
+    >>> self.browser.getControl('Full Name').value
     ''
-    >>> self.browser.getControl(name='form.email').value
+    >>> self.browser.getControl('E-mail').value
     ''
-    >>> self.browser.getControl(name='form.home_page').value
+    >>> self.browser.getControl('Home page').value
     ''
-    >>> self.browser.getControl(name='form.description').value
+    >>> self.browser.getControl('Biography').value
     ''
-    >>> self.browser.getControl(name='form.portrait').value
+    >>> self.browser.getControl(name='form.widgets.portrait').value
 
-    >>> self.browser.getControl(name='form.pdelete').value
-    False
+The form should be using CSRF protection:
+
+    >>> self.browser.getControl(name='_authenticator')
+    <Control name='_authenticator' type='hidden'>
 
 
 Modifying user data
 -------------------
 
     >>> full_name = 'Plone user'
-    >>> self.browser.getControl(name='form.fullname').value = full_name
+    >>> self.browser.getControl('Full Name').value = full_name
 
     >>> home_page = 'http://www.plone.org/'
-    >>> self.browser.getControl(name='form.home_page').value = home_page
+    >>> self.browser.getControl('Home page').value = home_page
 
     >>> description = 'Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.'
-    >>> self.browser.getControl(name='form.description').value = description
+    >>> self.browser.getControl('Biography').value = description
 
     >>> email_address = 'person@example.com'
-    >>> self.browser.getControl(name='form.email').value = email_address
+    >>> self.browser.getControl('E-mail').value = email_address
 
     >>> location = 'Somewhere'
-    >>> self.browser.getControl(name='form.location').value = location
+    >>> self.browser.getControl('Location').value = location
 
     >>> from pkg_resources import resource_stream
     >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
-    >>> self.browser.getControl(name='form.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
+    >>> self.browser.getControl(name='form.widgets.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
 
-    >>> self.browser.getControl(name="form.actions.save").click()
+    >>> self.browser.getControl('Save').click()
     >>> 'Required input is missing.' in self.browser.contents
     False
     >>> 'No changes made.' in self.browser.contents
@@ -105,8 +107,8 @@ Is the data of the created Image the same as the (scaled) orignal image?
 
 Can we delete the Image using the checkbox?
 
-    >>> self.browser.getControl("Delete Portrait").selected = True
-    >>> self.browser.getControl(name="form.actions.save").click()
+    >>> self.browser.getControl('Remove existing image').selected = True
+    >>> self.browser.getControl('Save').click()
     >>> 'Changes saved.' in self.browser.contents
     True
 
@@ -117,3 +119,12 @@ slightly depending on which Plone version you have.  Products.PlonePAS
     >>> portrait_value = self.membership.getPersonalPortrait('test_user_1_')
     >>> portrait_value
     <FSImage at /plone/defaultUser...>
+
+Finally let's see if Cancel button still leaves us on selected user Personal
+Information form::
+
+    >>> self.browser.getControl('Cancel').click()
+    >>> 'Changes canceled.' in self.browser.contents
+    True
+    >>> 'Change personal information for test_user_1_' in self.browser.contents
+    True
