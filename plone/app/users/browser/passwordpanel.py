@@ -1,6 +1,5 @@
 from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
-from Products.CMFDefault.formlib.schema import SchemaAdapterBase
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.users.browser.account import AccountPanelForm
@@ -38,7 +37,7 @@ class IPasswordSchema(Interface):
     )
 
 
-class PasswordPanelAdapter(SchemaAdapterBase):
+class PasswordPanelAdapter(object):
 
     def __init__(self, context):
         self.context = getToolByName(context, 'portal_membership')
