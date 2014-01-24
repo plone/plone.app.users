@@ -4,6 +4,10 @@ CHANGES
 2.0 (unreleased)
 ----------------
 
+- Have a soft dependency on plone.app.event and include the timezone field only
+  then in the schema, if plone.app.event is available.
+  [thet]
+
 - Migrate plone.app.users to use z3c.form instead of zope.formlib.
   [lentinj, vipod, thet]
 

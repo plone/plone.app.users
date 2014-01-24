@@ -9,6 +9,12 @@ from zope.interface import Interface
 from zope.schema import Bool
 from zope.schema import Choice
 
+try:
+    import plone.app.event
+    HAS_PAE = True
+except ImportError:
+    HAS_PAE = False
+
 
 class IPersonalPreferences(Interface):
     """Provide schema for personalize form."""
@@ -57,12 +63,13 @@ class IPersonalPreferences(Interface):
         required=False
     )
 
-    timezone = Choice(
-        title=_(u'label_timezone', default=u'Time zone'),
-        description=_(u'help_timezone', default=u'Your time zone'),
-        vocabulary='plone.app.event.AvailableTimezones',
-        required=False,
-    )
+    if HAS_PAE:
+        timezone = Choice(
+            title=_(u'label_timezone', default=u'Time zone'),
+            description=_(u'help_timezone', default=u'Your time zone'),
+            vocabulary='plone.app.event.AvailableTimezones',
+            required=False,
+        )
 
 
 class PersonalPreferencesPanelAdapter(AccountPanelSchemaAdapter):

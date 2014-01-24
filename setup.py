@@ -45,7 +45,6 @@ setup(
         'ZODB3',
         'Zope2 >= 2.12.3',
         'plone.app.controlpanel >=2.1b1',
-        'plone.app.event',
         'plone.app.layout',
         'plone.autoform >= 1.2',
         'plone.formwidget.namedfile >= 1.0.3',
