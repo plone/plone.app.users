@@ -7,6 +7,7 @@ from Products.PlonePAS.tools.membership import default_portrait
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.schema import IUserDataSchema
+from plone.namedfile.file import NamedBlobImage
 
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
@@ -24,16 +25,17 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
                                                default_portrait,
                                                None)):
             return None
-        return value
+        return NamedBlobImage(value.data, contentType=value.content_type,
+                              filename=getattr(value, 'filename', None))
 
     def set_portrait(self, value):
         mt = getToolByName(self.context, 'portal_membership')
         if value is None:
             mt.deletePersonalPortrait(str(self.context.getId()))
         else:
-            file = value.open()
-            file.filename = value.filename
-            mt.changeMemberPortrait(file, str(self.context.getId()))
+            portrait_file = value.open()
+            portrait_file.filename = value.filename
+            mt.changeMemberPortrait(portrait_file, str(self.context.getId()))
 
     portrait = property(get_portrait, set_portrait)
 
