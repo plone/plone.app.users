@@ -1,8 +1,8 @@
 Changelog
 =========
 
-1.2a3 (unreleased)
-------------------
+1.2 (2014-01-27)
+----------------
 
 - Fixed i18n of new_password field in change-password view.
   [vincentfretin]
