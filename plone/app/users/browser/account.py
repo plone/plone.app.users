@@ -140,7 +140,6 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     @button.buttonAndHandler(_(u'Save'))
     def handleSave(self, action):
         CheckAuthenticator(self.request)
-
         data, errors = self.extractData()
 
         # extra validation for email
@@ -158,6 +157,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         else:
             IStatusMessage(self.request).addStatusMessage(
                 self.noChangesMessage, type='info')
+        self.request.response.redirect(self.request['ACTUAL_URL'])
 
     @button.buttonAndHandler(_(u'Cancel'))
     def cancel(self, action):
