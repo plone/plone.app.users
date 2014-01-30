@@ -157,7 +157,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         else:
             IStatusMessage(self.request).addStatusMessage(
                 self.noChangesMessage, type='info')
-        self.request.response.redirect(self.request['ACTUAL_URL'])
+        self.request.response.redirect(self.action())
 
     @button.buttonAndHandler(_(u'Cancel'))
     def cancel(self, action):
