@@ -27,6 +27,11 @@
                  tal:attributes="href string:$portal_url/@@usergroup-controlpanel"
                  i18n:translate="label_usergroup_settings">Settings</a>
             </li>
+            <li>
+              <a href=""
+                 tal:attributes="href string:$portal_url/@@member-fields"
+                 i18n:translate="label_member_fields">Member Fields</a>
+            </li>
             <li class="selected">
               <a href=""
                  tal:attributes="href string:$portal_url/@@member-registration"
