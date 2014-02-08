@@ -7,7 +7,8 @@ from .schemaeditor import (SCHEMATA_KEY,
     get_ttw_edited_schema,
     model_key,
     CACHE_CONTAINER)
-from .schema import (ICombinedRegisterSchema,
+from .schema import (IUserDataSchema,
+    IRegisterSchema,
     IUserDataSchemaProvider,
     IRegisterSchemaProvider)
 
@@ -37,10 +38,10 @@ class BaseMemberSchemaProvider(object):
 
 class UserDataSchemaProvider(BaseMemberSchemaProvider):
     implements(IUserDataSchemaProvider)
-    baseSchema = ICombinedRegisterSchema
+    baseSchema = IUserDataSchema
 
 
 class RegisterSchemaProvider(BaseMemberSchemaProvider):
     implements(IRegisterSchemaProvider)
-    baseSchema = ICombinedRegisterSchema
+    baseSchema = IRegisterSchema
 
