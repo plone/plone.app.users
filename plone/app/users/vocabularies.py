@@ -1,6 +1,7 @@
 from AccessControl import getSecurityManager
 
 from zope.interface import implements
+from zope.component import getUtility
 from zope.schema import getFieldNames
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
@@ -11,7 +12,7 @@ from Products.CMFCore.permissions import ManagePortal
 from Products.CMFPlone.utils import normalizeString, safe_unicode
 
 from plone.app.users.browser.register import RegistrationForm
-
+from .schema import IUserDataSchemaProvider
 
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
@@ -49,7 +50,9 @@ class UserRegistrationFieldsVocabulary(object):
 
     def __call__(self, context):
         # default list of Registration Form fields
-        values = getFieldNames(RegistrationForm.schema)
+        util = getUtility(IUserDataSchemaProvider)
+        schema = util.getSchema()
+        values = getFieldNames(schema)
 
         # make sure required minimum number of fields is present
         for val in JOIN_CONST:

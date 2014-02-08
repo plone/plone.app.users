@@ -26,7 +26,7 @@ from zope.interface import Interface
 from zope.schema import getFieldNames
 import logging
 
-from ..schema import IRegisterSchema, ICombinedRegisterSchema, IAddUserSchema
+from ..schema import IRegisterSchema, IRegisterSchemaProvider, IAddUserSchema
 from ..utils import notifyWidgetActionExecutionError
 
 # Number of retries for creating a user id like bob-jones-42:
@@ -39,11 +39,14 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     description = u""
     formErrorsMessage = _('There were errors.')
     ignoreContext = True
-    schema = ICombinedRegisterSchema
     enableCSRFProtection = True
 
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
+
+    def __init__(self, *args, **kwargs):
+        super(BaseRegistrationForm, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IRegisterSchemaProvider).getSchema()
 
     def render(self):
         if self._finishedRegister:
