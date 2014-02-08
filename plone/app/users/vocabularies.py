@@ -12,7 +12,7 @@ from Products.CMFCore.permissions import ManagePortal
 from Products.CMFPlone.utils import normalizeString, safe_unicode
 
 from plone.app.users.browser.register import RegistrationForm
-from .schema import IUserDataSchemaProvider
+from .schema import IRegisterSchemaProvider
 
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
@@ -50,7 +50,7 @@ class UserRegistrationFieldsVocabulary(object):
 
     def __call__(self, context):
         # default list of Registration Form fields
-        util = getUtility(IUserDataSchemaProvider)
+        util = getUtility(IRegisterSchemaProvider)
         schema = util.getSchema()
         values = getFieldNames(schema)
 
