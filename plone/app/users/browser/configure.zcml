@@ -63,6 +63,13 @@
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
+    <browser:page
+        name="member-fields"
+        for="*"
+        class="..schemaeditor.MemberSchemaContext"
+        permission="plone.app.controlpanel.UsersAndGroups"
+        allowed_interface="OFS.interfaces.IItem" />
+
     <adapter
       provides=".personalpreferences.IPersonalPreferences"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"

@@ -15,6 +15,9 @@ from z3c.form.widget import FieldWidget
 from zope.component import adapter
 from zope.interface import implementer
 
+SCHEMA_ANNOTATION = "plone.app.users.schema"
+# must match the browser view name !
+SCHEMATA_KEY = "member-fields"
 
 def checkEmailAddress(value):
     portal = getUtility(ISiteRoot)
@@ -175,3 +178,23 @@ class IRegistrationSettingsSchema(Interface):
         value_type=schema.Choice(
             vocabulary='plone.app.users.user_registration_fields'),
     )
+
+
+class IUserDataSchemaProvider(Interface):
+    """
+    """
+
+    def getSchema():
+        """
+        Return base user schema + TTW Fields
+        """
+
+
+class IRegisterSchemaProvider(Interface):
+    """
+    """
+
+    def getSchema():
+        """
+        Return base register schema + TTW Fields
+        """

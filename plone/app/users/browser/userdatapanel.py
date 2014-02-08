@@ -1,4 +1,6 @@
 from Acquisition import aq_inner
+from zope.component import getUtility, provideAdapter
+from zope.interface import Interface
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import set_own_login_name
@@ -8,12 +10,21 @@ from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.schema import IUserDataSchema
 from plone.namedfile.file import NamedBlobImage
+from plone.app.layout.navigation.interfaces import INavigationRoot
 
+from ..schema import IUserDataSchemaProvider
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
     """One does not simply set portrait, email might be used to login with.
     """
-    schema = IUserDataSchema
+    
+    def __init__(self, *args, **kwargs):
+        super(UserDataPanelAdapter, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
+        # make forms adapters know about ttw fields
+        # we force self.schema as it can be a
+        # generated supermodel with TTw fields
+        provideAdapter(self.__class__, (Interface,), self.schema)
 
     def get_portrait(self):
         """If user has default portrait, return none
@@ -61,8 +72,13 @@ class UserDataPanel(AccountPanelForm):
     label = _(u'title_personal_information_form',
               default=u'Personal Information')
     form_name = _(u'User Data Form')
-    schema = IUserDataSchema
     enableCSRFProtection = True
+
+    def __init__(self, *args, **kwargs):
+        super(UserDataPanel, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
+        # as schema is a generated supermodel, just insert a relevant adapter for it
+        provideAdapter(UserDataPanelAdapter, (INavigationRoot,), self.schema)
 
     @property
     def description(self):
