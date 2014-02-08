@@ -7,6 +7,7 @@ from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZODB.POSException import ConflictError
+from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.interfaces import IUserIdGenerator
 from plone.app.users.utils import uuid_userid_generator
@@ -21,13 +22,14 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import DISPLAY_MODE
 from zExceptions import Forbidden
 from zope.component import getMultiAdapter
-from zope.component import getUtility, queryUtility, getAdapter
+from zope.component import getUtility, queryUtility, getAdapter, provideAdapter
 from zope.interface import Interface
 from zope.schema import getFieldNames
 import logging
 
-from ..schema import IRegisterSchema, IRegisterSchemaProvider, IAddUserSchema
+from ..schema import IRegisterSchema, IRegisterSchemaProvider, IAddUserSchema, ICombinedRegisterSchema
 from ..utils import notifyWidgetActionExecutionError
+from ..schemaprovider import RegisterSchemaProvider
 
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
@@ -40,6 +42,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     formErrorsMessage = _('There were errors.')
     ignoreContext = True
     enableCSRFProtection = True
+    schema = ICombinedRegisterSchema
 
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
@@ -47,6 +50,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     def __init__(self, *args, **kwargs):
         super(BaseRegistrationForm, self).__init__(*args, **kwargs)
         self.schema = getUtility(IRegisterSchemaProvider).getSchema()
+        # as schema is a generated supermodel, just insert a relevant adapter for it
+        provideAdapter(RegisterSchemaProvider, (INavigationRoot,), self.schema)
 
     def render(self):
         if self._finishedRegister:

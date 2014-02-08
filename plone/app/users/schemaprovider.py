@@ -8,7 +8,7 @@ from .schemaeditor import (SCHEMATA_KEY,
     model_key,
     CACHE_CONTAINER)
 from .schema import (IUserDataSchema,
-    IRegisterSchema,
+    ICombinedRegisterSchema,
     IUserDataSchemaProvider,
     IRegisterSchemaProvider)
 
@@ -43,5 +43,5 @@ class UserDataSchemaProvider(BaseMemberSchemaProvider):
 
 class RegisterSchemaProvider(BaseMemberSchemaProvider):
     implements(IRegisterSchemaProvider)
-    baseSchema = IRegisterSchema
+    baseSchema = ICombinedRegisterSchema
 
