@@ -22,7 +22,11 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import DISPLAY_MODE
 from zExceptions import Forbidden
 from zope.component import getMultiAdapter
-from zope.component import getUtility, queryUtility, getAdapter, provideAdapter
+from zope.component import (getUtility,
+    queryUtility,
+    getAdapter,
+    provideAdapter,
+    queryAdapter)
 from zope.interface import Interface
 from zope.schema import getFieldNames
 import logging
@@ -30,6 +34,7 @@ import logging
 from ..schema import IRegisterSchema, IRegisterSchemaProvider, IAddUserSchema, ICombinedRegisterSchema
 from ..utils import notifyWidgetActionExecutionError
 from ..schemaprovider import RegisterSchemaProvider
+from .userdatapanel import UserDataPanelAdapter
 
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
@@ -566,6 +571,14 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if schema in adapters:
                 adapter = adapters[schema]
             else:
+                # as the ttw schema is a generated supermodel,
+                # just insert a relevant adapter for it
+                if INavigationRoot.providedBy(self.context):
+                    provideAdapter(
+                        UserDataPanelAdapter,
+                        (INavigationRoot,),
+                        schema
+                    )
                 adapters[schema] = adapter = getAdapter(portal, schema)
                 adapter.context = member
 
