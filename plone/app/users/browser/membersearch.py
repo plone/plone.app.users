@@ -98,7 +98,6 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
 
             view = getView(self.context, request, 'pas_search')
             criteria = self.extractCriteriaFromRequest()
-            import pdb; pdb.set_trace()
             self.results = view.searchUsers(sort_by='fullname', **criteria)
 
     def extractCriteriaFromRequest(self):
