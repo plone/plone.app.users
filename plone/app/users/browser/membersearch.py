@@ -42,8 +42,8 @@ class IMemberSearchSchema(model.Schema):
             default=u'Return users with full names containing this value.'),
         required=False,
     )
-    #directives.read_permission('roles', 'cmf.ManagePortal')
-    #directives.write_permission('roles', 'cmf.ManagePortal')
+    directives.read_permission(roles='cmf.ManagePortal')
+    directives.write_permission(roles='cmf.ManagePortal')
     directives.widget('roles', CheckBoxWidget)
     roles = schema.List(
         title=_(u'label_roles', default=u'Role(s)'),
@@ -101,6 +101,7 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
 
             view = getView(self.context, request, 'pas_search')
             criteria = self.extractCriteriaFromRequest()
+            import pdb; pdb.set_trace()
             self.results = view.searchUsers(sort_by='fullname', **criteria)
 
     def extractCriteriaFromRequest(self):
