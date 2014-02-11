@@ -1,11 +1,8 @@
 from Acquisition import aq_inner
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.statusmessages.interfaces import IStatusMessage
-from plone.app.users.browser.account import AccountPanelForm
 from zope.component import getMultiAdapter
 from z3c.form import button, form
 from zope import schema
-from zope.interface import Interface
 
 from plone.autoform.form import AutoExtensibleForm
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
