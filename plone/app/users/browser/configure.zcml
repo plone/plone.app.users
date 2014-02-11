@@ -50,7 +50,7 @@
       />
 
     <browser:page
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+        for="plone.app.layout.navigation.interfaces.INavigationRoot"
       name="personal-information"
       class=".userdatapanel.UserDataPanel"
       permission="cmf.SetOwnProperties"
@@ -67,7 +67,7 @@
       name="member-search"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".membersearch.MemberSearchForm"
-      permission="zope.Public"
+      permission="zope2.View"
       />
 
     <adapter
