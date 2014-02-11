@@ -11,8 +11,11 @@ from plone.autoform.form import AutoExtensibleForm
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from ..schema import checkEmailAddress
 
+from plone.supermodel import model
+from plone.autoform import directives
 
-class IMemberSearchSchema(Interface):
+
+class IMemberSearchSchema(model.Schema):
 
     """Provide schema for member search """
 
@@ -38,6 +41,8 @@ class IMemberSearchSchema(Interface):
             default=u'Return users with full names containing this value.'),
         required=False,
     )
+    #directives.read_permission('roles', 'cmf.ManagePortal')
+    #directives.write_permission('roles', 'cmf.ManagePortal')
     roles = schema.List(
         title=_(u'label_roles', default=u'Role(s)'),
         description=_(
@@ -61,11 +66,8 @@ def getView(context, request, name):
 
 
 class MemberSearchForm(AutoExtensibleForm, form.Form):
-
-    """ Define Form handling
-
-    This form can be accessed as http://yoursite/@@my-form
-
+    """ This search form enables you to find users by specifying one or more
+        search criteria.
     """
 
     schema = IMemberSearchSchema
@@ -78,22 +80,25 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
     enableCSRFProtection = True
     formErrorsMessage = _('There were errors.')
 
+    def __init__(self, context, request):
+        super(MemberSearchForm, self).__init__(context, request)
+        self.submitted = False
+
     @button.buttonAndHandler(_(u'label_search'))
     def handleApply(self, action):
         request = self.request
         data, errors = self.extractData()
 
-        view = getView(self.context, request, 'pas_search')
-        criteria = self.extractCriteriaFromRequest()
-        results = view.searchUsers(sort_by='fullname', **criteria)
-
         if errors:
             self.status = self.formErrorsMessage
             return
 
-        # Set status on this form page
-        # (this status message is not bind to the session and does not go thru redirects)
-        self.status = "Thank you very much!"
+        if request.get('form.buttons.label_search', None):
+            self.submitted = True
+
+            view = getView(self.context, request, 'pas_search')
+            criteria = self.extractCriteriaFromRequest()
+            self.results = view.searchUsers(sort_by='fullname', **criteria)
 
     def extractCriteriaFromRequest(self):
         criteria = self.request.form.copy()
