@@ -13,6 +13,7 @@ from ..schema import checkEmailAddress
 
 from plone.supermodel import model
 from plone.autoform import directives
+from z3c.form.browser.checkbox import CheckBoxWidget
 
 
 class IMemberSearchSchema(model.Schema):
@@ -43,6 +44,7 @@ class IMemberSearchSchema(model.Schema):
     )
     #directives.read_permission('roles', 'cmf.ManagePortal')
     #directives.write_permission('roles', 'cmf.ManagePortal')
+    directives.widget('roles', CheckBoxWidget)
     roles = schema.List(
         title=_(u'label_roles', default=u'Role(s)'),
         description=_(
@@ -66,6 +68,7 @@ def getView(context, request, name):
 
 
 class MemberSearchForm(AutoExtensibleForm, form.Form):
+
     """ This search form enables you to find users by specifying one or more
         search criteria.
     """
@@ -84,7 +87,7 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
         super(MemberSearchForm, self).__init__(context, request)
         self.submitted = False
 
-    @button.buttonAndHandler(_(u'label_search'))
+    @button.buttonAndHandler(_(u'label_search', default=u'Search'), name='search')
     def handleApply(self, action):
         request = self.request
         data, errors = self.extractData()
@@ -93,7 +96,7 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
             self.status = self.formErrorsMessage
             return
 
-        if request.get('form.buttons.label_search', None):
+        if request.get('form.buttons.search', None):
             self.submitted = True
 
             view = getView(self.context, request, 'pas_search')
