@@ -91,7 +91,6 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
             self.status = self.formErrorsMessage
             return
 
-
         # Set status on this form page
         # (this status message is not bind to the session and does not go thru redirects)
         self.status = "Thank you very much!"
@@ -112,4 +111,3 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
                 del criteria[key]
 
         return criteria
-
