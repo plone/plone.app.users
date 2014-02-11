@@ -1,23 +1,15 @@
 from Acquisition import aq_inner
-from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 from plone.app.users.browser.account import AccountPanelForm
-from z3c.form import button
-from z3c.form import form
+from zope.component import getMultiAdapter
+from z3c.form import button, form
 from zope import schema
 from zope.interface import Interface
 
-from zope.schema.vocabulary import SimpleVocabulary
 from plone.autoform.form import AutoExtensibleForm
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from ..schema import checkEmailAddress
-
-from zope.schema.interfaces import ISource, IContextSourceBinder
-from zope.schema.vocabulary import SimpleVocabulary
-from Products.CMFCore.utils import getToolByName
-from zope.interface import implements, classProvides
-from zope.component.hooks import getSite
 
 
 class IMemberSearchSchema(Interface):
@@ -58,6 +50,16 @@ class IMemberSearchSchema(Interface):
     )
 
 
+def getView(context, request, name):
+    # Remove the acquisition wrapper (prevent false context assumptions)
+    context = aq_inner(context)
+    # May raise ComponentLookUpError
+    view = getMultiAdapter((context, request), name=name)
+    # Add the view to the acquisition chain
+    view = view.__of__(context)
+    return view
+
+
 class MemberSearchForm(AutoExtensibleForm, form.Form):
 
     """ Define Form handling
@@ -78,13 +80,36 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
 
     @button.buttonAndHandler(_(u'label_search'))
     def handleApply(self, action):
+        request = self.request
         data, errors = self.extractData()
+
+        view = getView(self.context, request, 'pas_search')
+        criteria = self.extractCriteriaFromRequest()
+        results = view.searchUsers(sort_by='fullname', **criteria)
+
         if errors:
             self.status = self.formErrorsMessage
             return
 
-        # Do something with valid data here
 
         # Set status on this form page
         # (this status message is not bind to the session and does not go thru redirects)
         self.status = "Thank you very much!"
+
+    def extractCriteriaFromRequest(self):
+        criteria = self.request.form.copy()
+
+        for key in ["_authenticator", "form.buttons.label_search"]:
+            if key in criteria:
+                del criteria[key]
+
+        for (key, value) in criteria.items():
+            if not value:
+                del criteria[key]
+            else:
+                new_key = key.replace('form.widgets.', '')
+                criteria[new_key] = value
+                del criteria[key]
+
+        return criteria
+
