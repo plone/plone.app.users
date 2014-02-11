@@ -20,30 +20,6 @@ from zope.interface import implements, classProvides
 from zope.component.hooks import getSite
 
 
-
-class PortalRoles(object):
-
-    """Context source binder to provide a vocabulary of roles in a given
-    group.
-    """
-
-    implements(ISource)
-    classProvides(IContextSourceBinder)
-
-    def __call__(self):
-        portal = getSite()
-        membership_tool = getToolByName(portal, 'portal_membership')
-        terms = []
-
-        for role in membership_tool.getPortalRoles():
-            terms.append(SimpleVocabulary.createTerm(role, str(role), role))
-
-        return SimpleVocabulary(terms)
-
-
-PortalRolesVocabulary = PortalRoles()
-
-
 class IMemberSearchSchema(Interface):
 
     """Provide schema for member search """
@@ -77,7 +53,7 @@ class IMemberSearchSchema(Interface):
             default=u'Find users with all of the selected roles.'),
         required=False,
         value_type=schema.Choice(
-            vocabulary=PortalRolesVocabulary(),
+            vocabulary='plone.app.vocabularies.Roles',
         ),
     )
 
