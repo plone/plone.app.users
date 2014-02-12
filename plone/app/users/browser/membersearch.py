@@ -39,6 +39,8 @@ class IMemberSearchSchema(model.Schema):
             default=u'Return users with full names containing this value.'),
         required=False,
     )
+    # disabled: https://dev.plone.org/ticket/13862
+    """
     directives.read_permission(roles='cmf.ManagePortal')
     directives.write_permission(roles='cmf.ManagePortal')
     directives.widget('roles', CheckBoxWidget)
@@ -52,6 +54,7 @@ class IMemberSearchSchema(model.Schema):
             vocabulary='plone.app.vocabularies.Roles',
         ),
     )
+    """
 
 
 def getView(context, request, name):
@@ -98,15 +101,16 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
 
             view = getView(self.context, request, 'pas_search')
             criteria = self.extractCriteriaFromRequest()
-            self.results = view.searchUsers(sort_by='fullname', **criteria)
+            self.results = view.searchUsers(sort_by=u'fullname', **criteria)
 
     def extractCriteriaFromRequest(self):
         criteria = self.request.form.copy()
 
-        for key in ["_authenticator", "form.buttons.label_search"]:
+        for key in ["_authenticator",
+                    "form.buttons.label_search",
+                    "form.widgets.roles-empty-marker",]:
             if key in criteria:
                 del criteria[key]
-
         for (key, value) in criteria.items():
             if not value:
                 del criteria[key]
