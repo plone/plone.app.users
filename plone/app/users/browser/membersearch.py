@@ -17,6 +17,11 @@ class IMemberSearchSchema(model.Schema):
 
     """Provide schema for member search """
 
+    model.fieldset('extra',
+        label=_(u"legend_member_search_criteria", default=u'User Search Criteria'),
+        fields=['login', 'email', 'fullname']
+        )
+
     login = schema.TextLine(
         title=_(u'label_name', default=u'Name'),
         description=_(
