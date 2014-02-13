@@ -71,6 +71,22 @@ def getView(context, request, name):
     view = view.__of__(context)
     return view
 
+def extractCriteriaFromRequest(criteria):
+    for key in ["_authenticator",
+                "form.buttons.search",
+                "form.widgets.roles-empty-marker",]:
+        if key in criteria:
+            del criteria[key]
+    for (key, value) in criteria.items():
+        if not value:
+            del criteria[key]
+        else:
+            new_key = key.replace('form.widgets.', '')
+            criteria[new_key] = value
+            del criteria[key]
+
+    return criteria
+
 
 class MemberSearchForm(AutoExtensibleForm, form.Form):
 
@@ -105,23 +121,5 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
             self.submitted = True
 
             view = getView(self.context, request, 'pas_search')
-            criteria = self.extractCriteriaFromRequest()
+            criteria = extractCriteriaFromRequest(self.request.form.copy())
             self.results = view.searchUsers(sort_by=u'fullname', **criteria)
-
-    def extractCriteriaFromRequest(self):
-        criteria = self.request.form.copy()
-
-        for key in ["_authenticator",
-                    "form.buttons.label_search",
-                    "form.widgets.roles-empty-marker",]:
-            if key in criteria:
-                del criteria[key]
-        for (key, value) in criteria.items():
-            if not value:
-                del criteria[key]
-            else:
-                new_key = key.replace('form.widgets.', '')
-                criteria[new_key] = value
-                del criteria[key]
-
-        return criteria
