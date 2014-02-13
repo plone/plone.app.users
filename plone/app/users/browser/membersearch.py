@@ -63,15 +63,17 @@ class IMemberSearchSchema(model.Schema):
 
 
 def getView(context, request, name):
-    # Remove the acquisition wrapper (prevent false context assumptions)
+    """ Get the View 'name' and return it.
+    """
     context = aq_inner(context)
-    # May raise ComponentLookUpError
     view = getMultiAdapter((context, request), name=name)
-    # Add the view to the acquisition chain
     view = view.__of__(context)
     return view
 
 def extractCriteriaFromRequest(criteria):
+    """ Takes a dictionary of z3c.form data and sanitizes it to fit
+        for a pas member search.
+    """
     for key in ["_authenticator",
                 "form.buttons.search",
                 "form.widgets.roles-empty-marker",]:
