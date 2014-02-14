@@ -65,7 +65,7 @@
 
     <browser:page
       name="member-search"
-      for="*"
+      for="plone.app.contenttypes.interfaces.IFolder"
       class=".membersearch.MemberSearchForm"
       permission="zope2.View"
       />
