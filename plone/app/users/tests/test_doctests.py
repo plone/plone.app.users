@@ -21,6 +21,7 @@ def test_suite():
         'personal_preferences_prefs_user_details.txt',
         'password.txt',
         'email_login.txt',
+        'member_search.txt',
         '../vocabularies.py',
         ]
     suite = TestSuite()
