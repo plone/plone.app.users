@@ -1,10 +1,11 @@
 CHANGES
 =======
 
-2.0.1 (unreleased)
+2.0.1 (2014-03-02)
 ------------------
 
-- Nothing changed yet.
+- Fix packaging error.
+  [esteele]
 
 
 2.0 (2014-03-02)
