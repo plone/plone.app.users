@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.0 (unreleased)
+2.0 (2014-03-02)
 ----------------
 
 - Have a soft dependency on plone.app.event and include the timezone field only
