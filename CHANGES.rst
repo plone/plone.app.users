@@ -4,7 +4,11 @@ CHANGES
 2.0.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- More explicit ZCML package includes. At least, the inclusion of
+  plone.formwidget.namedfile fixes a problem in Dexterity-less setups, where
+  the @@personal-information form couldn't be rendered because NamedBlobImage
+  didn't provide IFromUnicode.
+  [thet]
 
 
 2.0.1 (2014-03-02)
