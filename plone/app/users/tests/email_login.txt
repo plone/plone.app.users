@@ -78,7 +78,7 @@ Testing email address as login name
     True
 
     The form should be using CSRF protection
-    >>> self.browser.getControl(name='_authenticator')
+    >>> self.browser.getControl(name='_authenticator', index=0)
     <Control name='_authenticator' type='hidden'>
 
     Check that user name is not displayed.

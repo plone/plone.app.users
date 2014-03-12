@@ -36,7 +36,7 @@ We have these controls in the form:
 
 The form should be using CSRF protection:
 
-    >>> self.browser.getControl(name='_authenticator')
+    >>> self.browser.getControl(name='_authenticator', index=0)
     <Control name='_authenticator' type='hidden'>
 
 
