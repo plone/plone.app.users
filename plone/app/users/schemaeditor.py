@@ -43,7 +43,6 @@ from schema import (
 CACHE_CONTAINER = {}
 USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
 USERS_PREFIX = 'users'
-VALIDATORS_KEY = 'validators'
 SPLITTER = '_//_'
 
 
@@ -70,51 +69,12 @@ def log(message,
     getattr(logger, level)(message)
 
 
-class IMemberField(Interface):
-
-    validators = mschema.Set(
-        title=_("Validators"),
-        description=_(
-            u"help_userfield_validators",
-            default=u'Select the validators to use on this field'),
-        required=False,
-        value_type=mschema.Choice(
-            vocabulary="plone.app.users.validators"),
-    )
 
 class IMemberFieldValidator(Interface):
     """Base marker for field validators"""
 
 class IMemberSchemaContext(Interface):
     """ """
-
-
-@adapter(IMemberSchemaContext, IField)
-def get_member_field_schema(schema_context, field):
-    return IMemberField
-
-provideAdapter(
-    get_member_field_schema,
-    provides=IFieldEditorExtender,
-    name='plone.app.users.memberfield')
-
-
-class MemberFieldAdapter(object):
-    adapts(IField)
-
-    def __init__(self, field):
-        self.field = field
-
-    def _get_validators(self):
-        validators = self.field.queryTaggedValue(VALIDATORS_KEY, {})
-        return validators
-
-    def _set_validators(self, value):
-        self.field.setTaggedValue(VALIDATORS_KEY, value)
-
-    validators = property(_get_validators, _set_validators)
-
-provideAdapter(MemberFieldAdapter, provides=IMemberField)
 
 
 def copy_schema(schema, filter_serializable=False):
@@ -189,30 +149,8 @@ def updateSchema(object, event):
             pm._delProperty(field_id)
 
 
-def get_validators(site=None):
-    validators = {}
-    if not site:
-        site = getSite()
-    for name, ut in getUtilitiesFor(IMemberFieldValidator, site):
-        validators[name] = {
-            'func': ut,
-            'doc': _(ut,
-                     default=getattr(ut, '__doc__', None))
-        }
-    return validators
 
 
-# Base validators
-provideUtility(checkEmailAddress,
-               provides=IMemberFieldValidator,
-               name='check_email')
-
-
-def chain_validators(vals):
-    def validate(value):
-        for v in vals:
-            return v(value)
-    return validate
 
 def model_key(*a, **kw):
     site = getSite()
@@ -223,36 +161,11 @@ def model_key(*a, **kw):
     return (psite, key)
 
 
-@ram.cache(model_key)
+# @ram.cache(model_key)
 def get_ttw_edited_schema():
-    site = getSite()
-    annotations = IAnnotations(site)
-    funcs = get_validators(site)
-    data = ''
-    oschema = None
-    try:
-        data = get_schema()
-        oschema = load_ttw_schema(data)
-        for name in oschema:
-            f = oschema[name]
-            validators = f.queryTaggedValue(
-                VALIDATORS_KEY, [])
-            if not validators: validators = []
-            vfuncs = []
-            for v in validators:
-                fval = funcs.get(v, None)
-                if fval:
-                    vfuncs.append(fval['func'])
-                else:
-                    log('Unexistant validator for %s' % v)
-            if vfuncs:
-                val = chain_validators(vfuncs)
-                f.constraint = val
-    except Exception, e:
-        oschema = None
-        if data:
-            log(traceback.format_exc())
-    return oschema
+    data = get_schema()
+    if data:
+        return load_ttw_schema(data)
 
 
 class UsersMetadataSchemaExporter(object):
