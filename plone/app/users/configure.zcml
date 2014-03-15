@@ -6,6 +6,10 @@
     i18n_domain="plone.app.users">
 
     <include package="plone.app.controlpanel" />
+    <include package="plone.supermodel" />
+    <include package="plone.autoform" />
+    <include package="plone.namedfile" />
+    <include package="plone.formwidget.namedfile" />
     <include package="Products.CMFCore" file="permissions.zcml" />
 
     <utility provides=".userdataschema.IUserDataSchemaProvider"
@@ -24,34 +28,10 @@
       class=".registration.RegistrationControlPanel"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
+    <utility component=".vocabularies.UserRegistrationFieldsVocabularyFactory"
+             name="plone.app.users.user_registration_fields" />
+    <utility provides="zope.schema.interfaces.IVocabularyFactory"
+             component=".vocabularies.GroupIdVocabularyFactory"
+             name="plone.app.users.group_ids"/>
 
-    <adapter factory=".registration.RegistrationControlPanelAdapter"/>
-
-    <browser:page
-        name="member-fields"
-        for="*"
-        class=".schemaeditor.MemberSchemaContext"
-        permission="plone.app.controlpanel.UsersAndGroups"
-        allowed_interface="OFS.interfaces.IItem" />
-
-    <subscriber
-        for=".schemaeditor.IMemberSchemaContext
-             plone.schemaeditor.interfaces.ISchemaModifiedEvent"
-        handler=".schemaeditor.updateSchema"
-        />
-
-      <genericsetup:exportStep
-          name="usersschema"
-          title="Export member custom TTW schema"
-          description="Export member custom TTW schema"
-          handler="plone.app.users.setuphandlers.export_schema">
-      </genericsetup:exportStep>
-      <genericsetup:importStep
-          name="usersschema"
-          title="Export member custom TTW schema"
-          description="Import member custom TTW schema"
-          handler="plone.app.users.setuphandlers.import_schema">
-        <depends name="plone-content"/>
-      </genericsetup:importStep>
-      <!-- -->
 </configure>

@@ -7,7 +7,12 @@ Testing the flexible user registration
     >>> import hmac
     >>> from hashlib import sha1
     >>> def getAuth():
-    ...     secret = getUtility(IKeyManager)[u'_system'].current
+    ...     manager = getUtility(IKeyManager)
+    ...     try:
+    ...         ring = manager[u'_forms']
+    ...     except:
+    ...         ring = manager[u'_system']
+    ...     secret = ring.current
     ...     return hmac.new(secret, 'admin', sha1).hexdigest()
 
 
@@ -40,11 +45,14 @@ Check that the site admin has a link to the configlet in the control panel.
 "Location" and "Home page" are not in the form by default.
     
     >>> form = browser.getForm(action='http://nohost/plone/@@member-registration')
-    >>> user_registration_fields = form.getControl(name='form.user_registration_fields.to')
+    >>> user_registration_fields = form.getControl(name='form.widgets.user_registration_fields.to')
     >>> 'location' in user_registration_fields.displayOptions
     False
     >>> 'home_page' in user_registration_fields.displayOptions
     False
+
+    >>> self.browser.getControl(name='_authenticator', index=0)
+    <Control name='_authenticator' type='hidden'>
 
 Let's add home_page to the list of registration form fields.
 (Setting this by hand since add/remove widget doesn't work properly without javascript)
@@ -59,7 +67,7 @@ Check that 'home_page' is now in the right box (enabled registration form fields
 
     >>> browser.open('http://nohost/plone/@@member-registration')
     >>> form = browser.getForm(action='http://nohost/plone/@@member-registration')
-    >>> enabled_fields = form.getControl(name='form.user_registration_fields.to')
+    >>> enabled_fields = form.getControl(name='form.widgets.user_registration_fields.to')
     >>> 'home_page' in enabled_fields.displayOptions
     True
 
@@ -88,7 +96,11 @@ get all required fields on registration form.
     >>> browser.getControl('Login Name').value = 'admin'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Log in').click()
-    >>> data = 'form.user_registration_fields:list=fullname&form.actions.save=Save&form.buttons.save=Save&_authenticator=' + getAuth()
+    >>> data = '&'.join([
+    ...     'form.widgets.user_registration_fields:list=fullname',
+    ...     'form.actions.save=Save',
+    ...     'form.buttons.save=Save',
+    ...     '_authenticator=' + getAuth()])
     >>> browser.open('http://nohost/plone/@@member-registration', data)
     >>> 'Changes saved.' in browser.contents
     True
@@ -100,7 +112,16 @@ get all required fields on registration form.
     >>> 'Registration form' in browser.contents
     True
     >>> browser.contents
-    '...User Name...Password...Confirm password...Full Name...E-mail...'
+    '...User Name...'
+    >>> browser.contents
+    '...Password...'
+    >>> browser.contents
+    '...Confirm password...'
+    >>> browser.contents
+    '...Full Name...'
+    >>> browser.contents
+    '...E-mail...'
+
 
 Check render register form in 'Use Email As Login' mode.
 
@@ -132,7 +153,7 @@ Check register form with portrait field.
     True
     >>> from pkg_resources import resource_stream
     >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
-    >>> browser.getControl(name='form.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
+    >>> browser.getControl(name='form.widgets.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
     >>> browser.getControl('User Name').value = 'testuser'
     >>> browser.getControl('E-mail').value = 'test@example.com'
     >>> browser.getControl('Password').value = 'testpassword'
@@ -192,7 +213,12 @@ Open up control panel form.
 
 Submit form with the same set of fields:
 
-    >>> data = 'form.user_registration_fields:list=username&form.user_registration_fields:list=email&form.actions.save=Save&form.buttons.save=Save&_authenticator=' + getAuth()
+    >>> data = '&'.join([
+    ...     'form.widgets.user_registration_fields:list=username',
+    ...     'form.widgets.user_registration_fields:list=email',
+    ...     'form.actions.save=Save',
+    ...     'form.buttons.save=Save',
+    ...     '_authenticator=' + getAuth()])
     >>> browser.open('http://nohost/plone/@@member-registration', data)
     >>> 'No changes made.' in browser.contents
     True

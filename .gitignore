@@ -5,3 +5,5 @@ include
 lib
 develop-eggs
 parts
+*.pydevproject
+*.project

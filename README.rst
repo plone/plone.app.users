@@ -1,19 +1,9 @@
 Introduction
 ============
 
-This package provide the registration form for new users using either Zope
-formlib_ forms and z3c.form_ forms. It allows the site administrator to
-select fields from a schema to appear on the registration form.
-
-Switching to the the z3c.form forms
-===================================
-
-By default, plone.app.users will use formlib-based forms for backwards
-compatibility. To switch to the z3c.form-based forms, add the following
-in your `configure.zcml` and `overrides.zcml` respectively::
-
-    <include package="plone.app.users.browser" file="z3c-configure.zcml" />
-    <include package="plone.app.users.browser" file="z3c-overrides.zcml" />
+This package provide the registration form for new users using z3c.form_ forms.
+It allows the site administrator to select fields from a schema to appear on
+the registration form.
 
 Overriding / extending the default schema
 =========================================
@@ -40,7 +30,7 @@ Where the `customschemachema.py` contains::
 
     from z3c.form.field import Fields
 
-    from plone.app.users.browser.z3cpersonalpreferences import UserDataPanel
+    from plone.app.users.browser.personalpreferences import UserDataPanel
     from plone.z3cform.fieldsets import extensible
 
 
@@ -69,7 +59,7 @@ Before values can be read and written, there needs to be a data manager to
 fetch the values. The default manager will read/write any field defined in
 the schema, so most of the work is done for you::
 
-    from plone.app.users.browser.z3cpersonalpreferences import AccountPanelSchemaAdapter
+    from plone.app.users.browser.personalpreferences import AccountPanelSchemaAdapter
 
     class EnhancedUserDataSchemaAdapter(AccountPanelSchemaAdapter):
         schema = IEnhancedUserDataSchema

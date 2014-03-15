@@ -1,11 +1,72 @@
-Changelog
-=========
+CHANGES
+=======
+
+2.0.2 (unreleased)
+------------------
+
+- More explicit ZCML package includes. At least, the inclusion of
+  plone.formwidget.namedfile fixes a problem in Dexterity-less setups, where
+  the @@personal-information form couldn't be rendered because NamedBlobImage
+  didn't provide IFromUnicode.
+  [thet]
+
+
+2.0.1 (2014-03-02)
+------------------
+
+- Fix packaging error.
+  [esteele]
+
+
+2.0 (2014-03-02)
+----------------
+
+- Have a soft dependency on plone.app.event and include the timezone field only
+  then in the schema, if plone.app.event is available.
+  [thet]
+
+- Migrate plone.app.users to use z3c.form instead of zope.formlib.
+  [lentinj, vipod, thet]
+
+
+1.3a1 (unreleased)
+------------------
+
+- Query ``ILoginNameGenerator`` utility to get a login name during registration.
+  This makes it easier to override the default login name logic.
+  Part of PLIP 13419.
+  [maurits]
+
+- Query ``IUserIdGenerator`` utility to get a user id during registration.
+  This makes it easier to override the default user id logic.
+  Part of PLIP 13419.
+  [maurits]
+
+- Support ``use_uuid_as_userid`` site property.
+  Part of PLIP 13419.
+  [maurits]
+
 
 1.2a2 (unreleased)
 ------------------
 
-- Update tests. We now check if the user can add and delete the portrait himself.
-  [tschanzt] 
+- Update tests. We now check if the user can add and delete the portrait
+  himself.
+  [tschanzt]
+
+- Added user timezone selection to user preferences and a dependency on
+  plone.app.event for vocabulary for user timezone selection.
+  [seanupton]
+
+- Fixed i18n of new_password field in change-password view.
+  [vincentfretin]
+
+- Fix email as login validation in the personalize form (UserDataPanel).
+  This is for the case when email is used as login.  It checked that a
+  changed email address was valid as user id.  But the user id is
+  never changed here, only the login name.  We only need to check if
+  this address is not used by another user.
+  [maurits]
 
 - Fix to not break if passwords contain non-ASCII characters.
   This closes https://dev.plone.org/ticket/13114

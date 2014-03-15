@@ -1,10 +1,6 @@
 Admin modifies user information thru 'Users and groups' 
 ---------------------------------------------------------------------
 
-The portrait widget varies between form libaries.
-
-    >>> delete_control = 'Remove existing image' if self.form_library == 'z3c.form' else 'Delete Portrait'
-
 An admin can modify user information thru the @@user-information form in Users and Groups
 config page.
 
@@ -33,7 +29,12 @@ We have these controls in the form:
     ''
     >>> self.browser.getControl('Biography').value
     ''
-    >>> self.browser.getControl(name='form.portrait').value
+    >>> self.browser.getControl(name='form.widgets.portrait').value
+
+The form should be using CSRF protection:
+
+    >>> self.browser.getControl(name='_authenticator', index=0)
+    <Control name='_authenticator' type='hidden'>
 
 
 Modifying user data
@@ -56,7 +57,7 @@ Modifying user data
 
     >>> from pkg_resources import resource_stream
     >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
-    >>> self.browser.getControl(name='form.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
+    >>> self.browser.getControl(name='form.widgets.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
 
     >>> self.browser.getControl('Save').click()
     >>> 'Required input is missing.' in self.browser.contents
@@ -106,7 +107,7 @@ Is the data of the created Image the same as the (scaled) orignal image?
 
 Can we delete the Image using the checkbox?
 
-    >>> self.browser.getControl(delete_control).selected = True
+    >>> self.browser.getControl('Remove existing image').selected = True
     >>> self.browser.getControl('Save').click()
     >>> 'Changes saved.' in self.browser.contents
     True

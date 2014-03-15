@@ -3,7 +3,7 @@ Testing the flexible user registration
 
     >>> browser = self.browser
     >>> browser.open('http://nohost/plone')
-    >>> list_widget_suffix = ':list' if self.form_library == 'z3c.form' else ''
+    >>> list_widget_suffix = ':list'
 
     Self-registration is disabled, user does not see 'Register' link.
     >>> 'Register' in browser.contents
@@ -64,6 +64,14 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...There were errors...User Name...Required input is missing...E-mail...Required input is missing...'
+
+    We have to provide a valid email address
+    >>> browser.open('http://nohost/plone/@@register')
+    >>> browser.getControl('User Name').value = 'user1'
+    >>> browser.getControl('E-mail').value = 'user1-AT-example.com'
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...There were errors...Invalid email address...'
     
     Fill out the form. 
     >>> browser.getControl('User Name').value = 'user1'
@@ -92,9 +100,6 @@ Testing the flexible user registration
     >>> browser.getControl('Save').click()
     >>> 'Changes saved' in browser.contents
     True
-    
-    
-    
     >>> browser.getLink(url='http://nohost/plone/logout').click()
     >>> 'Log in' in browser.contents
     True
@@ -142,7 +147,7 @@ Testing the flexible user registration
     
     Great! The user-facing form works. Let's try the manager's version...
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
-    >>> browser.getControl('Add New User').click()
+    >>> browser.getLink('Add New User').click()
     >>> '@@new-user' in browser.url
     True    
 
@@ -181,7 +186,18 @@ Testing the flexible user registration
     >>> 'Send a confirmation mail with a link to set the password' in browser.contents
     False
 
+    We have to provide a valid email address
+    >>> browser.open('http://nohost/plone/@@new-user')
+    >>> browser.getControl('User Name').value = 'user2a'
+    >>> browser.getControl('E-mail').value = 'user2a-AT-example.com'
+    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Confirm password').value = 'secret'
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...There were errors...Invalid email address...'
+
     Fill out the form.
+    >>> browser.open('http://nohost/plone/@@new-user')
     >>> browser.getControl('User Name').value = 'user3'
     >>> browser.getControl('E-mail').value = 'user3@example.com'
     >>> browser.getControl('Password').value = 'secret'
@@ -230,15 +246,15 @@ Testing the flexible user registration
     But, at first, let's try to check form validation a bit. Do not set 'mail me' and 'password' fields.
     
     By Default Mail Me is checked.
-    >>> browser.getControl(name='form.mail_me' + list_widget_suffix).value in (True, ['selected'])
+    >>> browser.getControl(name='form.widgets.mail_me' + list_widget_suffix).value in (True, ['selected'])
     True
-    >>> browser.getControl(name='form.mail_me' + list_widget_suffix).value = False
+    >>> browser.getControl(name='form.widgets.mail_me' + list_widget_suffix).value = False
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...You must set a password or choose to send an email...'
 
     As we want to validate emails. The password fields have become optional.
-    >>> browser.getControl(name='form.mail_me' + list_widget_suffix).value = True
+    >>> browser.getControl(name='form.widgets.mail_me' + list_widget_suffix).value = True
     >>> browser.getControl('Register').click()
     >>> print browser.url
     http://...@@usergroup-userprefs...

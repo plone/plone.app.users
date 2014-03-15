@@ -1,34 +1,32 @@
-from zope.component import getMultiAdapter
-from z3c.form import form, field, button
-from z3c.form.browser.orderedselect import OrderedSelectFieldWidget
-
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
-
 from plone.protect import CheckAuthenticator
-
-from ..registration import USER_REGISTRATION_FIELDS
-from ..registrationschema import IZ3CRegistrationSchema
+from z3c.form import button
+from z3c.form import field
+from z3c.form import form
+from zope.component import getMultiAdapter
+from plone.app.users.schema import IRegistrationSettingsSchema
+from z3c.form.browser.orderedselect import OrderedSelectFieldWidget
 
 
 class RegistrationControlPanel(form.Form):
-
     label = _(u"Registration settings")
     description = _(u"Registration settings for this site.")
     form_name = _(u"Registration settings")
+    enableCSRFProtection = True
 
     formErrorsMessage = _('There were errors.')
-    template = ViewPageTemplateFile('z3c-memberregistration.pt')
+    template = ViewPageTemplateFile('memberregistration.pt')
 
-    fields = field.Fields(IZ3CRegistrationSchema)
+    fields = field.Fields(IRegistrationSettingsSchema)
     fields['user_registration_fields'].widgetFactory = OrderedSelectFieldWidget
 
     def getContent(self):
         props = self.props()
         return {'user_registration_fields': props.getProperty(
-            USER_REGISTRATION_FIELDS, [])}
+            'user_registration_fields', [])}
 
     @button.buttonAndHandler(_(u'label_save', default=u'Save'), name='save')
     def action_save(self, action):
@@ -43,22 +41,28 @@ class RegistrationControlPanel(form.Form):
 
         # save property
         if data['user_registration_fields'] != \
-            self.getContent()['user_registration_fields']:
+                self.getContent()['user_registration_fields']:
             props = self.props()
-            props._updateProperty(USER_REGISTRATION_FIELDS,
-                data['user_registration_fields'])
+            props._updateProperty(
+                'user_registration_fields',
+                data['user_registration_fields']
+            )
             msg = _("Changes saved.")
         else:
             msg = _("No changes made.")
         IStatusMessage(self.request).addStatusMessage(msg, type="info")
 
-    @button.buttonAndHandler(_(u'label_cancel', default=u'Cancel'),
-        name='cancel')
+    @button.buttonAndHandler(
+        _(u'label_cancel', default=u'Cancel'), name='cancel'
+    )
     def action_cancel(self, action):
-        IStatusMessage(self.request).addStatusMessage(_("Changes canceled."),
-            type="info")
-        url = getMultiAdapter((self.context, self.request),
-            name='absolute_url')()
+        IStatusMessage(self.request).addStatusMessage(
+            _("Changes canceled."), type="info"
+        )
+        url = getMultiAdapter(
+            (self.context, self.request),
+            name='absolute_url'
+        )()
         self.request.response.redirect(url + '/plone_control_panel')
 
     def props(self):
