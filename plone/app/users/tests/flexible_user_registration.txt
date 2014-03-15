@@ -7,7 +7,12 @@ Testing the flexible user registration
     >>> import hmac
     >>> from hashlib import sha1
     >>> def getAuth():
-    ...     secret = getUtility(IKeyManager)[u'_system'].current
+    ...     manager = getUtility(IKeyManager)
+    ...     try:
+    ...         ring = manager[u'_forms']
+    ...     except:
+    ...         ring = manager[u'_system']
+    ...     secret = ring.current
     ...     return hmac.new(secret, 'admin', sha1).hexdigest()
 
 
@@ -46,8 +51,7 @@ Check that the site admin has a link to the configlet in the control panel.
     >>> 'home_page' in user_registration_fields.displayOptions
     False
 
-The form should be using CSRF protection
-    >>> self.browser.getControl(name='_authenticator')
+    >>> self.browser.getControl(name='_authenticator', index=0)
     <Control name='_authenticator' type='hidden'>
 
 Let's add home_page to the list of registration form fields.
@@ -108,7 +112,16 @@ get all required fields on registration form.
     >>> 'Registration form' in browser.contents
     True
     >>> browser.contents
-    '...User Name...Password...Confirm password...Full Name...E-mail...'
+    '...User Name...'
+    >>> browser.contents
+    '...Password...'
+    >>> browser.contents
+    '...Confirm password...'
+    >>> browser.contents
+    '...Full Name...'
+    >>> browser.contents
+    '...E-mail...'
+
 
 Check render register form in 'Use Email As Login' mode.
 

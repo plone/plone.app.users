@@ -147,7 +147,7 @@ Testing the flexible user registration
     
     Great! The user-facing form works. Let's try the manager's version...
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
-    >>> browser.getControl('Add New User').click()
+    >>> browser.getLink('Add New User').click()
     >>> '@@new-user' in browser.url
     True    
 

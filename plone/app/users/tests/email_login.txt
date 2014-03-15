@@ -73,12 +73,12 @@ Testing email address as login name
 
     Great! The user-facing form works. Let's try the manager's version...
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
-    >>> browser.getControl('Add New User').click()
+    >>> browser.getLink('Add New User').click()
     >>> '@@new-user' in browser.url
     True
 
     The form should be using CSRF protection
-    >>> self.browser.getControl(name='_authenticator')
+    >>> self.browser.getControl(name='_authenticator', index=0)
     <Control name='_authenticator' type='hidden'>
 
     Check that user name is not displayed.
