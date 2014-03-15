@@ -50,6 +50,7 @@ setup(
         'plone.formwidget.namedfile >= 1.0.3',
         'plone.namedfile',
         'plone.protect',
+        'plone.schema',
         'plone.uuid',
         'z3c.form',
         'zope.component',
