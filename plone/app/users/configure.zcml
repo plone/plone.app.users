@@ -22,9 +22,6 @@
     <utility provides=".schema.IRegisterSchemaProvider"
              factory=".schemaprovider.RegisterSchemaProvider"/>
 
-    <utility name="plone.app.users.UsersMetadataSchemaExporter"
-             factory=".schemaeditor.UsersMetadataSchemaExporter"/>
-
     <subscriber
         for=".schemaeditor.IMemberSchemaContext
              plone.schemaeditor.interfaces.ISchemaModifiedEvent"
