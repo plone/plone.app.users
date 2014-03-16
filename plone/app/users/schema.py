@@ -58,7 +58,7 @@ class IRegisterSchema(Interface):
 
     email = schema.ASCIILine(
         title=_(u'label_email', default=u'E-mail'),
-        description=u'We will use this address if you need to recover your "
+        description=u'We will use this address if you need to recover your '
                     u'password',
         required=True,
         constraint=checkEmailAddress)
