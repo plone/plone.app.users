@@ -77,7 +77,7 @@ Check delete links::
     >>> 'http://nohost/plone/member-fields/location/@@delete' in browser.contents
     True
 
-Let's try editing a field::
+Let's try editing a required field::
 
     >>> settings_link = browser.getLink('Settings')
     >>> settings_link.url
@@ -115,7 +115,31 @@ Let's try editing a field::
     >>> browser.getControl(label='Required').selected
     True
 
-Let's try pushing the add field button::
+Let's try editing an optional field::
+
+    >>> browser.open('http://nohost/plone/member-fields/description')
+
+    >>> browser.getControl(label='Title').value
+    'Biography'
+    >>> browser.getControl(label='Required').selected
+    False
+
+    >>> browser.getControl(label='Title').value = 'Your story'
+    >>> required = browser.getControl(label='Required')
+    >>> required.click()
+
+    >>> browser.getControl(label='Save').click()
+    >>> browser.url
+    'http://nohost/plone/member-fields'
+
+    >>> browser.open('http://nohost/plone/member-fields/description')
+
+    >>> browser.getControl(label='Title').value
+    'Your story'
+    >>> browser.getControl(label='Required').selected
+    True
+
+We should be able to add a field::
 
     >>> browser.open('http://nohost/plone/@@member-fields')
     >>> browser.getForm(id="add-field").submit()
@@ -164,7 +188,6 @@ Let's see if our new field is actually on personal information::
 
     >>> 'Think about it' in browser.contents
     True
-
 
 
 Log out. Assert that we now have the home_page in the join form.
