@@ -93,19 +93,26 @@ Let's try editing a field::
     >>> browser.getControl(label='Description').value
     'Enter full name, e.g. John Smith.'
 
-    >>> required = browser.getControl(label='Required')
     >>> required.selected
-    False
+        False
 
+    >>> browser.getControl(label='Title').value = 'Long Name'
+    >>> browser.getControl(label='Description').value = 'Check your name tag'
+    >>> required = browser.getControl(label='Required')
     >>> required.click()
+
     >>> browser.getControl(label='Save').click()
     >>> browser.url
     'http://nohost/plone/member-fields'
 
     >>> settings_link = browser.getLink('Settings')
     >>> settings_link.click()
-    >>> required = browser.getControl(label='Required')
-    >>> required.selected
+
+    >>> browser.getControl(label='Title').value
+    'Long Name'
+    >>> browser.getControl(label='Description').value
+    'Check your name tag'
+    >>> browser.getControl(label='Required').selected
     True
 
 Let's try pushing the add field button::
