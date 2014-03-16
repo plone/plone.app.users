@@ -89,7 +89,7 @@ class MemberSchemaContext(SchemaContext):
     def __init__(self, context, request):
         self.baseSchema = getUtility(IUserDataSchemaProvider).getSchema()
         schema = copy_schema(self.baseSchema, filter_serializable=True)
-        self.fieldsWhichCannotBeDeleted = ['fullname']
+        self.fieldsWhichCannotBeDeleted = ['fullname', 'email']
         super(MemberSchemaContext, self).__init__(
             schema,
             request,

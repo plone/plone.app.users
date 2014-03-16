@@ -40,6 +40,12 @@ class IUserDataSchema(Interface):
                       default=u"Enter full name, e.g. John Smith."),
         required=False)
 
+    email = schema.ASCIILine(
+        title=_(u'label_email', default=u'E-mail'),
+        description=u'We will use this address if you need to recover your '
+                    u'password',
+        required=True,
+        constraint=checkEmailAddress)
 
 class IRegisterSchema(Interface):
 
@@ -53,13 +59,6 @@ class IRegisterSchema(Interface):
                     u"key is not enabled. This is the name used to log in."
         )
     )
-
-    email = schema.ASCIILine(
-        title=_(u'label_email', default=u'E-mail'),
-        description=u'We will use this address if you need to recover your '
-                    u'password',
-        required=True,
-        constraint=checkEmailAddress)
 
     password = schema.Password(
         title=_(u'label_password', default=u'Password'),
