@@ -14,7 +14,6 @@ from plone.app.layout.navigation.interfaces import INavigationRoot
 from ..schema import IUserDataSchemaProvider
 
 
-
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
     """One does not simply set portrait, email might be used to login with.
     """
