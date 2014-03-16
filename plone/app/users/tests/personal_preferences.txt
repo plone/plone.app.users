@@ -34,12 +34,10 @@ Now we should be able to access the user data panel:
     >>> self.browser.url.endswith(view_name)
     True
 
-We have two controls, one for the start page and one for the language:
+We have two controls, one for the editor and one for the language:
 
     >>> isEmptyMarker(self.browser.getControl('Wysiwyg editor').value)
     True
-    >>> self.browser.getControl('Enable external editing').selected
-    False
     >>> isEmptyMarker(self.browser.getControl('Language', index=0).value)
     True
 
@@ -64,7 +62,6 @@ Modifying values
 
     >>> self.browser.open('http://nohost/plone/' + view_name)
     >>> self.browser.getControl('Wysiwyg editor').value = ['TinyMCE']
-    >>> self.browser.getControl('Enable external editing').selected = True
     >>> self.browser.getControl('Language', index=0).value = ['en']
     >>> self.browser.getControl('Save').click()
     >>> 'Changes saved' in self.browser.contents
@@ -77,8 +74,6 @@ changed:
     >>> marker = object
     >>> member.getProperty('wysiwyg_editor', object)
     'TinyMCE'
-    >>> member.getProperty('ext_editor', object)
-    True
     >>> member.getProperty('language', object)
     'en'
 
@@ -88,8 +83,6 @@ And that the form still has the according values:
     False
     >>> self.browser.getControl('Wysiwyg editor').value
     ['TinyMCE']
-    >>> self.browser.getControl('Enable external editing').selected
-    True
     >>> self.browser.getControl('Language', index=0).value
     ['en']
 
@@ -101,7 +94,6 @@ Making an input empty should result in a stored empty string.
 
     >>> self.browser.open('http://nohost/plone/' + view_name)
     >>> self.browser.getControl('Wysiwyg editor').value = [empty_marker]
-    >>> self.browser.getControl('Enable external editing').selected = False
     >>> self.browser.getControl('Language', index=0).value = [empty_marker]
     >>> self.browser.getControl('Save').click()
     >>> 'Changes saved' in self.browser.contents
@@ -114,8 +106,6 @@ changed:
     >>> marker = object
     >>> member.getProperty('wysiwyg_editor', object)
     ''
-    >>> member.getProperty('ext_editor', object)
-    False
     >>> member.getProperty('language', object)
     ''
 
@@ -123,7 +113,5 @@ And that the form still has the according values:
 
     >>> isEmptyMarker(self.browser.getControl('Wysiwyg editor').value)
     True
-    >>> self.browser.getControl('Enable external editing').selected
-    False
     >>> isEmptyMarker(self.browser.getControl('Language', index=0).value)
     True
