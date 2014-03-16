@@ -35,7 +35,7 @@ We have these controls in the form:
     ''
     >>> self.browser.getControl('E-mail').value
     ''
-    >>> self.browser.getControl('Home page').value
+    >>> self.browser.getControl('Home Page').value
     ''
     >>> self.browser.getControl('Biography').value
     ''
@@ -75,7 +75,7 @@ If we do set an e-mail address, we should be able to save the form.
     >>> self.browser.getControl('Full Name').value = full_name
 
     >>> home_page = 'http://www.plone.org/'
-    >>> self.browser.getControl('Home page').value = home_page
+    >>> self.browser.getControl('Home Page').value = home_page
 
     >>> description = 'Far far away, behind the word mountains, far from the countries Vokalia and Consonantia, there live the blind texts.'
     >>> self.browser.getControl('Biography').value = description
@@ -144,7 +144,7 @@ If we empty all non-required inputs, the corresponding fields should
 be cleared, instead of keeping their old value
 
     >>> self.browser.getControl('Full Name').value = ''
-    >>> self.browser.getControl('Home page').value = ''
+    >>> self.browser.getControl('Home Page').value = ''
     >>> self.browser.getControl('Biography').value = ''
     >>> self.browser.getControl('Location').value = ''
     >>> self.browser.getControl('Save').click()
