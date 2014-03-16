@@ -29,8 +29,6 @@ We have these controls in the form:
 
     >>> isEmptyMarker(self.browser.getControl('Wysiwyg editor').value)
     True
-    >>> self.browser.getControl('Enable external editing').selected
-    False
     >>> isEmptyMarker(self.browser.getControl('Language', index=0).value)
     True
 
@@ -44,7 +42,6 @@ Modifying values
 ----------------
 
     >>> self.browser.getControl('Wysiwyg editor').value = ['TinyMCE']
-    >>> self.browser.getControl('Enable external editing').selected = True
     >>> self.browser.getControl('Language', index=0).value = ['en']
     >>> self.browser.getControl('Save').click()
     >>> 'Changes saved' in self.browser.contents
@@ -77,7 +74,6 @@ Clearing values
 Check that empty or False values do get stored.
 
     >>> self.browser.getControl('Wysiwyg editor').value = [empty_marker]
-    >>> self.browser.getControl('Enable external editing').selected = False
     >>> self.browser.getControl('Language', index=0).value = [empty_marker]
     >>> self.browser.getControl('Save').click()
     >>> 'Changes saved' in self.browser.contents
@@ -97,8 +93,6 @@ And that the form still has the according values:
     >>> self.browser.open("http://nohost/plone/@@user-preferences?userid=test_user_1_")
     >>> isEmptyMarker(self.browser.getControl('Wysiwyg editor').value)
     True
-    >>> self.browser.getControl('Enable external editing').selected
-    False
     >>> isEmptyMarker(self.browser.getControl('Language', index=0).value)
     True
 
