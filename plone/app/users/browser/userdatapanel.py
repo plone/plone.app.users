@@ -8,16 +8,17 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.PlonePAS.tools.membership import default_portrait
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from plone.app.users.schema import IUserDataSchema
 from plone.namedfile.file import NamedBlobImage
 from plone.app.layout.navigation.interfaces import INavigationRoot
 
 from ..schema import IUserDataSchemaProvider
 
+
+
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
     """One does not simply set portrait, email might be used to login with.
     """
-    
+
     def __init__(self, *args, **kwargs):
         super(UserDataPanelAdapter, self).__init__(*args, **kwargs)
         self.schema = getUtility(IUserDataSchemaProvider).getSchema()
@@ -77,7 +78,8 @@ class UserDataPanel(AccountPanelForm):
     def __init__(self, *args, **kwargs):
         super(UserDataPanel, self).__init__(*args, **kwargs)
         self.schema = getUtility(IUserDataSchemaProvider).getSchema()
-        # as schema is a generated supermodel, just insert a relevant adapter for it
+        # as schema is a generated supermodel, just insert a relevant
+        # adapter for it
         provideAdapter(UserDataPanelAdapter, (INavigationRoot,), self.schema)
 
     @property

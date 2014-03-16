@@ -1,29 +1,19 @@
 import re
 import logging
 import hashlib
-import copy
-import traceback
 
 from zope.component import (
     getUtility,
     provideAdapter,
-    adapter,
-    adapts,
-    provideUtility,
-    getUtilitiesFor,
 )
 from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import Interface, implements
-from zope import schema as mschema
-from zope.schema.interfaces import IField
 
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
 
-from plone.memoize import ram
 from plone.schemaeditor.browser.schema.traversal import SchemaContext
-from plone.schemaeditor.interfaces import IFieldEditorExtender
 from plone.supermodel.model import Model, finalizeSchemas, SchemaClass
 from plone.supermodel.parser import IFieldMetadataHandler
 from plone.supermodel.serializer import serialize
@@ -32,10 +22,9 @@ from plone.supermodel import loadString
 from plone.app.layout.navigation.interfaces import INavigationRoot
 
 from .browser.userdatapanel import UserDataPanelAdapter
-from schema import (
+from .schema import (
     IUserDataSchemaProvider,
     SCHEMA_ANNOTATION,
-    checkEmailAddress,
     SCHEMATA_KEY,
 )
 
@@ -60,7 +49,7 @@ field_type_mapping = {
 }
 
 
-re_flags = re.S|re.U|re.X
+re_flags = re.S | re.U | re.X
 
 
 def log(message,
@@ -69,9 +58,9 @@ def log(message,
     getattr(logger, level)(message)
 
 
-
 class IMemberFieldValidator(Interface):
     """Base marker for field validators"""
+
 
 class IMemberSchemaContext(Interface):
     """ """
@@ -80,8 +69,7 @@ class IMemberSchemaContext(Interface):
 def copy_schema(schema, filter_serializable=False):
     fields = {}
     for item in schema:
-        if (filter_serializable
-            and not is_serialisable_field(schema[item])):
+        if (filter_serializable and not is_serialisable_field(schema[item])):
             continue
         fields[item] = schema[item]
     oschema = SchemaClass(SCHEMATA_KEY, attrs=fields)
@@ -92,12 +80,14 @@ def copy_schema(schema, filter_serializable=False):
     finalizeSchemas(oschema)
     return oschema
 
+
 class MemberSchemaContext(SchemaContext):
     implements(IMemberSchemaContext)
 
     def __init__(self, context, request):
         self.baseSchema = getUtility(IUserDataSchemaProvider).getSchema()
         schema = copy_schema(self.baseSchema, filter_serializable=True)
+        self.fieldsWhichCannotBeDeleted = ['fullname']
         super(MemberSchemaContext, self).__init__(
             schema,
             request,
@@ -149,9 +139,6 @@ def updateSchema(object, event):
             pm._delProperty(field_id)
 
 
-
-
-
 def model_key(*a, **kw):
     site = getSite()
     psite = '/'.join(site.getPhysicalPath())
@@ -181,30 +168,19 @@ class UsersMetadataSchemaExporter(object):
     )
 
     def read(self, fieldNode, schema, field):
-        try:
-            val = self.load(
-                fieldNode.get(
-                    ns(VALIDATORS_KEY, self.ns), []))
-        except:
-            val = []
-        field.setTaggedValue(VALIDATORS_KEY, val)
         for attr in self.if_attrs:
             value = self.load(
-                fieldNode.get(ns(attr, self.ns),
-                                  None))
+                fieldNode.get(ns(attr, self.ns), None))
             if value is not None:
                 setattr(field, attr, value)
 
     def write(self, fieldNode, schema, field):
-        val = field.queryTaggedValue(VALIDATORS_KEY, [])
         for attr in self.if_attrs:
             value = getattr(field, attr, None)
             if value is not None:
                 v = self.serialize(value)
                 fieldNode.set(ns(attr, self.ns), v)
-        if val:
-            fieldNode.set(ns(VALIDATORS_KEY, self.ns),
-                          self.serialize(val))
+
 
     def load(self, value):
         listre = re.compile('(?P<type>list|set|tuple)'
@@ -228,17 +204,15 @@ class UsersMetadataSchemaExporter(object):
                 except:
                     value = []
             else:
-                value = {"bool:true":True,
-                         "bool:false":False}.get(
-                             value.lower(), value)
+                value = {"bool:true": True,
+                         "bool:false": False}.get(value.lower(), value)
         return value
 
     def serialize(self, value):
         if isinstance(value, bool):
-            value = value  and "bool:true" or "bool:false"
+            value = value and "bool:true" or "bool:false"
         elif isinstance(value, (list, set, tuple)):
-            value = u"%s:%s" % (type(value).__name__,
-                                 SPLITTER.join(value))
+            value = u"%s:%s" % (type(value).__name__, SPLITTER.join(value))
         elif value is not None:
             value = u"int:%s" % unicode(value)
         return value
@@ -263,12 +237,12 @@ def serialize_ttw_schema(schema=None):
             attrs[name] = f
     smember = SchemaClass(SCHEMATA_KEY, attrs=attrs)
     finalizeSchemas(smember)
-    model = Model({SCHEMATA_KEY:smember})
+    model = Model({SCHEMATA_KEY: smember})
     sschema = serialize(model)
     return sschema
 
 
-def load_ttw_schema(string = None):
+def load_ttw_schema(string=None):
     if not string:
         string = get_schema()
     schema = loadString(string).schemata.get(SCHEMATA_KEY, None)
@@ -276,12 +250,14 @@ def load_ttw_schema(string = None):
 
 
 def get_schema(site=None):
-    if site is None: site = getSite()
+    if site is None:
+        site = getSite()
     annotations = IAnnotations(site)
     return annotations.get(SCHEMA_ANNOTATION, '')
 
 
 def set_schema(string, site=None):
-    if site is None: site = getSite()
+    if site is None:
+        site = getSite()
     annotations = IAnnotations(site)
     annotations[SCHEMA_ANNOTATION] = string

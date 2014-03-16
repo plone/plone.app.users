@@ -3,11 +3,13 @@ from zope.interface import implements
 from plone.memoize import volatile
 from plone.supermodel.model import finalizeSchemas, SchemaClass
 
-from .schemaeditor import (SCHEMATA_KEY,
+from .schemaeditor import (
+    SCHEMATA_KEY,
     get_ttw_edited_schema,
     model_key,
     CACHE_CONTAINER)
-from .schema import (IUserDataSchema,
+from .schema import (
+    IUserDataSchema,
     ICombinedRegisterSchema,
     IUserDataSchemaProvider,
     IRegisterSchemaProvider)
@@ -44,4 +46,3 @@ class UserDataSchemaProvider(BaseMemberSchemaProvider):
 class RegisterSchemaProvider(BaseMemberSchemaProvider):
     implements(IRegisterSchemaProvider)
     baseSchema = ICombinedRegisterSchema
-

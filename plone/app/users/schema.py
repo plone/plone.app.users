@@ -2,8 +2,6 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.exceptions import EmailAddressInvalid
 from Products.CMFPlone import PloneMessageFactory as _
-from plone.autoform import directives as form
-from plone.namedfile.field import NamedBlobImage
 from zope import schema
 from zope.component import getUtility
 from zope.interface import Interface

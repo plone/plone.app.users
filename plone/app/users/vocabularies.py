@@ -11,7 +11,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFPlone.utils import normalizeString, safe_unicode
 
-from plone.app.users.browser.register import RegistrationForm
 from .schema import IRegisterSchemaProvider
 
 # Define constants from the Join schema that should be added to the

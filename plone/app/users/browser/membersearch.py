@@ -7,8 +7,6 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from ..schema import checkEmailAddress
 
 from plone.supermodel import model
-#from plone.autoform import directives
-#from z3c.form.browser.checkbox import CheckBoxWidget
 
 
 class IMemberSearchSchema(model.Schema):
@@ -16,9 +14,9 @@ class IMemberSearchSchema(model.Schema):
     """Provide schema for member search """
 
     model.fieldset('extra',
-        label=_(u"legend_member_search_criteria", default=u'User Search Criteria'),
-        fields=['login', 'email', 'fullname']
-        )
+                   label=_(u"legend_member_search_criteria",
+                           default=u'User Search Criteria'),
+                   fields=['login', 'email', 'fullname'])
 
     login = schema.TextLine(
         title=_(u'label_name', default=u'Name'),
@@ -66,7 +64,7 @@ def extractCriteriaFromRequest(criteria):
     """
     for key in ["_authenticator",
                 "form.buttons.search",
-                "form.widgets.roles-empty-marker",]:
+                "form.widgets.roles-empty-marker", ]:
         if key in criteria:
             del criteria[key]
     for (key, value) in criteria.items():
@@ -98,7 +96,8 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
 
     submitted = False
 
-    @button.buttonAndHandler(_(u'label_search', default=u'Search'), name='search')
+    @button.buttonAndHandler(_(u'label_search', default=u'Search'),
+                             name='search')
     def handleApply(self, action):
         request = self.request
         data, errors = self.extractData()
