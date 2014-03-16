@@ -243,6 +243,7 @@ class UsersMetadataSchemaExporter(object):
             value = u"int:%s" % unicode(value)
         return value
 
+
 def is_serialisable_field(field):
     ret = False
     if field.__class__.__name__ in field_type_mapping:
@@ -277,16 +278,10 @@ def load_ttw_schema(string = None):
 def get_schema(site=None):
     if site is None: site = getSite()
     annotations = IAnnotations(site)
-    schema = annotations.get(SCHEMA_ANNOTATION, '')
-    # be sure to have something serialized in storage
-    if not isinstance(schema, basestring):
-        schema = ""
-    return schema
+    return annotations.get(SCHEMA_ANNOTATION, '')
 
 
 def set_schema(string, site=None):
     if site is None: site = getSite()
     annotations = IAnnotations(site)
     annotations[SCHEMA_ANNOTATION] = string
-
-

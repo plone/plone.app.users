@@ -41,45 +41,41 @@ class IUserDataSchema(Interface):
                       default=u"Enter full name, e.g. John Smith."),
         required=False)
 
-    email = schema.ASCIILine(
-        title=_(u'label_email', default=u'E-mail'),
-        description=u'',
-        required=True,
-        constraint=checkEmailAddress)
 
-    home_page = schema.TextLine(
-        title=_(u'label_homepage', default=u'Home page'),
-        description=_(u'help_homepage',
-                      default=u"The URL for your external home page, "
-                      "if you have one."),
-        required=False)
 
-    description = schema.Text(
-        title=_(u'label_biography', default=u'Biography'),
-        description=_(u'help_biography',
-                      default=u"A short overview of who you are and what you "
-                      "do. Will be displayed on your author page, linked "
-                      "from the items you create."),
-        required=False)
-
-    location = schema.TextLine(
-        title=_(u'label_location', default=u'Location'),
-        description=_(u'help_location',
-                      default=u"Your location - either city and "
-                      "country - or in a company setting, where "
-                      "your office is located."),
-        required=False)
-
-    portrait = NamedBlobImage(
-        title=_(u'label_portrait', default=u'Portrait'),
-        description=_(
-            u'help_portrait',
-            default=u'To add or change the portrait: click the "Browse" '
-                    u'button; select a picture of yourself.  Recommended '
-                    u'image size is 75 pixels wide by 100 pixels tall.'
-        ),
-        required=False)
-    form.widget(portrait='plone.app.users.schema.PortraitFieldWidget')
+#     home_page = schema.TextLine(
+#         title=_(u'label_homepage', default=u'Home page'),
+#         description=_(u'help_homepage',
+#                       default=u"The URL for your external home page, "
+#                       "if you have one."),
+#         required=False)
+#
+#     description = schema.Text(
+#         title=_(u'label_biography', default=u'Biography'),
+#         description=_(u'help_biography',
+#                       default=u"A short overview of who you are and what you "
+#                       "do. Will be displayed on your author page, linked "
+#                       "from the items you create."),
+#         required=False)
+#
+#     location = schema.TextLine(
+#         title=_(u'label_location', default=u'Location'),
+#         description=_(u'help_location',
+#                       default=u"Your location - either city and "
+#                       "country - or in a company setting, where "
+#                       "your office is located."),
+#         required=False)
+#
+#     portrait = NamedBlobImage(
+#         title=_(u'label_portrait', default=u'Portrait'),
+#         description=_(
+#             u'help_portrait',
+#             default=u'To add or change the portrait: click the "Browse" '
+#                     u'button; select a picture of yourself.  Recommended '
+#                     u'image size is 75 pixels wide by 100 pixels tall.'
+#         ),
+#         required=False)
+#     form.widget(portrait='plone.app.users.schema.PortraitFieldWidget')
 
 
 class IRegisterSchema(Interface):
@@ -94,6 +90,13 @@ class IRegisterSchema(Interface):
                     u"key is not enabled. This is the name used to log in."
         )
     )
+
+    email = schema.ASCIILine(
+        title=_(u'label_email', default=u'E-mail'),
+        description=u'We will use this address if you need to recover your "
+                    u'password',
+        required=True,
+        constraint=checkEmailAddress)
 
     password = schema.Password(
         title=_(u'label_password', default=u'Password'),
