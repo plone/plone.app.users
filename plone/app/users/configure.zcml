@@ -27,7 +27,13 @@
              plone.schemaeditor.interfaces.ISchemaModifiedEvent"
         handler=".schemaeditor.updateSchema"
         />
-
+    <genericsetup:registerProfile
+          name='importUserData'
+          title='Import User Data'
+          directory='profiles/default'
+          description='Import default schema'
+          provides='Products.GenericSetup.interfaces.EXTENSION'
+        />
     <genericsetup:exportStep
           name="usersschema"
           title="Export member custom TTW schema"

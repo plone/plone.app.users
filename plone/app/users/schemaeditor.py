@@ -152,8 +152,11 @@ def model_key(*a, **kw):
 def get_ttw_edited_schema():
     data = get_schema()
     if data:
-        return load_ttw_schema(data)
-
+        ttwschema = load_ttw_schema(data)
+        if ttwschema is None:
+            return ''
+        return ttwschema
+    return ''
 
 class UsersMetadataSchemaExporter(object):
     """Support the security: namespace in model definitions.
