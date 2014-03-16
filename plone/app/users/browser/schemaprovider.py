@@ -8,7 +8,7 @@ from .schemaeditor import (
     get_ttw_edited_schema,
     model_key,
     CACHE_CONTAINER)
-from .schema import (
+from plone.app.users.schema import (
     IUserDataSchema,
     ICombinedRegisterSchema,
     IUserDataSchemaProvider,

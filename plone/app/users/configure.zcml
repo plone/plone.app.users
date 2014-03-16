@@ -17,15 +17,15 @@
              name="plone.app.users.group_ids"/>
 
     <utility provides=".schema.IUserDataSchemaProvider"
-             factory=".schemaprovider.UserDataSchemaProvider"/>
+             factory="plone.app.users.browser.schemaprovider.UserDataSchemaProvider"/>
 
     <utility provides=".schema.IRegisterSchemaProvider"
-             factory=".schemaprovider.RegisterSchemaProvider"/>
+             factory="plone.app.users.browser.schemaprovider.RegisterSchemaProvider"/>
 
     <subscriber
-        for=".schemaeditor.IMemberSchemaContext
+        for="plone.app.users.browser.schemaeditor.IMemberSchemaContext
              plone.schemaeditor.interfaces.ISchemaModifiedEvent"
-        handler=".schemaeditor.updateSchema"
+        handler="plone.app.users.browser.schemaeditor.updateSchema"
         />
 
     <genericsetup:exportStep

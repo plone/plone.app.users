@@ -21,8 +21,8 @@ from plone.supermodel.utils import ns
 from plone.supermodel import loadString
 from plone.app.layout.navigation.interfaces import INavigationRoot
 
-from .browser.userdatapanel import UserDataPanelAdapter
-from .schema import (
+from plone.app.users.browser.userdatapanel import UserDataPanelAdapter
+from plone.app.users.schema import (
     IUserDataSchemaProvider,
     SCHEMA_ANNOTATION,
     SCHEMATA_KEY,
@@ -53,7 +53,7 @@ re_flags = re.S | re.U | re.X
 
 
 def log(message,
-        level='info', id='plone.app.users.schemaeditor'):
+        level='info', id='plone.app.users.browser.schemaeditor'):
     logger = logging.getLogger(id)
     getattr(logger, level)(message)
 
