@@ -84,6 +84,8 @@ def copy_schema(schema, filter_serializable=False):
 class MemberSchemaContext(SchemaContext):
     implements(IMemberSchemaContext)
 
+    label = _(u"Edit member form fields")
+
     def __init__(self, context, request):
         self.baseSchema = getUtility(IUserDataSchemaProvider).getSchema()
         schema = copy_schema(self.baseSchema, filter_serializable=True)
@@ -91,12 +93,11 @@ class MemberSchemaContext(SchemaContext):
         super(MemberSchemaContext, self).__init__(
             schema,
             request,
-            name=SCHEMATA_KEY
+            name=SCHEMATA_KEY,
+            title=_(u"Member Fields"),
         )
         provideAdapter(UserDataPanelAdapter, (INavigationRoot,), schema)
 
-    def label(self):
-        return _("Edit member fields")
 
 
 def updateSchema(object, event):
