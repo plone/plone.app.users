@@ -31,6 +31,7 @@ setup(
             'Products.MailHost',
             'Products.PloneTestCase',
             'plone.keyring',
+            'plone.schema'
         ],
     ),
     install_requires=[
