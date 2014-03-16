@@ -13,6 +13,8 @@ from z3c.form.widget import FieldWidget
 from zope.component import adapter
 from zope.interface import implementer
 
+from plone.schema.email import Email
+
 SCHEMA_ANNOTATION = "plone.app.users.schema"
 # must match the browser view name !
 SCHEMATA_KEY = "member-fields"
@@ -40,12 +42,11 @@ class IUserDataSchema(Interface):
                       default=u"Enter full name, e.g. John Smith."),
         required=False)
 
-    email = schema.ASCIILine(
+    email = Email(
         title=_(u'label_email', default=u'E-mail'),
         description=u'We will use this address if you need to recover your '
                     u'password',
-        required=True,
-        constraint=checkEmailAddress)
+        required=True,)
 
 class IRegisterSchema(Interface):
 

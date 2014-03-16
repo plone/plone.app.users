@@ -46,6 +46,9 @@ field_type_mapping = {
     "Date": 'date',
     "Choice": 'text',
     "List": 'text',
+    "Email": 'text',
+    "URI": 'text',
+    "NamedBlobImage": ''
 }
 
 
@@ -226,6 +229,8 @@ def is_serialisable_field(field):
     ret = False
     if field.__class__.__name__ in field_type_mapping:
         ret = True
+    else:
+        raise TypeError("type not serializable %s" % field.__class__.__name__)
     return ret
 
 
