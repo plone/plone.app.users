@@ -6,6 +6,7 @@
     <include package="plone.supermodel" />
     <include package="plone.autoform" />
     <include package="plone.namedfile" />
+    <include package="plone.schema" />
     <include package="plone.formwidget.namedfile" />
     <include package="Products.CMFCore" file="permissions.zcml" />
     <include package=".browser" />
