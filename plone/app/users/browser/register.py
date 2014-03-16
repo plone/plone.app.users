@@ -37,7 +37,7 @@ from ..schema import (
     IAddUserSchema,
     ICombinedRegisterSchema)
 from ..utils import notifyWidgetActionExecutionError
-from ..schemaprovider import RegisterSchemaProvider
+from plone.app.users.browser.schemaprovider import RegisterSchemaProvider
 from .userdatapanel import UserDataPanelAdapter
 
 # Number of retries for creating a user id like bob-jones-42:

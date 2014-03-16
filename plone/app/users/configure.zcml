@@ -16,17 +16,6 @@
              component=".vocabularies.GroupIdVocabularyFactory"
              name="plone.app.users.group_ids"/>
 
-    <utility provides=".schema.IUserDataSchemaProvider"
-             factory=".schemaprovider.UserDataSchemaProvider"/>
-
-    <utility provides=".schema.IRegisterSchemaProvider"
-             factory=".schemaprovider.RegisterSchemaProvider"/>
-
-    <subscriber
-        for=".schemaeditor.IMemberSchemaContext
-             plone.schemaeditor.interfaces.ISchemaModifiedEvent"
-        handler=".schemaeditor.updateSchema"
-        />
     <genericsetup:registerProfile
           name='importUserData'
           title='Import User Data'
@@ -34,6 +23,7 @@
           description='Import default schema'
           provides='Products.GenericSetup.interfaces.EXTENSION'
         />
+        
     <genericsetup:exportStep
           name="usersschema"
           title="Export member custom TTW schema"

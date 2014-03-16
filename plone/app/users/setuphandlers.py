@@ -3,7 +3,7 @@ import logging
 import transaction
 from Products.CMFCore.utils import getToolByName
 
-import plone.app.users.schemaeditor as ttw
+import plone.app.users.browser.schemaeditor as ttw
 
 logger = logging.getLogger('plone.app.users.setuphandlers')
 
