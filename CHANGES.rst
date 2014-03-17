@@ -4,6 +4,18 @@ CHANGES
 2.0.2 (unreleased)
 ------------------
 
+- Added upgrade step to move past Plone to user editable member schema.
+  [ianderso]
+
+- Split personal information schema into required and ttw editable schemas
+  [ianderso, ljb, stevem]
+
+- Updated tests to reflect current status of the product.
+  [stevem]
+
+- Added ttw editable schema for personal information.
+  [ianderso, ljb, stevem]
+
 - Removed ext_editor and visible_ids preferences.
   [davisagli]
 
