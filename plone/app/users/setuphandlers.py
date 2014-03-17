@@ -1,7 +1,4 @@
-import copy
 import logging
-import transaction
-from Products.CMFCore.utils import getToolByName
 
 import plone.app.users.browser.schemaeditor as ttw
 
@@ -23,7 +20,6 @@ def import_schema(context):
 def export_schema(context):
     """Export TTW schema
     """
-    portal = context.getSite()
     schema = ttw.serialize_ttw_schema()
     logger.info('Exported schema')
     context.writeDataFile(FILE, schema, 'text/xml')
