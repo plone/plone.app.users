@@ -39,4 +39,12 @@
         <depends name="plone-content"/>
     </genericsetup:importStep>
 
+    <genericsetup:upgradeStep
+        title="Upgrade to TTW Schema editing for user information form"
+        description=""
+        source="*"
+        destination="*"
+        handler=".upgrades.upgrade_to_ttw"
+        profile="plone.app.users:default" />
+
 </configure>
