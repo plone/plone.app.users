@@ -33,13 +33,13 @@ depend on a mail server properly set-up:
 Check that the site admin has a link to the configlet in the control panel.
     >>> browser.open('http://nohost/plone/plone_control_panel')
     >>> browser.getLink('Users and Groups').click()
-    >>> 'Member form fields' in browser.contents
+    >>> 'Member Form Fields' in browser.contents
     True
     >>> link = browser.getLink(url='http://nohost/plone/@@member-fields')
     >>> link
     <Link ...>
     >>> link.click()
-    >>> 'Edit member form fields' in browser.contents
+    >>> 'Edit Member Form Fields' in browser.contents
     True
 
 Check default form fields

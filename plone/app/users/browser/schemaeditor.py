@@ -87,7 +87,7 @@ def copy_schema(schema, filter_serializable=False):
 class MemberSchemaContext(SchemaContext):
     implements(IMemberSchemaContext)
 
-    label = _(u"Edit member form fields")
+    label = _(u"Edit Member Form Fields")
 
     def __init__(self, context, request):
         self.baseSchema = getUtility(IUserDataSchemaProvider).getSchema()
