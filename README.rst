@@ -30,7 +30,8 @@ Where the `customschemachema.py` contains::
 
     from z3c.form.field import Fields
 
-    from plone.app.users.browser.personalpreferences import UserDataPanel
+    from plone.app.users.browser.userdatapanel import UserDataPanel
+    from plone.supermodel import model
     from plone.z3cform.fieldsets import extensible
 
 
@@ -41,7 +42,7 @@ Where the `customschemachema.py` contains::
     @adapter(Interface, IDefaultBrowserLayer, UserDataPanel)
     class UserDataPanelExtender(extensible.FormExtender):
         def update(self):
-            fields = field.Fields(IEnhancedUserDataSchema)
+            fields = Fields(IEnhancedUserDataSchema)
             self.add(fields, prefix="IEnhancedUserDataSchema")
 
 Storing / retreiving custom fields
@@ -59,7 +60,7 @@ Before values can be read and written, there needs to be a data manager to
 fetch the values. The default manager will read/write any field defined in
 the schema, so most of the work is done for you::
 
-    from plone.app.users.browser.personalpreferences import AccountPanelSchemaAdapter
+    from plone.app.users.browser.account import AccountPanelSchemaAdapter
 
     class EnhancedUserDataSchemaAdapter(AccountPanelSchemaAdapter):
         schema = IEnhancedUserDataSchema
@@ -70,7 +71,7 @@ override the default behavior.
 Finally, register the data manager in ZCML::
 
     <adapter
-      provides=".userdataschema.IEnhancedUserDataSchema"
+      provides="my.customschemachema.IEnhancedUserDataSchema"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       factory=".adapter.EnhancedUserDataSchemaAdapter"
       />
