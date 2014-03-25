@@ -13,7 +13,7 @@
     <include package="Products.CMFCore" file="permissions.zcml" />
 
     <utility provides=".userdataschema.IUserDataSchemaProvider"
-             factory=".userdataschema.UserDataSchemaProvider"/>
+             factory=".schemaprovider.UserDataSchemaProvider"/>
 
     <utility
         name="plone.app.users.UsersMetadataSchemaExporter"

@@ -1,9 +1,6 @@
-from zope.interface import Interface, implements
+from zope.interface import Interface
 from zope import schema
-from zope.component import provideAdapter
 from zope.component import getUtility
-from zope.component.hooks import getSite
-from zope.annotation.interfaces import IAnnotations
 
 from plone.autoform import directives as form
 from plone.namedfile.field import NamedBlobImage
@@ -13,7 +10,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.exceptions import EmailAddressInvalid
 from Products.CMFDefault.formlib.schema import FileUpload
 from Products.CMFPlone import PloneMessageFactory as _
-from plone.supermodel.model import finalizeSchemas, SchemaClass
 
 
 SCHEMA_ANNOTATION = "plone.app.users.schema"
@@ -110,26 +106,3 @@ class IUserDataSchemaProvider(Interface):
         """
         Return base user schema + TTW Fields
         """
-
-
-class UserDataSchemaProvider(object):
-    implements(IUserDataSchemaProvider)
-    baseSchema = IUserDataZ3CSchema
-
-    def getSchema(self):
-        """
-        """
-        # import in time to avoid circular imports errors
-        from .schemaeditor import get_ttw_edited_schema
-
-        attrs = dict([(n, self.baseSchema[n])
-                      for n in self.baseSchema])
-        ttwschema = get_ttw_edited_schema()
-        if ttwschema:
-            attrs.update(dict([(a, ttwschema[a]) for a in ttwschema]))
-        schema = SchemaClass(SCHEMATA_KEY,
-                             bases=(self.baseSchema,),
-                             attrs=attrs)
-        finalizeSchemas(schema)
-        return schema
-
