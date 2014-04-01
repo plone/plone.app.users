@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.0.2 (unreleased)
+2.0.2 (2014-04-01)
 ------------------
 
 - More explicit ZCML package includes. At least, the inclusion of
