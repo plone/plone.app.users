@@ -1,6 +1,7 @@
 from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.utils import getFSVersionTuple
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
@@ -10,10 +11,18 @@ from zope.schema import Bool
 from zope.schema import Choice
 
 try:
-    import plone.app.event
+    import plone.app.event  # nopep8
     HAS_PAE = True
 except ImportError:
     HAS_PAE = False
+
+try:
+    import plone.app.vocabularies.datetimerelated  # nopep8
+    HAS_DT_VOCAB = True
+except ImportError:
+    HAS_DT_VOCAB = False
+
+PLONE5 = getFSVersionTuple()[0] >= 5
 
 
 class IPersonalPreferences(Interface):
@@ -63,7 +72,14 @@ class IPersonalPreferences(Interface):
         required=False
     )
 
-    if HAS_PAE:
+    if HAS_PAE and HAS_DT_VOCAB:
+        timezone = Choice(
+            title=_(u'label_timezone', default=u'Time zone'),
+            description=_(u'help_timezone', default=u'Your time zone'),
+            vocabulary='plone.app.vocabularies.AvailableTimezones',
+            required=False,
+        )
+    elif HAS_PAE:
         timezone = Choice(
             title=_(u'label_timezone', default=u'Time zone'),
             description=_(u'help_timezone', default=u'Your time zone'),
