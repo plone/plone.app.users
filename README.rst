@@ -1,7 +1,7 @@
 Introduction
 ============
 
-This package provide the registration form for new users using z3c.form_ forms.
+This package provide the registration form for new users using z3c.form forms.
 It allows the site administrator to select fields from a schema to appear on
 the registration form.
 
