@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.0.3 (unreleased)
+2.0.3 (2014-04-19)
 ------------------
 
 - Test timezone attribute on plone.app.users.
