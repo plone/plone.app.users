@@ -10,7 +10,9 @@ CHANGES
 2.0.3 (2014-04-19)
 ------------------
 
-- Test timezone attribute on plone.app.users.
+- Use correct timezone vocabulary in IPersonalPreferences schema. Wether
+  the newer plone.app.vocabularies, the older plone.app.event one or none at
+  all, depending on availability.
   [thet]
 
 
