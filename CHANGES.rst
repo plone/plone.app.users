@@ -1,23 +1,8 @@
 CHANGES
 =======
 
-2.0.4 (unreleased)
-------------------
-
-- Nothing changed yet.
-
-
-2.0.3 (2014-04-19)
-------------------
-
-- Use correct timezone vocabulary in IPersonalPreferences schema. Wether
-  the newer plone.app.vocabularies, the older plone.app.event one or none at
-  all, depending on availability.
-  [thet]
-
-
-2.0.2 (2014-04-01)
-------------------
+2.1 (unreleased)
+----------------
 
 - Added upgrade step to move past Plone to user editable member schema.
   [ianderso]
@@ -33,6 +18,19 @@ CHANGES
 
 - Removed ext_editor and visible_ids preferences.
   [davisagli]
+
+
+2.0.3 (2014-04-19)
+------------------
+
+- Use correct timezone vocabulary in IPersonalPreferences schema. Wether
+  the newer plone.app.vocabularies, the older plone.app.event one or none at
+  all, depending on availability.
+  [thet]
+
+
+2.0.2 (2014-04-01)
+------------------
 
 - More explicit ZCML package includes. At least, the inclusion of
   plone.formwidget.namedfile fixes a problem in Dexterity-less setups, where
