@@ -1,6 +1,5 @@
 from AccessControl import Unauthorized
 from Acquisition import aq_inner
-from Products.CMFCore.permissions import SetOwnProperties
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import safe_unicode
@@ -11,9 +10,11 @@ from plone.app.controlpanel.events import ConfigurationChangedEvent
 from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.autoform.form import AutoExtensibleForm
 from plone.protect import CheckAuthenticator
+from z3c.form import button
+from z3c.form import form
+from zope.component import getMultiAdapter
 from zope.event import notify
 from zope.interface import implements
-from z3c.form import form, button
 
 from ..utils import notifyWidgetActionExecutionError
 
@@ -178,7 +179,16 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         tabs = []
         navigation_root_url = context.absolute_url()
 
-        if mt.checkPermission(SetOwnProperties, context):
+        def _check_allowed(context, request, name):
+            """Check, if user has required permissions on view.
+            """
+            view = getMultiAdapter((context, request), name=name)
+            allowed = True
+            for perm in view.__ac_permissions__:
+                allowed = allowed and mt.checkPermission(perm[0], context)
+            return allowed
+
+        if _check_allowed(context, self.request, 'personal-information'):
             tabs.append({
                 'title': _('title_personal_information_form',
                            u'Personal Information'),
@@ -186,6 +196,8 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
                 'selected': (self.__name__ == 'personal-information'),
                 'id': 'user_data-personal-information',
             })
+
+        if _check_allowed(context, self.request, 'personal-preferences'):
             tabs.append({
                 'title': _(u'Personal Preferences'),
                 'url': navigation_root_url + '/@@personal-preferences',
