@@ -4,7 +4,10 @@ CHANGES
 2.0.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Check the permission for the Object tab on the AccountPanelForm as configured
+  in ZCML. This allows to revoke access to individual forms by changing the
+  permissions via ZCML overrides.
+  [thet]
 
 
 2.0.3 (2014-04-19)
