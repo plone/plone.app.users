@@ -42,8 +42,10 @@ Where the `customschemachema.py` contains::
     @adapter(Interface, IDefaultBrowserLayer, UserDataPanel)
     class UserDataPanelExtender(extensible.FormExtender):
         def update(self):
-            fields = Fields(IEnhancedUserDataSchema)
-            self.add(fields, prefix="IEnhancedUserDataSchema")
+            fields = Fields(
+                IEnhancedUserDataSchema,
+                prefix="IEnhancedUserDataSchema")
+            self.add(fields)
 
 Storing / retreiving custom fields
 ----------------------------------
