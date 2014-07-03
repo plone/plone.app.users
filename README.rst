@@ -146,4 +146,4 @@ the schema. For example, for the `firstname` field, we do this::
 
 .. _formlib: http://pypi.python.org/pypi/zope.formlib
 .. _plone.app.controlpanel: http://pypi.python.org/pypi/plone.app.controlpanel
-.. _`collective.examples.userdata`: http://pypi.python.org/pypi/collective.examples.userdata
+.. _`collective.examples.userdata`: http://pypi.python.org/pypi/collective.examples.userdata/0.4
