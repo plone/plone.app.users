@@ -20,7 +20,7 @@ So let's login as Plone admin:
 Let's see if we can navigate to the user information form in Users and groups
     >>> self.browser.getLink('Site Setup').click()
     >>> self.browser.getLink('Users and Groups').click()
-    >>> self.browser.getLink('(test_user_1_)').click()
+    >>> self.browser.getLink('test_user_1_').click()
     >>> self.browser.getLink('Personal Preferences').click()
     >>> self.browser.url
     'http://nohost/plone/@@user-preferences?userid=test_user_1_'
