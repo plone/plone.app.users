@@ -44,13 +44,6 @@
 
       <div id="content">
 
-          <a href=""
-             id="setup-link"
-             tal:attributes="href string:$portal_url/plone_control_panel"
-             i18n:translate="">
-              Site Setup
-          </a>
-
           <h1 class="documentFirstHeading"
               i18n:translate="heading_usergroup_settings">User/Groups Settings</h1>
 
