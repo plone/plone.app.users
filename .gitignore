@@ -1,4 +1,4 @@
-*.pyc
+*.py[co]
 *.egg-info
 bin
 include
@@ -7,3 +7,4 @@ develop-eggs
 parts
 *.pydevproject
 *.project
+.installed.cfg
