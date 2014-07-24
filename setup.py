@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '2.0.4'
+version = '2.1.dev0'
 
 setup(
     name='plone.app.users',
@@ -12,10 +12,12 @@ setup(
     classifiers=[
         "Environment :: Web Environment",
         "Framework :: Plone",
+        "Framework :: Plone :: 5.0",
         "Framework :: Zope2",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
     ],
     keywords='Zope CMF Plone Users Groups',
     author='Plone Foundation',
