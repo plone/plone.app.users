@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Base class for flexible user registration test cases.
 
 This is in a separate module because it's potentially useful to other

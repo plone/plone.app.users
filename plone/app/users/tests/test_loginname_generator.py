@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Note: test setup somehow fails when only tests from this file are run.
 from zope.component import getSiteManager
 

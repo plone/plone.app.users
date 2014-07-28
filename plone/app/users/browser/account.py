@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
 from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName

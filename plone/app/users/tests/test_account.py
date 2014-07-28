@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 from Testing.makerequest import makerequest
 from OFS.SimpleItem import SimpleItem

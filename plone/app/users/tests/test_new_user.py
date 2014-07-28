@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from plone.app.users.tests.base import BaseTestCase
 from plone.protect import authenticator as auth
 import hmac

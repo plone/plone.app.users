@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from zope.component import getUtility
 import zope.event
 from zope.interface import Invalid

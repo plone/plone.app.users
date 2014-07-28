@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Products.CMFPlone import PloneMessageFactory as _
 from z3c.form import button, form
 from zope import schema
