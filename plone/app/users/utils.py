@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from zope.component import getUtility
-import zope.event
-from zope.interface import Invalid
-
+from plone.uuid.interfaces import IUUIDGenerator
 from z3c.form.action import ActionErrorOccurred
 from z3c.form.interfaces import WidgetActionExecutionError
+from zope.component import getUtility
+from zope.interface import Invalid
 
-from plone.uuid.interfaces import IUUIDGenerator
+import zope.event
 
 
 def uuid_userid_generator(data=None):

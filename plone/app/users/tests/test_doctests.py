@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import doctest
-from unittest import TestSuite
-from Testing.ZopeTestCase import FunctionalDocFileSuite
 from Products.PloneTestCase.PloneTestCase import setupPloneSite
+from Testing.ZopeTestCase import FunctionalDocFileSuite
 from plone.app.users.tests.base import BaseTestCase
+from unittest import TestSuite
+
+import doctest
 
 
 setupPloneSite()

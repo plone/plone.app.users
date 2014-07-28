@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 from AccessControl import getSecurityManager
-
+from Products.CMFCore.permissions import ManagePortal
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import normalizeString
+from Products.CMFPlone.utils import safe_unicode
+from plone.app.users.browser.register import RegistrationForm
 from zope.interface import implements
 from zope.schema import getFieldNames
 from zope.schema.interfaces import IVocabularyFactory
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
+from zope.schema.vocabulary import SimpleTerm
 from zope.site.hooks import getSite
-
-from Products.CMFCore.utils import getToolByName
-from Products.CMFCore.permissions import ManagePortal
-from Products.CMFPlone.utils import normalizeString, safe_unicode
-
-from plone.app.users.browser.register import RegistrationForm
 
 
 # Define constants from the Join schema that should be added to the

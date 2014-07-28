@@ -10,6 +10,10 @@ from Products.statusmessages.interfaces import IStatusMessage
 from ZODB.POSException import ConflictError
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.interfaces import IUserIdGenerator
+from plone.app.users.schema import IAddUserSchema
+from plone.app.users.schema import ICombinedRegisterSchema
+from plone.app.users.schema import IRegisterSchema
+from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.app.users.utils import uuid_userid_generator
 from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.interfaces import OMITTED_KEY
@@ -21,14 +25,15 @@ from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import DISPLAY_MODE
 from zExceptions import Forbidden
+from zope.component import getAdapter
 from zope.component import getMultiAdapter
-from zope.component import getUtility, queryUtility, getAdapter
+from zope.component import getUtility
+from zope.component import queryUtility
 from zope.interface import Interface
 from zope.schema import getFieldNames
+
 import logging
 
-from ..schema import IRegisterSchema, ICombinedRegisterSchema, IAddUserSchema
-from ..utils import notifyWidgetActionExecutionError
 
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100

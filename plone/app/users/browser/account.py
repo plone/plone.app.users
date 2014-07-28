@@ -9,6 +9,7 @@ from Products.statusmessages.interfaces import IStatusMessage
 from ZTUtils import make_query
 from plone.app.controlpanel.events import ConfigurationChangedEvent
 from plone.app.users.browser.interfaces import IAccountPanelForm
+from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.autoform.form import AutoExtensibleForm
 from plone.protect import CheckAuthenticator
 from z3c.form import button
@@ -16,8 +17,6 @@ from z3c.form import form
 from zope.component import getMultiAdapter
 from zope.event import notify
 from zope.interface import implements
-
-from ..utils import notifyWidgetActionExecutionError
 
 
 MESSAGE_EMAIL_CANNOT_CHANGE = \

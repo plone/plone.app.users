@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from plone.app.users.browser.membersearch import extractCriteriaFromRequest
+
 import unittest
 
 
@@ -12,7 +14,6 @@ class TestMemberSearch(unittest.TestCase):
             'form.widgets.roles-empty-marker': True,
         }
 
-        from plone.app.users.browser.membersearch import extractCriteriaFromRequest
         result = extractCriteriaFromRequest(data)
 
         self.assertEqual(result, {"something": u'any form value'})

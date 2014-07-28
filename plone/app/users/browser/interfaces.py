@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from zope.interface import Interface
 from plone.app.controlpanel.interfaces import IPloneControlPanelForm
+from zope.interface import Interface
 
 
 class IAccountPanelForm(IPloneControlPanelForm):

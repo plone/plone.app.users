@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 from Products.CMFPlone import PloneMessageFactory as _
-from z3c.form import button, form
-from zope import schema
-
-from plone.autoform.form import AutoExtensibleForm
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from ..schema import checkEmailAddress
-
+from plone.app.users.schema import checkEmailAddress
+from plone.autoform.form import AutoExtensibleForm
 from plone.supermodel import model
+from z3c.form import button
+from z3c.form import form
+from zope import schema
 #from plone.autoform import directives
 #from z3c.form.browser.checkbox import CheckBoxWidget
 

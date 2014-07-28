@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from hashlib import sha1 as sha
 from plone.app.users.tests.base import BaseTestCase
 from plone.protect import authenticator as auth
+
 import hmac
-from hashlib import sha1 as sha
 
 
 class TestNewUser(BaseTestCase):

@@ -3,17 +3,18 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.exceptions import EmailAddressInvalid
 from Products.CMFPlone import PloneMessageFactory as _
-from plone.autoform import directives as form
-from plone.namedfile.field import NamedBlobImage
-from zope import schema
-from zope.component import getUtility
-from zope.interface import Interface
-from plone.formwidget.namedfile.widget import NamedImageWidget
-from plone.namedfile.interfaces import INamedImageField
 from ZTUtils import make_query
-from z3c.form.interfaces import IFieldWidget, IFormLayer
+from plone.autoform import directives as form
+from plone.formwidget.namedfile.widget import NamedImageWidget
+from plone.namedfile.field import NamedBlobImage
+from plone.namedfile.interfaces import INamedImageField
+from zope import schema
+from z3c.form.interfaces import IFieldWidget
+from z3c.form.interfaces import IFormLayer
 from z3c.form.widget import FieldWidget
 from zope.component import adapter
+from zope.component import getUtility
+from zope.interface import Interface
 from zope.interface import implementer
 
 

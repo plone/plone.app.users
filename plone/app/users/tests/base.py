@@ -5,27 +5,25 @@ This is in a separate module because it's potentially useful to other
 packages which register accountpanels. They should be able to import it
 without the PloneTestCase.setupPloneSite() side effects.
 """
-
-from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
+from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
-from zope.component import getSiteManager
+from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
+from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
+from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
+from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
+from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.utils import classImplements
+from OFS.Cache import Cacheable
+from zope.component import getSiteManager
+from zope.component import getUtility
 
 # BBB Zope 2.12
 try:
     from Testing.testbrowser import Browser
 except ImportError:
     from Products.Five.testbrowser import Browser
-
-from AccessControl.SecurityInfo import ClassSecurityInfo
-from OFS.Cache import Cacheable
-from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
-from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
-from Products.PluggableAuthService.utils import classImplements
-from Products.CMFCore.interfaces import ISiteRoot
-from zope.component import getUtility
-from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 
 
 class BaseTestCase(FunctionalTestCase):

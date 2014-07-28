@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 # Note: test setup somehow fails when only tests from this file are run.
-from zope.component import getSiteManager
-
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.register import BaseRegistrationForm
 from plone.app.users.tests.base import BaseTestCase
+from zope.component import getSiteManager
 
 
 class TestGenerateLoginName(BaseTestCase):
