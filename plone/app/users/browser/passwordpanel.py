@@ -18,7 +18,7 @@ class IPasswordSchema(Interface):
         description=_(
             u'help_current_password',
             default=u'Enter your current password.'),
-        #constraint=checkCurrentPassword,
+        # constraint=checkCurrentPassword,
     )
 
     new_password = schema.Password(

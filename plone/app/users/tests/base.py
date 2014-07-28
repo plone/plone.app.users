@@ -78,7 +78,7 @@ class BaseTestCase(FunctionalTestCase):
         if plugin is not None:
             plugins = pas_instance._getOb('plugins')
             plugins.deactivatePlugin(IValidationPlugin, 'test')
-            #plugins.deactivatePlugin(IPropertiesPlugin, 'test')
+            # plugins.deactivatePlugin(IPropertiesPlugin, 'test')
             pas_instance.manage_delObjects('test')
 
     def setMailHost(self):

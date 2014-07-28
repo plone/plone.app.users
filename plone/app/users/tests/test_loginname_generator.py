@@ -17,7 +17,8 @@ class TestGenerateLoginName(BaseTestCase):
         )
 
         # Generator overrides this behavior
-        sm.registerUtility(lambda data: data['useme'], provided=ILoginNameGenerator)
+        sm.registerUtility(lambda data: data['useme'],
+                           provided=ILoginNameGenerator)
         self.assertEqual(
             self.generateLoginName(dict(useme='me me me', username='frank')),
             'me me me'

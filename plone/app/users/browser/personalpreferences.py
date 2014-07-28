@@ -105,14 +105,14 @@ class PersonalPreferencesPanel(AccountPanelForm):
         userid = self.request.form.get('userid')
         mt = getToolByName(self.context, 'portal_membership')
         if userid and (userid != mt.getAuthenticatedMember().getId()):
-            #editing someone else's profile
+            # editing someone else's profile
             return _(
                 u'description_preferences_form_otheruser',
                 default='Personal settings for $name',
                 mapping={'name': userid}
             )
         else:
-            #editing my own profile
+            # editing my own profile
             return _(
                 u'description_my_preferences',
                 default='Your personal settings.'

@@ -16,4 +16,9 @@ def uuid_userid_generator(data=None):
 
 
 def notifyWidgetActionExecutionError(action, widget, err_str):
-    zope.event.notify(ActionErrorOccurred(action, WidgetActionExecutionError(widget, Invalid(err_str))))
+    zope.event.notify(
+        ActionErrorOccurred(
+            action,
+            WidgetActionExecutionError(widget, Invalid(err_str))
+        )
+    )

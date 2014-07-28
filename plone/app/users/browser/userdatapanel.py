@@ -17,8 +17,7 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
     schema = IUserDataSchema
 
     def get_portrait(self):
-        """If user has default portrait, return none
-        """
+        """If user has default portrait, return none"""
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         mt = getToolByName(self.context, 'portal_membership')
         value = mt.getPersonalPortrait(self.context.getId())
@@ -70,14 +69,14 @@ class UserDataPanel(AccountPanelForm):
         userid = self.request.form.get('userid')
         mt = getToolByName(self.context, 'portal_membership')
         if userid and (userid != mt.getAuthenticatedMember().getId()):
-            #editing someone else's profile
+            # editing someone else's profile
             return _(
                 u'description_personal_information_form_otheruser',
                 default='Change personal information for $name',
                 mapping={'name': userid}
             )
         else:
-            #editing my own profile
+            # editing my own profile
             return _(
                 u'description_personal_information_form',
                 default='Change your personal information'

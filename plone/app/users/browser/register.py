@@ -70,19 +70,19 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             'user_registration_fields', []) if f in self.schema]
 
         # Check on required join fields
-        if not 'username' in registration_fields and not use_email_as_login:
+        if 'username' not in registration_fields and not use_email_as_login:
             registration_fields.insert(0, 'username')
 
         if 'username' in registration_fields and use_email_as_login:
             registration_fields.remove('username')
 
-        if not 'email' in registration_fields:
+        if 'email' not in registration_fields:
             # Perhaps only when use_email_as_login is true, but also
             # for some other cases; the email field has always been
             # required.
             registration_fields.append('email')
 
-        if not 'password' in registration_fields:
+        if 'password' not in registration_fields:
             if 'username' in registration_fields:
                 base = registration_fields.index('username')
             else:
@@ -90,12 +90,12 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             registration_fields.insert(base + 1, 'password')
 
         # Add password_ctl after password
-        if not 'password_ctl' in registration_fields:
+        if 'password_ctl' not in registration_fields:
             registration_fields.insert(
                 registration_fields.index('password') + 1, 'password_ctl')
 
         # Add email_me after password_ctl
-        if not 'mail_me' in registration_fields:
+        if 'mail_me' not in registration_fields:
             registration_fields.insert(
                 registration_fields.index('password_ctl') + 1, 'mail_me')
 
@@ -340,7 +340,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         # Password field checked against RegistrationTool
         if 'password' in form_field_names:
             # Skip this check if password fields already have an error
-            if not 'password' in error_keys:
+            if 'password' not in error_keys:
                 password = data.get('password')
                 if password:
                     # Use PAS to test validity
@@ -374,7 +374,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         # check if username is valid
         # Skip this check if username was already in error list
-        if not username_field in error_keys:
+        if username_field not in error_keys:
             # user id may not be the same as the portal id.
             if user_id == portal.getId():
                 err_str = _(u"This username is reserved. Please choose a "
@@ -383,14 +383,14 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                                                  username_field, err_str)
 
         # Check if user id is allowed by the member id pattern.
-        if not username_field in error_keys:
+        if username_field not in error_keys:
             if not registration.isMemberIdAllowed(user_id):
                 err_str = _(u"The login name you selected is already in use "
                             "or is not valid. Please choose another.")
                 notifyWidgetActionExecutionError(action,
                                                  username_field, err_str)
 
-        if not username_field in error_keys:
+        if username_field not in error_keys:
             # Check the uniqueness of the login name, not only when
             # use_email_as_login is true, but always.
             pas = getToolByName(self, 'acl_users')
@@ -401,7 +401,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 notifyWidgetActionExecutionError(action,
                                                  username_field, err_str)
 
-        if 'password' in form_field_names and not 'password' in error_keys:
+        if 'password' in form_field_names and 'password' not in error_keys:
             # Admin can either set a password or mail the user (or both).
             if not (data['password'] or data['mail_me']):
                 err_str = _('msg_no_password_no_mail_me',

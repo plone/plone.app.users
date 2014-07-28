@@ -7,18 +7,19 @@ from plone.supermodel import model
 from z3c.form import button
 from z3c.form import form
 from zope import schema
-#from plone.autoform import directives
-#from z3c.form.browser.checkbox import CheckBoxWidget
+# from plone.autoform import directives
+# from z3c.form.browser.checkbox import CheckBoxWidget
 
 
 class IMemberSearchSchema(model.Schema):
+    """Provide schema for member search."""
 
-    """Provide schema for member search """
-
-    model.fieldset('extra',
-        label=_(u"legend_member_search_criteria", default=u'User Search Criteria'),
+    model.fieldset(
+        'extra',
+        label=_(u'legend_member_search_criteria',
+                default=u'User Search Criteria'),
         fields=['login', 'email', 'fullname']
-        )
+    )
 
     login = schema.TextLine(
         title=_(u'label_name', default=u'Name'),
@@ -61,12 +62,12 @@ class IMemberSearchSchema(model.Schema):
 
 
 def extractCriteriaFromRequest(criteria):
-    """ Takes a dictionary of z3c.form data and sanitizes it to fit
-        for a pas member search.
+    """Takes a dictionary of z3c.form data and sanitizes it to fit
+    for a pas member search.
     """
-    for key in ["_authenticator",
-                "form.buttons.search",
-                "form.widgets.roles-empty-marker",]:
+    for key in ['_authenticator',
+                'form.buttons.search',
+                'form.widgets.roles-empty-marker', ]:
         if key in criteria:
             del criteria[key]
     for (key, value) in criteria.items():
@@ -81,24 +82,25 @@ def extractCriteriaFromRequest(criteria):
 
 
 class MemberSearchForm(AutoExtensibleForm, form.Form):
-
-    """ This search form enables you to find users by specifying one or more
-        search criteria.
+    """This search form enables you to find users by specifying one or more
+    search criteria.
     """
 
     schema = IMemberSearchSchema
     ignoreContext = True
 
     label = _(u'heading_member_search', default=u'Search for users')
-    description = _(u'description_member_search', default=u"This search form \
-        enables you to find users by specifying one or more search criteria.")
+    description = _(u'description_member_search',
+                    default=u'This search form enables you to find users by '
+                            u'specifying one or more search criteria.')
     template = ViewPageTemplateFile('membersearch_form.pt')
     enableCSRFProtection = True
     formErrorsMessage = _('There were errors.')
 
     submitted = False
 
-    @button.buttonAndHandler(_(u'label_search', default=u'Search'), name='search')
+    @button.buttonAndHandler(_(u'label_search', default=u'Search'),
+                             name='search')
     def handleApply(self, action):
         request = self.request
         data, errors = self.extractData()

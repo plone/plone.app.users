@@ -4,22 +4,34 @@ from setuptools import setup
 
 version = '2.1.dev0'
 
+long_description = '{0}\n{1}'.format(open('README.rst').read(),
+                                     open('CHANGES.rst').read())
+
+
+extras_require = {
+    'test': [
+        'Products.MailHost',
+        'Products.PloneTestCase',
+        'plone.keyring',
+    ]
+}
+
+
 setup(
     name='plone.app.users',
     version=version,
-    description="A package for all things users and groups related (specific "
-                "to plone)",
-    long_description=open("README.rst").read() + "\n" +
-                     open("CHANGES.rst").read(),
+    description='A package for all things users and groups related (specific '
+                'to plone)',
+    long_description=long_description,
     classifiers=[
-        "Environment :: Web Environment",
-        "Framework :: Plone",
-        "Framework :: Plone :: 5.0",
-        "Framework :: Zope2",
-        "License :: OSI Approved :: GNU General Public License (GPL)",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 2.7",
+        'Environment :: Web Environment',
+        'Framework :: Plone',
+        'Framework :: Plone :: 5.0',
+        'Framework :: Zope2',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2.7',
     ],
     keywords='Zope CMF Plone Users Groups',
     author='Plone Foundation',
@@ -30,15 +42,8 @@ setup(
     namespace_packages=['plone', 'plone.app'],
     include_package_data=True,
     zip_safe=False,
-    extras_require=dict(
-        test=[
-            'Products.MailHost',
-            'Products.PloneTestCase',
-            'plone.keyring',
-        ],
-    ),
+    extras_require=extras_require,
     install_requires=[
-        'setuptools',
         'AccessControl',
         'Acquisition',
         'Products.CMFCore',
@@ -55,6 +60,7 @@ setup(
         'plone.namedfile',
         'plone.protect',
         'plone.uuid',
+        'setuptools',
         'z3c.form',
         'zope.component',
         'zope.event',
