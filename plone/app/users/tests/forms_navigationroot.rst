@@ -1,7 +1,7 @@
 Test form links against different navigation roots
 --------------------------------------------------
 
-Links that are present within each of the forms should adhere to 
+Links that are present within each of the forms should adhere to
 the current navigation root for the site.
 
     >>> from Products.Five.utilities.marker import mark
@@ -33,7 +33,7 @@ same base class so if the fix works on one, it works on them all.
     'http://nohost/plone/@@personal-preferences'
 
 Check the existance and links for a standard site context (navigation root
-is the Plone site itself since the marker interface isn't applied here 
+is the Plone site itself since the marker interface isn't applied here
 yet).
 
     >>> self.browser.getLink('Personal Information').url
@@ -43,7 +43,7 @@ yet).
 
 Now, let's mark this folder and see what happens.  All links should
 now be rooted to the given folder and not the Plone site proper.
- 
+
     >>> mark(self.portal.folder_navroot, INavigationRoot)
 
     >>> self.browser.getLink('Navroot').click()

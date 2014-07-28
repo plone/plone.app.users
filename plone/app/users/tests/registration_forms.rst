@@ -8,7 +8,7 @@ Testing the flexible user registration
     Self-registration is disabled, user does not see 'Register' link.
     >>> 'Register' in browser.contents
     False
-    
+
     Enable self-registration
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
@@ -23,11 +23,11 @@ Testing the flexible user registration
     >>> browser.getLink(url='http://nohost/plone/logout').click()
     >>> 'Log in' in browser.contents
     True
-    
+
     Logged out user should now see the register link.
     >>> 'Register' in browser.contents
     True
-    
+
     >>> browser.getLink('Register').click()
     >>> '@@register' in browser.url
     True
@@ -37,9 +37,9 @@ Testing the flexible user registration
     '...This site...valid email setup...cannot register at this time...'
     >>> 'User Name' in browser.contents
     False
-    
+
     Check that the form is not displayed when no mailhost is defined and users
-    cannot choose their own passwords. 
+    cannot choose their own passwords.
     >>> 'User Name' in browser.contents
     False
     >>> 'Password' in browser.contents
@@ -72,8 +72,8 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...There were errors...Invalid email address...'
-    
-    Fill out the form. 
+
+    Fill out the form.
     >>> browser.getControl('User Name').value = 'user1'
     >>> browser.getControl('E-mail').value = 'user1@example.com'
     >>> browser.getControl('Register').click()
@@ -88,7 +88,7 @@ Testing the flexible user registration
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user1' in browser.contents
     True
-    
+
     Disable the mailhost and enable user ability to set their own password.
     >>> self.unsetMailHost()
     >>> browser.open('http://nohost/plone/login_form')
@@ -103,17 +103,17 @@ Testing the flexible user registration
     >>> browser.getLink(url='http://nohost/plone/logout').click()
     >>> 'Log in' in browser.contents
     True
-    
+
     >>> browser.getLink('Register').click()
     >>> '@@register' in browser.url
     True
-    
+
     Check that password is now displayed
     >>> 'Password' in browser.contents
     True
     >>> 'Confirm password' in browser.contents
     True
-    
+
     Fill out the form.
     >>> browser.getControl('User Name').value = 'user2'
     >>> browser.getControl('E-mail').value = 'user2@example.com'
@@ -144,12 +144,12 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
     >>> browser.url
     'http://nohost/plone/news'
-    
+
     Great! The user-facing form works. Let's try the manager's version...
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> browser.getLink('Add New User').click()
     >>> '@@new-user' in browser.url
-    True    
+    True
 
     Check that password and groups are displayed.
     >>> 'Password' in browser.contents
@@ -163,7 +163,7 @@ Testing the flexible user registration
     not setup correctly.
     >>> 'Send a confirmation mail with a link to set the password' in browser.contents
     False
-    
+
     Turn off the ability for users to set their own passwords.  We are
     now back to the default settings.
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
@@ -171,7 +171,7 @@ Testing the flexible user registration
     >>> browser.getControl('Save').click()
     >>> 'Changes saved' in browser.contents
     True
-    
+
     Most fields are displayed again:
     >>> browser.open('http://nohost/plone/@@new-user')
     >>> 'Password' in browser.contents
@@ -208,7 +208,7 @@ Testing the flexible user registration
 
     TODO Since the MockMailHost doesn't flip out over missing mail settings, we
     won't see our error message here Figure out a way to do so.
-    
+
     We should get a warning because no mail could be sent, but the user is
     created anyway.
     Original test was "
@@ -244,7 +244,7 @@ Testing the flexible user registration
     >>> browser.getControl('Reviewers').selected = True
 
     But, at first, let's try to check form validation a bit. Do not set 'mail me' and 'password' fields.
-    
+
     By Default Mail Me is checked.
     >>> browser.getControl(name='form.widgets.mail_me' + list_widget_suffix).value in (True, ['selected'])
     True
@@ -264,15 +264,15 @@ Testing the flexible user registration
     Check that at least this one error does not show up:
     >>> "Failed to create your account" in browser.contents
     False
-    
+
     Check that the selected group has been applied to the new user.
     >>> browser.getLink('user4').click()
     >>> browser.getLink('Group Memberships').click()
     >>> browser.contents
     '...Current group memberships...
     ...Reviewers...'
-    
-    
+
+
     Now let's test using a PAS Password validation plugin. Add a test plugin.
 
     >>> self.addParrotPasswordPolicy()
@@ -302,7 +302,7 @@ Testing the flexible user registration
     >>> '@@register' in browser.url
     True
 
-    
+
     Check that we are given instructions on what is a valid password
 
     >>> print browser.contents
@@ -361,7 +361,7 @@ Testing the flexible user registration
 
     >>> print browser.getControl("Password").mech_control.get_labels()[0]._text
     Password...Enter your new password. Must not be dead. Minimum 5 characters...
-    
+
     We'll enter an invalid password
 
     Fill out the form.

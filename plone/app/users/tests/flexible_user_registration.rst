@@ -43,7 +43,7 @@ Check that the site admin has a link to the configlet in the control panel.
     True
 
 "Location" and "Home page" are not in the form by default.
-    
+
     >>> form = browser.getForm(action='http://nohost/plone/@@member-registration')
     >>> user_registration_fields = form.getControl(name='form.widgets.user_registration_fields.to')
     >>> 'location' in user_registration_fields.displayOptions
@@ -62,7 +62,7 @@ It should show up at the end of the form.
     >>> browser.open('http://nohost/plone/@@register')
     >>> browser.contents
     '...User Name...Home page...'
-    
+
 Check that 'home_page' is now in the right box (enabled registration form fields).
 
     >>> browser.open('http://nohost/plone/@@member-registration')
