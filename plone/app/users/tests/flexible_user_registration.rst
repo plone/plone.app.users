@@ -1,7 +1,13 @@
+======================================
 Testing the flexible user registration
 ======================================
 
-    >>> browser = self.browser
+    >>> from plone.testing.z2 import Browser
+    >>> import transaction
+    >>> app = layer['app']
+    >>> portal = layer['portal']
+    >>> browser = Browser(app)
+    >>> browser.handleErrors = False
     >>> from zope.component import getUtility
     >>> from plone.keyring.interfaces import IKeyManager
     >>> import hmac
@@ -51,12 +57,13 @@ Check that the site admin has a link to the configlet in the control panel.
     >>> 'home_page' in user_registration_fields.displayOptions
     False
 
-    >>> self.browser.getControl(name='_authenticator', index=0)
+    >>> browser.getControl(name='_authenticator', index=0)
     <Control name='_authenticator' type='hidden'>
 
 Let's add home_page to the list of registration form fields.
 (Setting this by hand since add/remove widget doesn't work properly without javascript)
     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['fullname', 'username', 'email', 'password', 'home_page'])
+    >>> transaction.commit()
 
 It should show up at the end of the form.
     >>> browser.open('http://nohost/plone/@@register')
@@ -85,6 +92,7 @@ Log out. Assert that we now have the home_page in the join form.
 Rearrange the fields
 (Setting this by hand since add/remove widget doesn't work properly without javascript)
     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['fullname', 'username', 'password', 'home_page', 'email'])
+    >>> transaction.commit()
     >>> browser.open('http://nohost/plone/@@register')
     >>> browser.contents
     '...Home page...E-mail...'
@@ -127,6 +135,7 @@ Check render register form in 'Use Email As Login' mode.
 
     >>> portal.portal_properties.site_properties._updateProperty('use_email_as_login', True)
     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['username'])
+    >>> transaction.commit()
     >>> browser.open('http://nohost/plone/@@register')
     >>> 'Registration form' in browser.contents
     True
@@ -146,6 +155,8 @@ Revert email mode.
 Check register form with portrait field.
 
     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['portrait'])
+    >>> transaction.commit()
+
     >>> browser.open('http://nohost/plone/@@register')
     >>> 'Registration form' in browser.contents
     True
@@ -166,6 +177,8 @@ Check more validation errors. Test Confirmation Password and invalid
 email, and reserved user name validations:
 
     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['username', 'email', 'password', 'mail_me'])
+    >>> transaction.commit()
+
     >>> browser.open('http://nohost/plone/@@register')
     >>> 'Registration form' in browser.contents
     True
@@ -197,6 +210,7 @@ supported by our test browser.
 Set list of registration fields:
 
     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['username', 'email'])
+    >>> transaction.commit()
 
 Login as admin.
 
