@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-from Products.PloneTestCase.PloneTestCase import setupPloneSite
-from Testing.ZopeTestCase import FunctionalDocFileSuite
-from plone.app.users.tests.base import BaseTestCase
-from unittest import TestSuite
+from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
+from plone.app.users.testing import optionflags
+from plone.testing import layered
 
 import doctest
+import unittest
 
-
-setupPloneSite()
-OPTIONFLAGS = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
 
 doc_tests = [
     'duplicate_email.rst',
@@ -27,12 +24,16 @@ doc_tests = [
 
 
 def test_suite():
-    suite = TestSuite()
-    for test_file in doc_tests:
-        suite.addTest(FunctionalDocFileSuite(
-            test_file,
-            optionflags=OPTIONFLAGS,
-            package='plone.app.users.tests',
-            test_class=BaseTestCase
-        ))
+    suite = unittest.TestSuite()
+    suite.addTests([
+        layered(
+            doctest.DocFileSuite(
+                'tests/{0}'.format(test_file),
+                package='plone.app.users',
+                optionflags=optionflags
+            ),
+            layer=PLONE_APP_USERS_FUNCTIONAL_TESTING)
+        for test_file in doc_tests
+    ])
+
     return suite
