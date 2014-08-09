@@ -3,6 +3,7 @@ from AccessControl import Unauthorized
 from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
@@ -12,9 +13,11 @@ from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.autoform.form import AutoExtensibleForm
 from plone.protect import CheckAuthenticator
+from plone.registry.interfaces import IRegistry
 from z3c.form import button
 from z3c.form import form
 from zope.component import getMultiAdapter
+from zope.component import getUtility
 from zope.event import notify
 from zope.interface import implements
 
@@ -123,8 +126,10 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         ]
         if 'email' not in error_keys:
             registration = getToolByName(context, 'portal_registration')
-            properties = getToolByName(context, 'portal_properties')
-            if properties.site_properties.getProperty('use_email_as_login'):
+            registry = getUtility(IRegistry)
+            security_settings = registry.forInterface(
+                ISecuritySchema, prefix="plone")
+            if security_settings.use_email_as_login:
                 err_str = ''
                 try:
                     id_allowed = registration.isMemberIdAllowed(data['email'])
