@@ -37,13 +37,13 @@
             Portal status message
         </div>
 
-        <div id="content">
+        <article id="content">
             <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
             <div id="content-core">
                 <metal:block use-macro="context/@@ploneform-macros/titlelessform">
                 </metal:block>
             </div>
-        </div>
+        </article>
 
     </metal:block>
 
