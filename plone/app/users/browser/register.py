@@ -222,7 +222,9 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         # First get a default value that we can return if we cannot
         # find anything better.
-        default = data.get('username') or data.get('email') or ''
+        pas = getToolByName(self.context, 'acl_users')
+        email = pas.applyTransform(data.get('email'))
+        default = data.get('username') or email or ''
         data['user_id'] = default
         fullname = data.get('fullname')
         if not fullname:

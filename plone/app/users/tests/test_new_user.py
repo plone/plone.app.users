@@ -96,6 +96,25 @@ class TestGenerateUserIdLoginName(BaseTestCase):
         self.assertEquals(user.getId(), 'newuser@example.com')
         self.assertEquals(user.getUserName(), 'newuser@example.com')
 
+    def test_uuid_disabled_email_as_login_enabled_no_full_name_uppercase(self):
+        self.security_settings.use_uuid_as_userid = False
+        self.security_settings.use_email_as_login = True
+
+        # create a user
+        self.browser.open('http://nohost/plone/@@new-user')
+        self.browser.getControl('E-mail').value = 'NewUser@Example.Com'
+        self.browser.getControl('Password').value = 'foobar'
+        self.browser.getControl('Confirm password').value = 'foobar'
+        self.browser.getControl('Register').click()
+
+        # the user id is set based on the e-mail, which should be lowercased
+        pas = getToolByName(self.portal, 'acl_users')
+        self.assertEquals(len(pas.searchUsers(name='newuser@example.com')), 1)
+        self.assertEquals(len(pas.searchUsers(name='NewUser@Example.Com')), 1)
+        user = pas.getUser('newuser@Example.Com')
+        self.assertEquals(user.getId(), 'newuser@example.com')
+        self.assertEquals(user.getUserName(), 'newuser@example.com')
+
     def test_uuid_disabled_email_as_login_enabled_has_full_name(self):
         self.security_settings.use_uuid_as_userid = False
         self.security_settings.use_email_as_login = True

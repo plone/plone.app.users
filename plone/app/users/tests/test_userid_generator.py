@@ -98,6 +98,21 @@ class TestGenerateUserId(BaseTestCase):
         self.assertEqual(form.generate_user_id(data), 'joe@example.org')
         self.assertEqual(data.get('user_id'), 'joe@example.org')
 
+    def test_use_email_as_login_no_fullname_uppercase_email(self):
+        """"Test generating a user id if the use_email_as_login setting is
+        enabled and full name is not provided, with an uppercase e-mail.
+        """
+        self.security_settings.use_email_as_login = True
+        form = BaseRegistrationForm(self.portal, {})
+
+        data = {}
+        self.assertEqual(form.generate_user_id(data), '')
+        self.assertEqual(data.get('user_id'), '')
+
+        data = {'email': 'Joe@Example.org'}
+        self.assertEqual(form.generate_user_id(data), 'joe@example.org')
+        self.assertEqual(data.get('user_id'), 'joe@example.org')
+
     def test_use_uuid_as_userid_enabled(self):
         """Test generating a user id if the use_uuid_as_userid setting is
         enabled.
