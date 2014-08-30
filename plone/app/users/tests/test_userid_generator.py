@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
-# Note: test setup somehow fails when only tests from this file are run.
 from plone.app.users.browser.interfaces import IUserIdGenerator
 from plone.app.users.browser.register import BaseRegistrationForm
-from plone.app.users.tests.base import BaseTestCase
+from plone.app.users.testing import PLONE_APP_USERS_INTEGRATION_TESTING
 from plone.app.users.utils import uuid_userid_generator
 from zope.component import getSiteManager
 
+import unittest
 
-class TestGenerateUserId(BaseTestCase):
+
+class TestGenerateUserId(unittest.TestCase):
+
+    layer = PLONE_APP_USERS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
 
     def test_standard_generate_user_id(self):
         form = BaseRegistrationForm(self.portal, {})
@@ -96,10 +102,13 @@ class TestGenerateUserId(BaseTestCase):
                             form.generate_user_id(data))
 
 
-class TestGenerateUUIDUserId(BaseTestCase):
+class TestGenerateUUIDUserId(unittest.TestCase):
 
-    def afterSetUp(self):
-        super(TestGenerateUUIDUserId, self).afterSetUp()
+    layer = PLONE_APP_USERS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+
         # If use_uuid_as_userid is set in the site_properties, we
         # generate a uuid.
         self.ptool = ptool = getattr(self.portal, 'portal_properties')
