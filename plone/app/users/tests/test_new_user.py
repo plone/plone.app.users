@@ -1,25 +1,32 @@
 # -*- coding: utf-8 -*-
-from hashlib import sha1 as sha
-from plone.app.users.tests.base import BaseTestCase
-from plone.protect import authenticator as auth
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import setRoles
+from plone.testing.z2 import Browser
+from plone.app.users.testing import PLONE_APP_USERS_INTEGRATION_TESTING
 
-import hmac
+import transaction
+import unittest
 
 
-class TestNewUser(BaseTestCase):
+class TestNewUser(unittest.TestCase):
+
+    layer = PLONE_APP_USERS_INTEGRATION_TESTING
+
+    def setUp(self):
+        self.portal = self.layer['portal']
+        app = self.layer['app']
+        setRoles(self.portal, TEST_USER_ID, ['Manager', ])
+        self.browser = Browser(app)
 
     def test_new_user_as_site_administrator(self):
         self.portal.acl_users._doAddUser(
             'siteadmin', 'secret', ['Site Administrator'], []
         )
+        # make the user available
+        transaction.commit()
+
         self.browser.addHeader('Authorization', 'Basic siteadmin:secret')
-        # XXX need to use auth token here because there is one case of write
-        # on read for portlets that isn't hit here...
-        ring = auth._getKeyring('siteadmin')
-        secret = ring.random()
-        token = hmac.new(secret, 'siteadmin', sha).hexdigest()
-        self.browser.open('http://nohost/plone/new-user?_authenticator=%s' % (
-            token))
+        self.browser.open('http://nohost/plone/new-user')
         self.browser.getControl('User Name').value = 'newuser'
         self.browser.getControl('E-mail').value = 'newuser@example.com'
         self.browser.getControl('Password').value = 'foobar'
