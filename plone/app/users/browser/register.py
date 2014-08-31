@@ -588,7 +588,7 @@ class RegistrationForm(BaseRegistrationForm):
         ctrlOverview = getMultiAdapter((portal, self.request),
                                        name='overview-controlpanel')
 
-        # hide form iff mailhost_warning == True and validate_email == True
+        # hide form if mailhost_warning == True and validate_email == True
         return not (ctrlOverview.mailhost_warning() and
                     portal.getProperty('validate_email', True))
 
