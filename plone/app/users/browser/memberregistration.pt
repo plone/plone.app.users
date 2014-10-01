@@ -30,7 +30,7 @@
             <li>
               <a href=""
                  tal:attributes="href string:$portal_url/@@member-fields"
-                 i18n:translate="label_member_fields">Member Fields</a>
+                 i18n:translate="label_member_fields">Member Form Fields</a>
             </li>
             <li class="selected">
               <a href=""
