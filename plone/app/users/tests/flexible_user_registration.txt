@@ -47,7 +47,7 @@ Check default form fields
     >>> form = browser.getForm(action='http://nohost/plone/@@member-fields')
     >>> form_control_ids = [c.id for c in form.mech_form.controls if c.id and c.id.startswith('form-widgets')]
     >>> form_control_ids
-    ['form-widgets-fullname', 'form-widgets-email', 'form-widgets-home_page', 'form-widgets-description', 'form-widgets-location', 'form-widgets-portrait-input']
+    ['form-widgets-fullname', 'form-widgets-email']
 
 Check "Settings" links::
 
@@ -57,12 +57,6 @@ Check "Settings" links::
     >>> 'href="http://nohost/plone/member-fields/email"' in browser.contents
     True
 
-    >>> 'href="http://nohost/plone/member-fields/description"' in browser.contents
-    True
-
-    >>> 'href="http://nohost/plone/member-fields/location"' in browser.contents
-    True
-
 Check delete links::
 
     >>> 'http://nohost/plone/member-fields/fullname/@@delete' in browser.contents
@@ -70,12 +64,6 @@ Check delete links::
 
     >>> 'http://nohost/plone/member-fields/email/@@delete' in browser.contents
     False
-
-    >>> 'http://nohost/plone/member-fields/description/@@delete' in browser.contents
-    True
-
-    >>> 'http://nohost/plone/member-fields/location/@@delete' in browser.contents
-    True
 
 Let's try editing a required field::
 
@@ -89,15 +77,10 @@ Let's try editing a required field::
 
     >>> browser.getControl(label='Title').value
     'Full Name'
-
-    >>> browser.getControl(label='Description').value
-    'Enter full name, e.g. John Smith.'
-
-    >>> required.selected
-        False
+    >>> browser.getControl(label='Required').selected
+    True
 
     >>> browser.getControl(label='Title').value = 'Long Name'
-    >>> browser.getControl(label='Description').value = 'Check your name tag'
     >>> required = browser.getControl(label='Required')
     >>> required.click()
 
@@ -110,32 +93,6 @@ Let's try editing a required field::
 
     >>> browser.getControl(label='Title').value
     'Long Name'
-    >>> browser.getControl(label='Description').value
-    'Check your name tag'
-    >>> browser.getControl(label='Required').selected
-    True
-
-Let's try editing an optional field::
-
-    >>> browser.open('http://nohost/plone/member-fields/description')
-
-    >>> browser.getControl(label='Title').value
-    'Biography'
-    >>> browser.getControl(label='Required').selected
-    False
-
-    >>> browser.getControl(label='Title').value = 'Your story'
-    >>> required = browser.getControl(label='Required')
-    >>> required.click()
-
-    >>> browser.getControl(label='Save').click()
-    >>> browser.url
-    'http://nohost/plone/member-fields'
-
-    >>> browser.open('http://nohost/plone/member-fields/description')
-
-    >>> browser.getControl(label='Title').value
-    'Your story'
     >>> browser.getControl(label='Required').selected
     True
 
