@@ -8,16 +8,16 @@
 <body>
     <metal:body fill-slot="body">
 
-        <div id="content" tal:condition="not: view/submitted">
+        <article id="content" tal:condition="not: view/submitted">
             <h1 class="documentFirstHeading"
                 tal:content="view/label | nothing" />
             <div id="content-core">
                 <metal:block use-macro="context/@@ploneform-macros/titlelessform" />
             </div>
-        </div>
+        </article>
 
         <tal:block condition="view/submitted">
-          <div id="content"
+          <article id="content"
                tal:define="listing_allowed python: checkPermission('List portal members', here);
                            results python:listing_allowed and view.results;
                            Batch python:modules['Products.CMFPlone'].Batch;
@@ -78,7 +78,7 @@
                     <p><strong i18n:translate="description_no_results_found">No results were found.</strong></p>
                 </div>
             </div>
-          </div>
+          </article>
         </tal:block>
 
 
