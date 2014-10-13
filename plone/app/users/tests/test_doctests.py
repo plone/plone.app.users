@@ -11,10 +11,10 @@ doc_tests = [
     'duplicate_email.rst',
     'email_login.rst',
     'flexible_user_registration.rst',
-    'forms_navigationroot.rst',
+    'forms_navigationroot.rst',  # need to ask about content types layer
     'member_search.rst',
-    'registration_forms.rst',
-    'password.rst',
+    'registration_forms.rst',  # working on it
+    'password.rst',  # for later
     'personal_preferences.rst',
     'personal_preferences_prefs_user_details.rst',
     'userdata.rst',

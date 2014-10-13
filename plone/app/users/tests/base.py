@@ -4,7 +4,7 @@
 This is in a separate module because it's potentially useful to other
 packages which register accountpanels. They should be able to import it
 without the PloneTestCase.setupPloneSite() side effects.
-"""
+""
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
 from Products.CMFCore.interfaces import ISiteRoot
@@ -27,7 +27,7 @@ except ImportError:
 
 
 class BaseTestCase(FunctionalTestCase):
-    """base test case which adds amin user"""
+    ""base test case which adds amin user""
 
     def afterSetUp(self):
         super(BaseTestCase, self).afterSetUp()
@@ -90,7 +90,7 @@ class BaseTestCase(FunctionalTestCase):
         setattr(self.portal, 'email_from_address', '')
 
     def test_nothing(self):
-        """Add a dummy test here, so the base class 'passes'."""
+        ""Add a dummy test here, so the base class 'passes'.""
         pass
 
 # Dummy password validation PAS plugin
@@ -118,3 +118,4 @@ class DeadParrotPassword(BasePlugin, Cacheable):
 
 
 classImplements(DeadParrotPassword, IValidationPlugin)
+"""

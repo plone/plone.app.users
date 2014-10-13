@@ -76,7 +76,6 @@ Password Validation Plugin
 
 Now let's test using a PAS Password validation plugin. Add a test plugin.
 
-    >>> import ipdb; ipdb.set_trace()
     >>> self.addParrotPasswordPolicy()
 
     >>> browser.open('http://nohost/plone/' + view_name)

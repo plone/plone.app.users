@@ -1,7 +1,22 @@
 Testing the flexible user registration
 ======================================
 
-    >>> browser = self.browser
+Set up
+======
+
+    >>> from plone.app.testing import TEST_USER_NAME
+    >>> from plone.testing.z2 import Browser
+
+    >>> app = layer['app']
+    >>> portal = layer['portal']
+    >>> membership = portal.portal_membership
+
+    >>> browser = Browser(app)
+    >>> browser.handleErrors = False
+
+    >>> browser_admin = Browser(app)
+    >>> browser_admin.handleErrors = False
+
     >>> browser.open('http://nohost/plone')
     >>> list_widget_suffix = ':list'
 
@@ -10,21 +25,18 @@ Testing the flexible user registration
     False
 
     Enable self-registration
-    >>> browser.open('http://nohost/plone/login_form')
-    >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
-    >>> browser.getControl('Log in').click()
-    >>> browser.open('http://nohost/plone/@@security-controlpanel')
-    >>> browser.getControl('Enable self-registration').selected = True
-    >>> browser.getControl('Save').click()
-    >>> 'Changes saved' in browser.contents
-    True
-
-    >>> browser.getLink(url='http://nohost/plone/logout').click()
-    >>> 'Log in' in browser.contents
+    >>> browser_admin.open('http://nohost/plone/login_form')
+    >>> browser_admin.getControl('Login Name').value = 'admin'
+    >>> browser_admin.getControl('Password').value = 'secret'
+    >>> browser_admin.getControl('Log in').click()
+    >>> browser_admin.open('http://nohost/plone/@@security-controlpanel')
+    >>> browser_admin.getControl('Enable self-registration').selected = True
+    >>> browser_admin.getControl('Save').click()
+    >>> 'Changes saved' in browser_admin.contents
     True
 
     Logged out user should now see the register link.
+    >>> browser.open('http://nohost/plone')
     >>> 'Register' in browser.contents
     True
 
@@ -47,12 +59,15 @@ Testing the flexible user registration
     >>> 'Confirm password' in browser.contents
     False
 
-    Set up a mailhost...
-    >>> self.setMailHost()
-    >>> browser.open('http://nohost/plone/@@register')
+    Fake that mailhost is set up properly:
+    >>> setattr(portal.MailHost, 'smtp_host', 'localhost')
+    >>> setattr(portal, 'email_from_address', 'admin@foo.com')
+    >>> import transaction
+    >>> transaction.commit()
 
     The form should now be visible, sans password, since the user still cannot
     set it.
+    >>> browser.open('http://nohost/plone/@@register')
     >>> 'User Name' in browser.contents
     True
     >>> 'Password' in browser.contents
