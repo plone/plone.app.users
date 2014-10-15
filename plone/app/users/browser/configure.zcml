@@ -77,6 +77,6 @@
       factory=".personalpreferences.UserDataPanelAdapter"
       />
     <adapter factory=".personalpreferences.PasswordPanelAdapter" />
-
+    <adapter factory=".formlib.FileUploadWidget" permission="zope.Public" />
 
 </configure>
