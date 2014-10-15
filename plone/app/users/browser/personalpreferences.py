@@ -84,7 +84,7 @@ class IPersonalPreferences(Interface):
         timezone = Choice(
             title=_(u'label_timezone', default=u'Time zone'),
             description=_(u'help_timezone', default=u'Your time zone'),
-            vocabulary='plone.app.event.AvailableTimezones',
+            vocabulary='plone.app.vocabularies.Timezones',
             required=False,
         )
 
