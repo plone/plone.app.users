@@ -39,6 +39,9 @@ CHANGES
 2.0 (2014-03-02)
 ----------------
 
+- Refactor the member-search form to a browser view, using z3c.form.
+  [pabo3000]
+
 - Have a soft dependency on plone.app.event and include the timezone field only
   then in the schema, if plone.app.event is available.
   [thet]
