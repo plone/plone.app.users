@@ -4,7 +4,8 @@ Changelog
 1.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed missing adapter registration for FileFields.  Fixes https://dev.plone.org/ticket/15306
+  [cewing]
 
 
 1.2 (2014-01-27)
