@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.2.1 (unreleased)
+1.2.1 (2014-10-21)
 ------------------
 
 - Fixed missing adapter registration for FileFields.  Fixes https://dev.plone.org/ticket/15306
