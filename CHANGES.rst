@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.0.4 (2014-06-03)
+2.1.0 (2014-10-23)
 ------------------
 
 - Check the permission for the Object tab on the AccountPanelForm as configured
