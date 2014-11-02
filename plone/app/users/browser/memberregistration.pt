@@ -42,7 +42,7 @@
         Portal status message
       </div>
 
-      <div id="content">
+      <article id="content">
 
           <h1 class="documentFirstHeading"
               i18n:translate="heading_usergroup_settings">User/Groups Settings</h1>
@@ -51,7 +51,7 @@
                 <metal:block use-macro="context/@@ploneform-macros/titlelessform">
                 </metal:block>
           </div>
-      </div>
+      </article>
 </metal:main>
 </body>
 </html>

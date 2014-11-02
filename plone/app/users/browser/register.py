@@ -595,7 +595,8 @@ class RegistrationForm(BaseRegistrationForm):
                                        name='overview-controlpanel')
 
         settings = self._get_security_settings()
-        # hide form iff mailhost_warning == True and validate_email == True
+        # hide form if mailhost_warning == True and validate_email == True
+
         return not (ctrlOverview.mailhost_warning() and
                     not settings.enable_user_pwd_choice)
 

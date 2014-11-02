@@ -14,7 +14,7 @@
 <body>
     <metal:body fill-slot="body">
 
-        <div id="content">
+        <article id="content">
             <tal:mailhost tal:condition="view/showForm">
             <h1 class="documentFirstHeading"
                 tal:content="view/label | nothing" />
@@ -45,7 +45,7 @@
                 </div>
 
             </tal:nomailhost>
-        </div>
+        </article>
 
     </metal:body>
 </body>

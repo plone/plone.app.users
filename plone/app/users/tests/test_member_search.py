@@ -16,4 +16,4 @@ class TestMemberSearch(unittest.TestCase):
 
         result = extractCriteriaFromRequest(data)
 
-        self.assertEqual(result, {"something": u'any form value'})
+        self.assertEqual(result, {'something': u'any form value'})
