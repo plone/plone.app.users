@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
-from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing.bbb import PTC_FIXTURE
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing.layers import FunctionalTesting
-from plone.app.testing.layers import IntegrationTesting
 from zope.component import getSiteManager
 from zope.configuration import xmlconfig
 
@@ -16,11 +15,7 @@ class PloneAppUsersLayer(PloneSandboxLayer):
 
     def setUpZope(self, app, configurationContext):
         import plone.app.users
-        xmlconfig.file(
-            'configure.zcml',
-            plone.app.users,
-            context=configurationContext
-        )
+        self.loadZCML(package=plone.app.users)
 
     def setUpPloneSite(self, portal):
         # Configure mock mail host
@@ -50,10 +45,6 @@ class PloneAppUsersLayer(PloneSandboxLayer):
 
 
 PLONE_APP_USERS_FIXTURE = PloneAppUsersLayer()
-PLONE_APP_USERS_INTEGRATION_TESTING = IntegrationTesting(
-    bases=(PLONE_APP_USERS_FIXTURE, ),
-    name='PloneAppUsersLayer:Integration'
-)
 PLONE_APP_USERS_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_USERS_FIXTURE, ),
     name='PloneAppUsersLayer:Functional'

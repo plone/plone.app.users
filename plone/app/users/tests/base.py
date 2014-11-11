@@ -4,14 +4,14 @@
 This is in a separate module because it's potentially useful to other
 packages which register accountpanels. They should be able to import it
 without the PloneTestCase.setupPloneSite() side effects.
-""
+"""
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
-from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
+from plone.app.testing.bbb import PloneTestCase
 from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
@@ -19,19 +19,18 @@ from OFS.Cache import Cacheable
 from zope.component import getSiteManager
 from zope.component import getUtility
 
-# BBB Zope 2.12
-try:
-    from Testing.testbrowser import Browser
-except ImportError:
-    from Products.Five.testbrowser import Browser
+from plone.testing.z2 import Browser
+from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 
 
-class BaseTestCase(FunctionalTestCase):
-    ""base test case which adds amin user""
+class BaseTestCase(PloneTestCase):
+    """ base test case which adds amin user """
+
+    layer = PLONE_APP_USERS_FUNCTIONAL_TESTING
 
     def afterSetUp(self):
         super(BaseTestCase, self).afterSetUp()
-        self.browser = Browser()
+        self.browser = Browser(self.layer['app'])
         self.portal.acl_users._doAddUser('admin', 'secret', ['Manager'], [])
 
         self.portal._original_MailHost = self.portal.MailHost
