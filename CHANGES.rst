@@ -1,6 +1,12 @@
 CHANGES
 =======
 
+2.1 (unreleased)
+----------------
+
+- Ported tests to plone.app.testing
+  [gforcada, tomgross]
+
 2.0.4 (2014-06-03)
 ------------------
 
