@@ -1,10 +1,11 @@
 CHANGES
 =======
 
-2.1.1 (unreleased)
-------------------
+2.2 (unreleased)
+----------------
 
-- Nothing changed yet.
+- Use email_from_address from registry (Plone 5) in tests.
+  [khink]
 
 
 2.1.0 (2014-10-23)

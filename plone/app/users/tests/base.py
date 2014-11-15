@@ -8,6 +8,7 @@ without the PloneTestCase.setupPloneSite() side effects.
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
@@ -16,6 +17,7 @@ from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
 from OFS.Cache import Cacheable
+from plone.registry.interfaces import IRegistry
 from zope.component import getSiteManager
 from zope.component import getUtility
 
@@ -82,12 +84,16 @@ class BaseTestCase(FunctionalTestCase):
             pas_instance.manage_delObjects('test')
 
     def setMailHost(self):
-        self.portal.MailHost.smtp_host = 'localhost'
-        setattr(self.portal, 'email_from_address', 'admin@foo.com')
+        registry = getUtility(IRegistry)
+        mail_settings = registry.forInterface(IMailSchema, prefix='plone')
+        mail_settings.smtp_host = u'localhost'
+        mail_settings.email_from_address = 'admin@foo.com'
 
     def unsetMailHost(self):
-        self.portal.MailHost.smtp_host = ''
-        setattr(self.portal, 'email_from_address', '')
+        registry = getUtility(IRegistry)
+        mail_settings = registry.forInterface(IMailSchema, prefix='plone')
+        mail_settings.smtp_host = u''
+        mail_settings.email_from_address = ''
 
     def test_nothing(self):
         """Add a dummy test here, so the base class 'passes'."""
