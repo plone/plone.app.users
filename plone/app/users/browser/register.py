@@ -595,8 +595,8 @@ class RegistrationForm(BaseRegistrationForm):
                                        name='overview-controlpanel')
 
         settings = self._get_security_settings()
-        # hide form if mailhost_warning == True and validate_email == True
-
+        # hide form if mailhost_warning == True and
+        # enable_user_pwd_choice == False
         return not (ctrlOverview.mailhost_warning() and
                     not settings.enable_user_pwd_choice)
 
@@ -657,7 +657,7 @@ class AddUserForm(BaseRegistrationForm):
         defaultFields = field.Fields(self.fields)
 
         # The mail_me field needs special handling depending on the
-        # validate_email property and on the correctness of the mail
+        # enable_user_pwd_choice setting and on the correctness of the mail
         # settings.
         portal = getUtility(ISiteRoot)
         ctrlOverview = getMultiAdapter((portal, self.request),
