@@ -589,7 +589,6 @@ class RegistrationForm(BaseRegistrationForm):
                                        name='overview-controlpanel')
 
         # hide form if mailhost_warning == True and validate_email == True
-        import ipdb; ipdb.set_trace()
         return not (ctrlOverview.mailhost_warning() and
                     portal.getProperty('validate_email', True))
 
