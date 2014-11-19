@@ -74,7 +74,7 @@ class IUserDataSchema(Interface):
         description=_(
             u'help_portrait',
             default=u'To add or change the portrait: click the "Browse" '
-                    u'button; select a picture of yourself.  Recommended '
+                    u'button; select a picture of yourself. Recommended '
                     u'image size is 75 pixels wide by 100 pixels tall.'
         ),
         required=False)

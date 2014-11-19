@@ -1,13 +1,13 @@
 CHANGES
 =======
 
-2.1 (unreleased)
-----------------
+2.1.1 (unreleased)
+------------------
 
 - Ported tests to plone.app.testing
   [gforcada, tomgross]
 
-2.0.4 (2014-06-03)
+2.1.0 (2014-10-23)
 ------------------
 
 - Check the permission for the Object tab on the AccountPanelForm as configured
@@ -44,6 +44,9 @@ CHANGES
 
 2.0 (2014-03-02)
 ----------------
+
+- Refactor the member-search form to a browser view, using z3c.form.
+  [pabo3000]
 
 - Have a soft dependency on plone.app.event and include the timezone field only
   then in the schema, if plone.app.event is available.
