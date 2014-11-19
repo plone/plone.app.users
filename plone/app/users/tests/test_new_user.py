@@ -2,21 +2,13 @@
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import setRoles
 from plone.testing.z2 import Browser
-from plone.app.users.testing import PLONE_APP_USERS_INTEGRATION_TESTING
+from plone.app.users.tests.base import BaseTestCase
 
 import transaction
 import unittest
 
 
-class TestNewUser(unittest.TestCase):
-
-    layer = PLONE_APP_USERS_INTEGRATION_TESTING
-
-    def setUp(self):
-        self.portal = self.layer['portal']
-        app = self.layer['app']
-        setRoles(self.portal, TEST_USER_ID, ['Manager', ])
-        self.browser = Browser(app)
+class TestNewUser(BaseTestCase):
 
     def test_new_user_as_site_administrator(self):
         self.portal.acl_users._doAddUser(

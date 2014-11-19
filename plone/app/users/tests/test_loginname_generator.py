@@ -1,18 +1,13 @@
 # -*- coding: utf-8 -*-
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.register import BaseRegistrationForm
-from plone.app.users.testing import PLONE_APP_USERS_INTEGRATION_TESTING
+from plone.app.users.tests.base import BaseTestCase
 from zope.component import getSiteManager
 
 import unittest
 
 
-class TestGenerateLoginName(unittest.TestCase):
-
-    layer = PLONE_APP_USERS_INTEGRATION_TESTING
-
-    def setUp(self):
-        self.portal = self.layer['portal']
+class TestGenerateLoginName(BaseTestCase):
 
     def test_generate_user_id_simplistic(self):
         sm = getSiteManager(context=self.portal)

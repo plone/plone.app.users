@@ -11,7 +11,7 @@ import doctest
 
 
 class PloneAppUsersLayer(PloneSandboxLayer):
-    defaultBases = (PLONE_FIXTURE, )
+    defaultBases = (PTC_FIXTURE, )
 
     def setUpZope(self, app, configurationContext):
         import plone.app.users

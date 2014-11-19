@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from plone.app.users.testing import PLONE_APP_USERS_INTEGRATION_TESTING
+from plone.app.users.tests.base import BaseTestCase
 
 import unittest
 
@@ -20,12 +20,7 @@ class DummyPortalMembership(object):
         return self.allowed
 
 
-class TestAccountPanelSchemaAdapter(unittest.TestCase):
-
-    layer = PLONE_APP_USERS_INTEGRATION_TESTING
-
-    def setUp(self):
-        self.request = self.layer['request']
+class TestAccountPanelSchemaAdapter(BaseTestCase):
 
     def test__init__no_userid(self):
         """Should edit current user."""

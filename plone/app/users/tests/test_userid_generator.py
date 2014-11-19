@@ -1,19 +1,14 @@
 # -*- coding: utf-8 -*-
 from plone.app.users.browser.interfaces import IUserIdGenerator
 from plone.app.users.browser.register import BaseRegistrationForm
-from plone.app.users.testing import PLONE_APP_USERS_INTEGRATION_TESTING
+from plone.app.users.tests.base import BaseTestCase
 from plone.app.users.utils import uuid_userid_generator
 from zope.component import getSiteManager
 
 import unittest
 
 
-class TestGenerateUserId(unittest.TestCase):
-
-    layer = PLONE_APP_USERS_INTEGRATION_TESTING
-
-    def setUp(self):
-        self.portal = self.layer['portal']
+class TestGenerateUserId(BaseTestCase):
 
     def test_standard_generate_user_id(self):
         form = BaseRegistrationForm(self.portal, {})

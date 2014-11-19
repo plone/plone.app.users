@@ -5,6 +5,7 @@ Set Up
 ======
 
     >>> from plone.app.testing import TEST_USER_ID
+    >>> from plone.app.testing import TEST_USER_NAME
     >>> from plone.testing.z2 import Browser
 
     >>> import transaction

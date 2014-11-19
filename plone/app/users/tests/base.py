@@ -89,7 +89,7 @@ class BaseTestCase(PloneTestCase):
         setattr(self.portal, 'email_from_address', '')
 
     def test_nothing(self):
-        ""Add a dummy test here, so the base class 'passes'.""
+        """ Add a dummy test here, so the base class 'passes'. """
         pass
 
 # Dummy password validation PAS plugin
