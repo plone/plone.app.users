@@ -26,22 +26,22 @@ Create a folder
 We'll create the test context and have the relevant navigation root marker
 interface ready to be applied:
 
-    >>> browser.open('http://nohost/plone/login_form')
-    >>> browser.getControl('Login Name').value = SITE_OWNER_NAME
-    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
-    >>> browser.getControl('Log in').click()
-
-
-XXX: needs to be able to create a folder or something folderish
-
-
+    >>> from plone.app.testing import setRoles
+    >>> from plone.app.testing import TEST_USER_ID
+    >>> setRoles(portal, TEST_USER_ID, ['Manager'])
     >>> portal.invokeFactory('Folder', id='folder_navroot', title="Navroot")
     'folder_navroot'
-
+    >>> from transaction import commit
+    >>> commit()
 
 Let's see if we can navigate to the user information and options forms
 in the 'Users and Groups' settings. Each of the 3 forms all use the
 same base class so if the fix works on one, it works on them all.
+
+    >>> browser.open('http://nohost/plone/login_form')
+    >>> browser.getControl('Login Name').value = SITE_OWNER_NAME
+    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
+    >>> browser.getControl('Log in').click()
 
     >>> browser.getLink('Navroot').click()
 
@@ -61,7 +61,8 @@ yet).
 Now, let's mark this folder and see what happens.  All links should
 now be rooted to the given folder and not the Plone site proper.
 
-    >>> mark(self.portal.folder_navroot, INavigationRoot)
+    >>> mark(portal.folder_navroot, INavigationRoot)
+    >>> commit()
 
     >>> browser.getLink('Navroot').click()
 

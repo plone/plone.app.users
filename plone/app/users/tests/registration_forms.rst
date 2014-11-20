@@ -12,10 +12,7 @@ Set up
     >>> membership = portal.portal_membership
 
     >>> browser = Browser(app)
-    >>> browser.handleErrors = False
-
     >>> browser_admin = Browser(app)
-    >>> browser_admin.handleErrors = False
 
     >>> browser.open('http://nohost/plone')
     >>> list_widget_suffix = ':list'
@@ -60,14 +57,14 @@ Set up
     False
 
     Fake that mailhost is set up properly:
-    >>> setattr(portal.MailHost, 'smtp_host', 'localhost')
-    >>> setattr(portal, 'email_from_address', 'admin@foo.com')
-    >>> import transaction
-    >>> transaction.commit()
+    >>> from plone.app.users.tests.base import setMailHost, unsetMailHost
+    >>> setMailHost(portal)
 
     The form should now be visible, sans password, since the user still cannot
     set it.
+    >>> browser = Browser(app)
     >>> browser.open('http://nohost/plone/@@register')
+
     >>> 'User Name' in browser.contents
     True
     >>> 'Password' in browser.contents
@@ -105,7 +102,7 @@ Set up
     True
 
     Disable the mailhost and enable user ability to set their own password.
-    >>> self.unsetMailHost()
+    >>> unsetMailHost(portal)
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
     >>> browser.getControl('Password').value = 'secret'
@@ -237,7 +234,7 @@ Set up
     >>> browser.getLink('user3').click()
 
     Set up the mailhost and try again.
-    >>> self.setMailHost()
+    >>> setMailHost()
     >>> browser.open('http://nohost/plone/@@new-user')
     >>> 'Password' in browser.contents
     True
@@ -290,12 +287,13 @@ Set up
 
     Now let's test using a PAS Password validation plugin. Add a test plugin.
 
-    >>> self.addParrotPasswordPolicy()
+    >>> from plone.app.users.tests.base import addParrotPasswordPolicy
+    >>> addParrotPasswordPolicy(portal)
 
     Enable setting own password
 
     Disable the mailhost and enable user ability to set their own password.
-    >>> self.unsetMailHost()
+    >>> unsetMailHost()
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
     >>> browser.getControl('Password').value = 'secret'
@@ -361,7 +359,7 @@ Set up
     True
 
     Add the default policy back in so we can test two plugins at once
-    >>> self.activateDefaultPasswordPolicy()
+    >>> activateDefaultPasswordPolicy(portal)
 
     >>> browser.getLink(url='http://nohost/plone/logout').click()
     >>> 'Log in' in browser.contents

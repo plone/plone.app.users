@@ -51,4 +51,4 @@ PLONE_APP_USERS_FUNCTIONAL_TESTING = FunctionalTesting(
 )
 
 
-optionflags = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
+optionflags = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE | doctest.REPORT_ONLY_FIRST_FAILURE)

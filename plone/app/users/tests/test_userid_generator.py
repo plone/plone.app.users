@@ -97,11 +97,9 @@ class TestGenerateUserId(BaseTestCase):
                             form.generate_user_id(data))
 
 
-class TestGenerateUUIDUserId(unittest.TestCase):
+class TestGenerateUUIDUserId(BaseTestCase):
 
-    layer = PLONE_APP_USERS_INTEGRATION_TESTING
-
-    def setUp(self):
+    def afterSetUp(self):
         self.portal = self.layer['portal']
 
         # If use_uuid_as_userid is set in the site_properties, we
@@ -115,6 +113,10 @@ class TestGenerateUUIDUserId(unittest.TestCase):
             use_uuid_as_userid=True
         )  # Change it.
         ptool.site_properties.getProperty('use_uuid_as_userid')
+
+    def beforeTearDown(self):
+        # override method defined in BaseTestCase
+        pass
 
     def test_generate_uuid_user_id(self):
         self.assertTrue(

@@ -21,6 +21,7 @@ from zope.component import getUtility
 
 from plone.testing.z2 import Browser
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
+from transaction import commit
 
 
 class BaseTestCase(PloneTestCase):
@@ -39,28 +40,8 @@ class BaseTestCase(PloneTestCase):
         sm = getSiteManager(context=self.portal)
         sm.unregisterUtility(provided=IMailHost)
         sm.registerUtility(mailhost, provided=IMailHost)
+        self.request = self.layer['request']
 
-    def addParrotPasswordPolicy(self):
-        # remove default policy
-        uf = self.portal.acl_users
-        for policy in uf.objectIds(['Default Plone Password Policy']):
-            uf.plugins.deactivatePlugin(IValidationPlugin, policy)
-
-        obj = DeadParrotPassword('test')
-        uf._setObject(obj.getId(), obj)
-        obj = uf[obj.getId()]
-        activatePluginInterfaces(self.portal, obj.getId())
-
-        portal = getUtility(ISiteRoot)
-        pas_instance = portal.acl_users
-        plugins = pas_instance._getOb('plugins')
-        validators = plugins.listPlugins(IValidationPlugin)
-        assert validators
-
-    def activateDefaultPasswordPolicy(self):
-        uf = self.portal.acl_users
-        for policy in uf.objectIds(['Default Plone Password Policy']):
-            activatePluginInterfaces(self.portal, policy)
 
     def beforeTearDown(self):
         self.portal.MailHost = self.portal._original_MailHost
@@ -80,17 +61,8 @@ class BaseTestCase(PloneTestCase):
             # plugins.deactivatePlugin(IPropertiesPlugin, 'test')
             pas_instance.manage_delObjects('test')
 
-    def setMailHost(self):
-        self.portal.MailHost.smtp_host = 'localhost'
-        setattr(self.portal, 'email_from_address', 'admin@foo.com')
-
-    def unsetMailHost(self):
-        self.portal.MailHost.smtp_host = ''
-        setattr(self.portal, 'email_from_address', '')
-
     def test_nothing(self):
         """ Add a dummy test here, so the base class 'passes'. """
-        pass
 
 # Dummy password validation PAS plugin
 
@@ -116,5 +88,38 @@ class DeadParrotPassword(BasePlugin, Cacheable):
         return errors
 
 
+# Helper methods used in doctests
+
+def setMailHost(portal):
+    portal.MailHost.smtp_host = 'localhost'
+    setattr(portal, 'email_from_address', 'admin@foo.com')
+    commit()
+
+def unsetMailHost(portal):
+    portal.MailHost.smtp_host = ''
+    setattr(portal, 'email_from_address', '')
+    commit()
+
+def activateDefaultPasswordPolicy(portal):
+    uf = portal.acl_users
+    for policy in uf.objectIds(['Default Plone Password Policy']):
+        activatePluginInterfaces(portal, policy)
+
+def addParrotPasswordPolicy(portal):
+    # remove default policy
+    uf = portal.acl_users
+    for policy in uf.objectIds(['Default Plone Password Policy']):
+        uf.plugins.deactivatePlugin(IValidationPlugin, policy)
+
+    obj = DeadParrotPassword('test')
+    uf._setObject(obj.getId(), obj)
+    obj = uf[obj.getId()]
+    activatePluginInterfaces(portal, obj.getId())
+
+    #portal = getUtility(ISiteRoot)
+    plugins = uf._getOb('plugins')
+    validators = plugins.listPlugins(IValidationPlugin)
+    assert validators
+    commit()
+
 classImplements(DeadParrotPassword, IValidationPlugin)
-"""

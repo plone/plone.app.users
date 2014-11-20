@@ -101,7 +101,7 @@ So let's search again. We should see two members (test_user_1_ and bob):
     >>> browser.getControl(name='form.buttons.search').click()
     >>> '2 items matching your search terms.' in browser.contents
     True
-    >>> '<a href="http://nohost/plone/author/test_user_1_">'in browser.contents
+    >>> '<a href="http://nohost/plone/Members/test_user_1_">'in browser.contents
     True
     >>> '<a href="http://nohost/plone/author/bob-jones">'in browser.contents
     True

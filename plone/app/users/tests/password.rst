@@ -76,7 +76,8 @@ Password Validation Plugin
 
 Now let's test using a PAS Password validation plugin. Add a test plugin.
 
-    >>> self.addParrotPasswordPolicy()
+    >>> from plone.app.users.tests.base import addParrotPasswordPolicy
+    >>> addParrotPasswordPolicy(portal)
 
     >>> browser.open('http://nohost/plone/' + view_name)
 

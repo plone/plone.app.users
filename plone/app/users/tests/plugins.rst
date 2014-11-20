@@ -68,18 +68,19 @@ To use this plugin we will need to register this class with the PAS system.
 
 And then add the plugin into acl_users.
 
-  >>>  obj = MyPasswordPolicy('pw_pol')
-  >>>  self.portal.acl_users._setObject(obj.getId(), obj)
-  >>>  obj = self.portal.acl_users[obj.getId()]
+  >>> obj = MyPasswordPolicy('pw_pol')
+  >>> portal = layer['portal']
+  >>> portal.acl_users._setObject(obj.getId(), obj)
+  >>> obj = portal.acl_users[obj.getId()]
 
 Activate it
 
-  >>>  obj.manage_activateInterfaces(['IValidationPlugin'])
+  >>> obj.manage_activateInterfaces(['IValidationPlugin'])
 
 and deactivate the default 5 char password policy
 
-  >>> for policy in self.portal.acl_users.objectIds(['Default Plone Password Policy']):
-  >>>   self.portal.acl_users.plugins.deactivatePlugin(IValidationPlugin, policy)
+  >>> for policy in portal.acl_users.objectIds(['Default Plone Password Policy']):
+  >>>   portal.acl_users.plugins.deactivatePlugin(IValidationPlugin, policy)
 
 Now our password policy is in force.
 
