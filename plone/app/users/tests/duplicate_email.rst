@@ -5,8 +5,7 @@ When email address is used as login name, duplicates are not allowed.
 
 Use email addresses as login name:
 
-    >>> ptool = self.portal.portal_properties
-    >>> ptool.site_properties._updateProperty('use_email_as_login', True)
+    >>> self.security_settings.use_email_as_login = True
 
 Create a new user one:
 
@@ -26,7 +25,7 @@ Login as user two:
     >>> self.browser.open('http://nohost/plone/')
     >>> self.browser.getLink('Log in').click()
 
-    >>> self.browser.getControl('E-mail').value = 'usertwo@example.com'
+    >>> self.browser.getControl('Login Name').value = 'usertwo@example.com'
     >>> self.browser.getControl('Password').value = 'secret'
     >>> self.browser.getControl('Log in').click()
     >>> 'Login failed' in self.browser.contents

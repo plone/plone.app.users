@@ -46,9 +46,10 @@ Testing email address as login name
     >>> 'Failed to create your account' in browser.contents
     False
 
-    We can login immediately.
-    >>> 'Click the button to log in immediately.' in browser.contents
-    True
+    We can now login.
+    >>> browser.getLink('Log in').click()
+    >>> browser.getControl('Login Name').value = 'bob-jones+test@example.com'
+    >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Log in').click()
     >>> 'You are now logged in' in browser.contents
     True
@@ -59,10 +60,9 @@ Testing email address as login name
     True
     >>> browser.getLink(url='http://nohost/plone/logout').click()
 
-    We login as manager. The login form now has a different label for
-    the login name.
+    We login as manager.
     >>> browser.open('http://nohost/plone/login_form')
-    >>> browser.getControl('E-mail').value = portal_owner
+    >>> browser.getControl('Login Name').value = portal_owner
     >>> browser.getControl('Password').value = default_password
     >>> browser.getControl('Log in').click()
 

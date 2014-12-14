@@ -4,6 +4,7 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
@@ -19,6 +20,7 @@ from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.interfaces import OMITTED_KEY
 from plone.autoform.interfaces import ORDER_KEY
 from plone.protect import CheckAuthenticator
+from plone.registry.interfaces import IRegistry
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
@@ -51,6 +53,11 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
 
+    def _get_security_settings(self):
+        """Return security settings from the registry."""
+        registry = getUtility(IRegistry)
+        return registry.forInterface(ISecuritySchema, prefix="plone")
+
     def render(self):
         if self._finishedRegister:
             return self.context.unrestrictedTraverse('registered')()
@@ -63,7 +70,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         """
         portal_props = getToolByName(self.context, 'portal_properties')
         props = portal_props.site_properties
-        use_email_as_login = props.getProperty('use_email_as_login')
+        settings = self._get_security_settings()
+        use_email_as_login = settings.use_email_as_login
 
         # Ensure all listed fields are in the schema
         registration_fields = [f for f in props.getProperty(
@@ -159,7 +167,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         1. We query a utility, so integrators can register a hook to
            generate a user id using their own logic.
 
-        2. If use_uuid_as_userid is set in the site_properties, we
+        2. If use_uuid_as_userid is set in the registry, we
            generate a uuid.
 
         3. If a username is given and we do not use email as login,
@@ -198,9 +206,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 data['user_id'] = userid
                 return userid
 
-        portal_props = getToolByName(self.context, 'portal_properties')
-        props = portal_props.site_properties
-        if props.getProperty('use_uuid_as_userid'):
+        settings = self._get_security_settings()
+        if settings.use_uuid_as_userid:
             userid = uuid_userid_generator()
             data['user_id'] = userid
             return userid
@@ -209,13 +216,15 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         userid = data.get('username')
         if userid:
             # If we are not using email as login, then this user name is fine.
-            if not props.getProperty('use_email_as_login'):
+            if not settings.use_email_as_login:
                 data['user_id'] = userid
                 return userid
 
         # First get a default value that we can return if we cannot
         # find anything better.
-        default = data.get('username') or data.get('email') or ''
+        pas = getToolByName(self.context, 'acl_users')
+        email = pas.applyTransform(data.get('email'))
+        default = data.get('username') or email or ''
         data['user_id'] = default
         fullname = data.get('fullname')
         if not fullname:
@@ -285,11 +294,9 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         login_name = data.get('username')
         login_name = pas.applyTransform(login_name)
         data['login_name'] = login_name
-        portal_props = getToolByName(self.context, 'portal_properties')
-        props = portal_props.site_properties
-        use_email_as_login = props.getProperty('use_email_as_login')
+        settings = self._get_security_settings()
         # If we are not using email as login, then this user name is fine.
-        if not use_email_as_login:
+        if not settings.use_email_as_login:
             return login_name
 
         # We use email as login.
@@ -319,9 +326,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         form_field_names = [f for f in self.fields]
 
         portal = getUtility(ISiteRoot)
-        portal_props = getToolByName(self.context, 'portal_properties')
-        props = portal_props.site_properties
-        use_email_as_login = props.getProperty('use_email_as_login')
 
         # passwords should match
         if 'password' in form_field_names:
@@ -349,7 +353,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                         notifyWidgetActionExecutionError(action,
                                                          'password', err_str)
 
-        if use_email_as_login:
+        settings = self._get_security_settings()
+        if settings.use_email_as_login:
             username_field = 'email'
         else:
             username_field = 'username'
@@ -486,7 +491,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         # set member properties
         self.applyProperties(user_id, data)
 
-        if data.get('mail_me') or (portal.validate_email and
+        settings = self._get_security_settings()
+        if data.get('mail_me') or (not settings.enable_user_pwd_choice and
                                    not data.get('password')):
             # We want to validate the email address (users cannot
             # select their own passwords on the register form) or the
@@ -588,9 +594,11 @@ class RegistrationForm(BaseRegistrationForm):
         ctrlOverview = getMultiAdapter((portal, self.request),
                                        name='overview-controlpanel')
 
-        # hide form if mailhost_warning == True and validate_email == True
+        settings = self._get_security_settings()
+        # hide form if mailhost_warning == True and
+        # enable_user_pwd_choice == False
         return not (ctrlOverview.mailhost_warning() and
-                    portal.getProperty('validate_email', True))
+                    not settings.enable_user_pwd_choice)
 
     def updateFields(self):
         if not self.showForm:
@@ -602,8 +610,8 @@ class RegistrationForm(BaseRegistrationForm):
         defaultFields = field.Fields(self.fields)
 
         # Can the user actually set his/her own password?
-        portal = getUtility(ISiteRoot)
-        if portal.getProperty('validate_email', True):
+        settings = self._get_security_settings()
+        if not settings.enable_user_pwd_choice:
             # No? Remove the password fields.
             defaultFields = defaultFields.omit('password', 'password_ctl')
         else:
@@ -622,8 +630,8 @@ class RegistrationForm(BaseRegistrationForm):
             return
 
         super(RegistrationForm, self).updateWidgets()
-        portal = getUtility(ISiteRoot)
-        if portal.getProperty('validate_email', True):
+        settings = self._get_security_settings()
+        if not settings.enable_user_pwd_choice:
             # Show a message indicating that a password reset link
             # will be mailed to the user.
             widget = self.widgets['mail_me']
@@ -649,7 +657,7 @@ class AddUserForm(BaseRegistrationForm):
         defaultFields = field.Fields(self.fields)
 
         # The mail_me field needs special handling depending on the
-        # validate_email property and on the correctness of the mail
+        # enable_user_pwd_choice setting and on the correctness of the mail
         # settings.
         portal = getUtility(ISiteRoot)
         ctrlOverview = getMultiAdapter((portal, self.request),
@@ -661,7 +669,8 @@ class AddUserForm(BaseRegistrationForm):
             # will check that at least one of the options is chosen.
             defaultFields['password'].field.required = False
             defaultFields['password_ctl'].field.required = False
-            if portal.getProperty('validate_email', True):
+            settings = self._get_security_settings()
+            if not settings.enable_user_pwd_choice:
                 defaultFields['mail_me'].field.default = True
             else:
                 defaultFields['mail_me'].field.default = False
