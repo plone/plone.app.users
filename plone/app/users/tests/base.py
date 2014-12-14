@@ -9,6 +9,7 @@ from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFPlone.interfaces.controlpanel import IMailSchema
+from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
@@ -16,6 +17,7 @@ from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
 from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
+from plone.registry.interfaces import IRegistry
 from OFS.Cache import Cacheable
 from plone.registry.interfaces import IRegistry
 from zope.component import getSiteManager
@@ -39,6 +41,9 @@ class BaseTestCase(FunctionalTestCase):
         self.portal._original_MailHost = self.portal.MailHost
         self.portal.MailHost = mailhost = MockMailHost('MailHost')
         self.membership = self.portal.portal_membership
+        registry = getUtility(IRegistry)
+        self.security_settings = registry.forInterface(
+            ISecuritySchema, prefix="plone")
         sm = getSiteManager(context=self.portal)
         sm.unregisterUtility(provided=IMailHost)
         sm.registerUtility(mailhost, provided=IMailHost)
