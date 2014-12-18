@@ -72,8 +72,8 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...There were errors...Invalid email address...'
-
-    Fill out the form.
+    
+    Fill out the form. 
     >>> browser.getControl('User Name').value = 'user1'
     >>> browser.getControl('E-mail').value = 'user1@example.com'
     >>> browser.getControl('Register').click()
@@ -194,7 +194,7 @@ Testing the flexible user registration
     >>> browser.getControl('Confirm password').value = 'secret'
     >>> browser.getControl('Register').click()
     >>> browser.contents
-    '...There were errors...The specified email is not valid...'
+    '...There were errors...Invalid email address...'
 
     Fill out the form.
     >>> browser.open('http://nohost/plone/@@new-user')
@@ -392,3 +392,5 @@ Testing the flexible user registration
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user6pas' in browser.contents
     True
+
+
