@@ -1,8 +1,11 @@
 CHANGES
 =======
 
-2.1 (unreleased)
+2.2 (unreleased)
 ----------------
+
+- Use email_from_address from registry (Plone 5) in tests.
+  [khink]
 
 - Added upgrade step to move past Plone to user editable member schema.
   [ianderso]
@@ -18,6 +21,15 @@ CHANGES
 
 - Removed ext_editor and visible_ids preferences.
   [davisagli]
+
+
+2.1.0 (2014-10-23)
+------------------
+
+- Check the permission for the Object tab on the AccountPanelForm as configured
+  in ZCML. This allows to revoke access to individual forms by changing the
+  permissions via ZCML overrides.
+  [thet]
 
 
 2.0.3 (2014-04-19)
@@ -48,6 +60,9 @@ CHANGES
 
 2.0 (2014-03-02)
 ----------------
+
+- Refactor the member-search form to a browser view, using z3c.form.
+  [pabo3000]
 
 - Have a soft dependency on plone.app.event and include the timezone field only
   then in the schema, if plone.app.event is available.

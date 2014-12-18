@@ -1,14 +1,15 @@
+# -*- coding: utf-8 -*-
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
+from plone.app.users.schema import IRegistrationSettingsSchema
 from plone.protect import CheckAuthenticator
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
-from zope.component import getMultiAdapter
-from plone.app.users.schema import IRegistrationSettingsSchema
 from z3c.form.browser.orderedselect import OrderedSelectFieldWidget
+from zope.component import getMultiAdapter
 
 
 class RegistrationControlPanel(form.Form):

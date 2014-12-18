@@ -43,14 +43,12 @@ Check that the site admin has a link to the configlet in the control panel.
     True
 
 Check default form fields
-
     >>> form = browser.getForm(action='http://nohost/plone/@@member-fields')
     >>> form_control_ids = [c.id for c in form.mech_form.controls if c.id and c.id.startswith('form-widgets')]
     >>> form_control_ids
     ['form-widgets-fullname', 'form-widgets-email']
 
 Check "Settings" links::
-
     >>> 'href="http://nohost/plone/member-fields/fullname"' in browser.contents
     True
 
@@ -74,7 +72,6 @@ Let's try editing a required field::
     >>> settings_link.click()
     >>> browser.url
     'http://nohost/plone/member-fields/fullname'
-
     >>> browser.getControl(label='Title').value
     'Full Name'
     >>> browser.getControl(label='Required').selected
@@ -83,10 +80,10 @@ Let's try editing a required field::
     >>> browser.getControl(label='Title').value = 'Long Name'
     >>> required = browser.getControl(label='Required')
     >>> required.click()
-
     >>> browser.getControl(label='Save').click()
     >>> browser.url
     'http://nohost/plone/member-fields'
+    >>> self.security_settings.use_email_as_login = False
 
     >>> settings_link = browser.getLink('Settings')
     >>> settings_link.click()

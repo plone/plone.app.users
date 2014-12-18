@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.CMFDefault.exceptions import EmailAddressInvalid
@@ -5,12 +6,18 @@ from Products.CMFPlone import PloneMessageFactory as _
 from zope import schema
 from zope.component import getUtility
 from zope.interface import Interface
-from plone.formwidget.namedfile.widget import NamedImageWidget
-from plone.namedfile.interfaces import INamedImageField
 from ZTUtils import make_query
-from z3c.form.interfaces import IFieldWidget, IFormLayer
+from plone.autoform import directives as form
+from plone.formwidget.namedfile.widget import NamedImageWidget
+from plone.namedfile.field import NamedBlobImage
+from plone.namedfile.interfaces import INamedImageField
+from zope import schema
+from z3c.form.interfaces import IFieldWidget
+from z3c.form.interfaces import IFormLayer
 from z3c.form.widget import FieldWidget
 from zope.component import adapter
+from zope.component import getUtility
+from zope.interface import Interface
 from zope.interface import implementer
 
 from plone.schema.email import Email
@@ -46,7 +53,10 @@ class IUserDataSchema(Interface):
         title=_(u'label_email', default=u'E-mail'),
         description=u'We will use this address if you need to recover your '
                     u'password',
-        required=True,)
+        required=True,
+        constraint=checkEmailAddress,
+        )
+
 
 class IRegisterSchema(Interface):
 

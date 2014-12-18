@@ -1,21 +1,25 @@
+# -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
 from Acquisition import aq_inner
-from Products.CMFCore.permissions import SetOwnProperties
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZTUtils import make_query
 from plone.app.controlpanel.events import ConfigurationChangedEvent
 from plone.app.users.browser.interfaces import IAccountPanelForm
+from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.autoform.form import AutoExtensibleForm
 from plone.protect import CheckAuthenticator
+from plone.registry.interfaces import IRegistry
+from z3c.form import button
+from z3c.form import form
+from zope.component import getMultiAdapter
+from zope.component import getUtility
 from zope.event import notify
 from zope.interface import implements
-from z3c.form import form, button
-
-from ..utils import notifyWidgetActionExecutionError
 
 
 MESSAGE_EMAIL_CANNOT_CHANGE = \
@@ -122,8 +126,10 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         ]
         if 'email' not in error_keys:
             registration = getToolByName(context, 'portal_registration')
-            properties = getToolByName(context, 'portal_properties')
-            if properties.site_properties.getProperty('use_email_as_login'):
+            registry = getUtility(IRegistry)
+            security_settings = registry.forInterface(
+                ISecuritySchema, prefix="plone")
+            if security_settings.use_email_as_login:
                 err_str = ''
                 try:
                     id_allowed = registration.isMemberIdAllowed(data['email'])
@@ -178,7 +184,16 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         tabs = []
         navigation_root_url = context.absolute_url()
 
-        if mt.checkPermission(SetOwnProperties, context):
+        def _check_allowed(context, request, name):
+            """Check, if user has required permissions on view.
+            """
+            view = getMultiAdapter((context, request), name=name)
+            allowed = True
+            for perm in view.__ac_permissions__:
+                allowed = allowed and mt.checkPermission(perm[0], context)
+            return allowed
+
+        if _check_allowed(context, self.request, 'personal-information'):
             tabs.append({
                 'title': _('title_personal_information_form',
                            u'Personal Information'),
@@ -186,6 +201,8 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
                 'selected': (self.__name__ == 'personal-information'),
                 'id': 'user_data-personal-information',
             })
+
+        if _check_allowed(context, self.request, 'personal-preferences'):
             tabs.append({
                 'title': _(u'Personal Preferences'),
                 'url': navigation_root_url + '/@@personal-preferences',

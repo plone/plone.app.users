@@ -145,7 +145,7 @@ Modifying user data in email mode
 
 Let's switch to using Email as Login Name
 
-    >>> portal.portal_properties.site_properties._updateProperty('use_email_as_login', True)
+    >>> self.security_settings.use_email_as_login = True
     >>> self.browser.open("http://nohost/plone/" + view_name)
 
 Update our email and see if login name was synced:
@@ -172,4 +172,4 @@ should fail with validation errors.
 
 Revert back from email mode
 
-    >>> portal.portal_properties.site_properties._updateProperty('use_email_as_login', False)
+    >>> self.security_settings.use_email_as_login = False

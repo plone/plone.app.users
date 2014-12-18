@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import getFSVersionTuple
@@ -53,7 +55,7 @@ class IPersonalPreferences(Interface):
         timezone = Choice(
             title=_(u'label_timezone', default=u'Time zone'),
             description=_(u'help_timezone', default=u'Your time zone'),
-            vocabulary='plone.app.event.AvailableTimezones',
+            vocabulary='plone.app.vocabularies.Timezones',
             required=False,
         )
 
@@ -74,14 +76,14 @@ class PersonalPreferencesPanel(AccountPanelForm):
         userid = self.request.form.get('userid')
         mt = getToolByName(self.context, 'portal_membership')
         if userid and (userid != mt.getAuthenticatedMember().getId()):
-            #editing someone else's profile
+            # editing someone else's profile
             return _(
                 u'description_preferences_form_otheruser',
                 default='Personal settings for $name',
                 mapping={'name': userid}
             )
         else:
-            #editing my own profile
+            # editing my own profile
             return _(
                 u'description_my_preferences',
                 default='Your personal settings.'

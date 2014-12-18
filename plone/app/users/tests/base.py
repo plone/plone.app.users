@@ -1,30 +1,33 @@
+# -*- coding: utf-8 -*-
 """Base class for flexible user registration test cases.
 
 This is in a separate module because it's potentially useful to other
 packages which register accountpanels. They should be able to import it
 without the PloneTestCase.setupPloneSite() side effects.
 """
-
-from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
+from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
-from zope.component import getSiteManager
+from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFPlone.interfaces.controlpanel import IMailSchema
+from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
+from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
+from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
+from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
+from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
+from Products.PluggableAuthService.utils import classImplements
+from plone.registry.interfaces import IRegistry
+from OFS.Cache import Cacheable
+from plone.registry.interfaces import IRegistry
+from zope.component import getSiteManager
+from zope.component import getUtility
 
 # BBB Zope 2.12
 try:
     from Testing.testbrowser import Browser
 except ImportError:
     from Products.Five.testbrowser import Browser
-
-from AccessControl.SecurityInfo import ClassSecurityInfo
-from OFS.Cache import Cacheable
-from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
-from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
-from Products.PluggableAuthService.utils import classImplements
-from Products.CMFCore.interfaces import ISiteRoot
-from zope.component import getUtility
-from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 
 
 class BaseTestCase(FunctionalTestCase):
@@ -38,6 +41,9 @@ class BaseTestCase(FunctionalTestCase):
         self.portal._original_MailHost = self.portal.MailHost
         self.portal.MailHost = mailhost = MockMailHost('MailHost')
         self.membership = self.portal.portal_membership
+        registry = getUtility(IRegistry)
+        self.security_settings = registry.forInterface(
+            ISecuritySchema, prefix="plone")
         sm = getSiteManager(context=self.portal)
         sm.unregisterUtility(provided=IMailHost)
         sm.registerUtility(mailhost, provided=IMailHost)
@@ -79,16 +85,20 @@ class BaseTestCase(FunctionalTestCase):
         if plugin is not None:
             plugins = pas_instance._getOb('plugins')
             plugins.deactivatePlugin(IValidationPlugin, 'test')
-            #plugins.deactivatePlugin(IPropertiesPlugin, 'test')
+            # plugins.deactivatePlugin(IPropertiesPlugin, 'test')
             pas_instance.manage_delObjects('test')
 
     def setMailHost(self):
-        self.portal.MailHost.smtp_host = 'localhost'
-        setattr(self.portal, 'email_from_address', 'admin@foo.com')
+        registry = getUtility(IRegistry)
+        mail_settings = registry.forInterface(IMailSchema, prefix='plone')
+        mail_settings.smtp_host = u'localhost'
+        mail_settings.email_from_address = 'admin@foo.com'
 
     def unsetMailHost(self):
-        self.portal.MailHost.smtp_host = ''
-        setattr(self.portal, 'email_from_address', '')
+        registry = getUtility(IRegistry)
+        mail_settings = registry.forInterface(IMailSchema, prefix='plone')
+        mail_settings.smtp_host = u''
+        mail_settings.email_from_address = ''
 
     def test_nothing(self):
         """Add a dummy test here, so the base class 'passes'."""

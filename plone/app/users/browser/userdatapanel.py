@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from zope.component import getUtility, provideAdapter
 from zope.interface import Interface
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import set_own_login_name
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.PlonePAS.tools.membership import default_portrait
@@ -10,6 +12,8 @@ from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.namedfile.file import NamedBlobImage
 from plone.app.layout.navigation.interfaces import INavigationRoot
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
 
 from ..schema import IUserDataSchemaProvider
 
@@ -27,8 +31,7 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
         provideAdapter(self.__class__, (Interface,), self.schema)
 
     def get_portrait(self):
-        """If user has default portrait, return none
-        """
+        """If user has default portrait, return none"""
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         mt = getToolByName(self.context, 'portal_membership')
         value = mt.getPersonalPortrait(self.context.getId())
@@ -54,8 +57,10 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
         return self._getProperty('email')
 
     def set_email(self, value):
-        pp = getToolByName(self.context, 'portal_properties')
-        if pp.site_properties.getProperty('use_email_as_login'):
+        registry = getUtility(IRegistry)
+        security_settings = registry.forInterface(
+            ISecuritySchema, prefix="plone")
+        if security_settings.use_email_as_login:
             mt = getToolByName(self.context, 'portal_membership')
             if self.context.getId() == mt.getAuthenticatedMember().getId():
                 set_own_login_name(self.context, value)
@@ -86,14 +91,14 @@ class UserDataPanel(AccountPanelForm):
         userid = self.request.form.get('userid')
         mt = getToolByName(self.context, 'portal_membership')
         if userid and (userid != mt.getAuthenticatedMember().getId()):
-            #editing someone else's profile
+            # editing someone else's profile
             return _(
                 u'description_personal_information_form_otheruser',
                 default='Change personal information for $name',
                 mapping={'name': userid}
             )
         else:
-            #editing my own profile
+            # editing my own profile
             return _(
                 u'description_personal_information_form',
                 default='Change your personal information'

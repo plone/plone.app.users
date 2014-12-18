@@ -1,8 +1,9 @@
-import unittest
+# -*- coding: utf-8 -*-
 from Testing.makerequest import makerequest
 from OFS.SimpleItem import SimpleItem
-
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
+
+import unittest
 
 
 class DummyPortalMembership(object):
