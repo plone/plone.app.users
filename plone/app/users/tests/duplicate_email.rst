@@ -117,6 +117,7 @@ Change e-mail
 
 Setting the e-mail address to an existing one should give an error message:
 
+    >>> browser.handleErrors = False
     >>> browser.getControl('E-mail').value = user1_email
     >>> browser.getControl('Save').click()
     >>> 'The email address you selected is already in use' in browser.contents

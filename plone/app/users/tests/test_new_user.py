@@ -52,15 +52,13 @@ class TestGenerateUserIdLoginName(BaseTestCase):
         self.portal.acl_users._doAddUser(
             'siteadmin', 'secret', ['Site Administrator'], []
         )
-        self.browser.handleErrors = False
+        transaction.commit() 
         self.browser.addHeader('Authorization', 'Basic siteadmin:secret')
-        registry = getUtility(IRegistry)
-        self.security_settings = registry.forInterface(
-            ISecuritySchema, prefix="plone")
 
     def test_uuid_disabled_email_as_login_disabled(self):
         self.security_settings.use_uuid_as_userid = False
         self.security_settings.use_email_as_login = False
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
@@ -81,6 +79,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     def test_uuid_disabled_email_as_login_enabled_no_full_name(self):
         self.security_settings.use_uuid_as_userid = False
         self.security_settings.use_email_as_login = True
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
@@ -101,6 +100,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     def test_uuid_disabled_email_as_login_enabled_no_full_name_uppercase(self):
         self.security_settings.use_uuid_as_userid = False
         self.security_settings.use_email_as_login = True
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
@@ -120,6 +120,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     def test_uuid_disabled_email_as_login_enabled_has_full_name(self):
         self.security_settings.use_uuid_as_userid = False
         self.security_settings.use_email_as_login = True
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
@@ -141,6 +142,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     def test_uuid_enabled_email_as_login_disabled(self):
         self.security_settings.use_uuid_as_userid = True
         self.security_settings.use_email_as_login = False
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
@@ -164,6 +166,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     def test_uuid_enabled_email_as_login_enabled(self):
         self.security_settings.use_uuid_as_userid = True
         self.security_settings.use_email_as_login = True
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')

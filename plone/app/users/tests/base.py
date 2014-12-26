@@ -50,6 +50,7 @@ class BaseTestCase(PloneTestCase):
 
 
     def beforeTearDown(self):
+        self.login('admin')
         self.portal.MailHost = self.portal._original_MailHost
         sm = getSiteManager(context=self.portal)
         sm.unregisterUtility(provided=IMailHost)

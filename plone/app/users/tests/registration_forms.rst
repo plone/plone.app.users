@@ -15,7 +15,7 @@ Set up
 
     Fake that mailhost is set up properly:
     >>> from plone.app.users.tests.base import setMailHost, unsetMailHost
-    >>> setMailHost(portal)
+    >>> setMailHost()
 
     The form should now be visible, sans password, since the user still cannot
     set it.
@@ -59,7 +59,7 @@ Set up
     True
 
     Disable the mailhost and enable user ability to set their own password.
-    >>> unsetMailHost(portal)
+    >>> unsetMailHost(l)
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
     >>> browser.getControl('Password').value = 'secret'
