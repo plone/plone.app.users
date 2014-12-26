@@ -30,16 +30,16 @@ class BaseTestCase(PloneTestCase):
     layer = PLONE_APP_USERS_FUNCTIONAL_TESTING
 
     def afterSetUp(self):
-        super(BaseTestCase, self).afterSetUp()
-        self.browser = Browser(self.layer['app'])
         self.portal.acl_users._doAddUser('admin', 'secret', ['Manager'], [])
 
         self.portal._original_MailHost = self.portal.MailHost
         self.portal.MailHost = mailhost = MockMailHost('MailHost')
-        self.membership = self.portal.portal_membership
         sm = getSiteManager(context=self.portal)
         sm.unregisterUtility(provided=IMailHost)
         sm.registerUtility(mailhost, provided=IMailHost)
+
+        self.browser = Browser(self.layer['app'])
+        self.membership = self.portal.portal_membership
         self.request = self.layer['request']
 
 
@@ -52,8 +52,7 @@ class BaseTestCase(PloneTestCase):
             provided=IMailHost
         )
 
-        portal = getUtility(ISiteRoot)
-        pas_instance = portal.acl_users
+        pas_instance = self.portal.acl_users
         plugin = getattr(pas_instance, 'test', None)
         if plugin is not None:
             plugins = pas_instance._getOb('plugins')
@@ -91,12 +90,12 @@ class DeadParrotPassword(BasePlugin, Cacheable):
 # Helper methods used in doctests
 
 def setMailHost(portal):
-    portal.MailHost.smtp_host = 'localhost'
+    setattr(portal.MailHost, 'smtp_host', 'localhost')
     setattr(portal, 'email_from_address', 'admin@foo.com')
     commit()
 
 def unsetMailHost(portal):
-    portal.MailHost.smtp_host = ''
+    setattr(portal.MailHost, 'smtp_host', '')
     setattr(portal, 'email_from_address', '')
     commit()
 

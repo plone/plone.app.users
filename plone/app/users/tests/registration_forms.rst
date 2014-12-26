@@ -12,49 +12,6 @@ Set up
     >>> membership = portal.portal_membership
 
     >>> browser = Browser(app)
-    >>> browser_admin = Browser(app)
-
-    >>> browser.open('http://nohost/plone')
-    >>> list_widget_suffix = ':list'
-
-    Self-registration is disabled, user does not see 'Register' link.
-    >>> 'Register' in browser.contents
-    False
-
-    Enable self-registration
-    >>> browser_admin.open('http://nohost/plone/login_form')
-    >>> browser_admin.getControl('Login Name').value = 'admin'
-    >>> browser_admin.getControl('Password').value = 'secret'
-    >>> browser_admin.getControl('Log in').click()
-    >>> browser_admin.open('http://nohost/plone/@@security-controlpanel')
-    >>> browser_admin.getControl('Enable self-registration').selected = True
-    >>> browser_admin.getControl('Save').click()
-    >>> 'Changes saved' in browser_admin.contents
-    True
-
-    Logged out user should now see the register link.
-    >>> browser.open('http://nohost/plone')
-    >>> 'Register' in browser.contents
-    True
-
-    >>> browser.getLink('Register').click()
-    >>> '@@register' in browser.url
-    True
-
-    No mailhost has been set up yet. User should not be able to see the form.
-    >>> browser.contents
-    '...This site...valid email setup...cannot register at this time...'
-    >>> 'User Name' in browser.contents
-    False
-
-    Check that the form is not displayed when no mailhost is defined and users
-    cannot choose their own passwords.
-    >>> 'User Name' in browser.contents
-    False
-    >>> 'Password' in browser.contents
-    False
-    >>> 'Confirm password' in browser.contents
-    False
 
     Fake that mailhost is set up properly:
     >>> from plone.app.users.tests.base import setMailHost, unsetMailHost
