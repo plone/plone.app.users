@@ -1,19 +1,9 @@
 # -*- coding: utf-8 -*-
-from plone.app.testing import TEST_USER_ID
-from plone.app.testing import setRoles
-from plone.testing.z2 import Browser
 from plone.app.users.tests.base import BaseTestCase
-from hashlib import sha1 as sha
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import ISecuritySchema
-from plone.app.users.tests.base import BaseTestCase
 from plone.app.users.utils import uuid_userid_generator
-from plone.protect import authenticator as auth
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
 
 import transaction
-import unittest
 
 
 class TestNewUser(BaseTestCase):

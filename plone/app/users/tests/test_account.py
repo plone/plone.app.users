@@ -2,8 +2,6 @@
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.tests.base import BaseTestCase
 
-import unittest
-
 
 class DummyPortalMembership(object):
 

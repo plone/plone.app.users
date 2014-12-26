@@ -7,7 +7,6 @@ without the PloneTestCase.setupPloneSite() side effects.
 """
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.tests.utils import MockMailHost
@@ -19,7 +18,6 @@ from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
 from plone.registry.interfaces import IRegistry
 from OFS.Cache import Cacheable
-from plone.registry.interfaces import IRegistry
 from zope.component import getSiteManager
 from zope.component import getUtility
 

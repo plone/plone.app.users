@@ -1,23 +1,12 @@
 # -*- coding: utf-8 -*-
 # Note: test setup somehow fails when only tests from this file are run.
-from Products.CMFPlone.interfaces import ISecuritySchema
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.register import BaseRegistrationForm
 from plone.app.users.tests.base import BaseTestCase
-from plone.registry.interfaces import IRegistry
 from zope.component import getSiteManager
-from zope.component import getUtility
-
-import unittest
 
 
 class TestGenerateLoginName(BaseTestCase):
-
-    def afterSetUp(self):
-        super(TestGenerateLoginName, self).afterSetUp()
-        registry = getUtility(IRegistry)
-        self.security_settings = registry.forInterface(
-            ISecuritySchema, prefix="plone")
 
     def test_custom_generator(self):
         """Test if a custom login name generator overrides the default
