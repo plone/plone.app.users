@@ -67,13 +67,10 @@ Fill out the form, using an odd email address that should not give problems.
     >>> 'Failed to create your account' in browser.contents
     False
 
-Login
-=====
-
-We can login immediately.
-
-    >>> 'Click the button to log in immediately.' in browser.contents
-    True
+    We can now login.
+    >>> browser.getLink('Log in').click()
+    >>> browser.getControl('Login Name').value = 'bob-jones+test@example.com'
+    >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Log in').click()
     >>> 'You are now logged in' in browser.contents
     True
@@ -84,14 +81,10 @@ We can login immediately.
     True
     >>> browser.getLink(url='http://nohost/plone/logout').click()
 
-Login form changes
-==================
-
-The login form now has a different label for the login name.
-
+    We login as manager.
     >>> browser.open('http://nohost/plone/login_form')
-    >>> browser.getControl('E-mail').value = SITE_OWNER_NAME
-    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
+    >>> browser.getControl('Login Name').value = portal_owner
+    >>> browser.getControl('Password').value = default_password
     >>> browser.getControl('Log in').click()
 
 The user id is now bob-jones, based on the full name:

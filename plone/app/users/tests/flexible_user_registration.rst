@@ -133,7 +133,9 @@ get all required fields on registration form.
 
 Check render register form in 'Use Email As Login' mode.
 
-    >>> portal.portal_properties.site_properties._updateProperty('use_email_as_login', True)
+    >>> from plone.app.users.tests.base import get_security_settings
+    >>> security_settings = get_security_settings()
+    >>> security_settings.use_email_as_login = True
     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['username'])
     >>> transaction.commit()
     >>> browser.open('http://nohost/plone/@@register')
@@ -145,12 +147,10 @@ Check render register form in 'Use Email As Login' mode.
     >>> browser.getControl('Password').value = 'testpassword'
     >>> browser.getControl('Confirm password').value = 'testpassword'
     >>> browser.getControl('Register').click()
-    >>> browser.contents
-    '...Welcome!...You have been registered...'
 
 Revert email mode.
 
-    >>> portal.portal_properties.site_properties._updateProperty('use_email_as_login', False)
+    >>> security_settings.use_email_as_login = False
 
 Check register form with portrait field.
 

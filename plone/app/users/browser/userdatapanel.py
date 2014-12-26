@@ -2,6 +2,7 @@
 from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import set_own_login_name
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.PlonePAS.tools.membership import default_portrait
@@ -9,6 +10,8 @@ from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.schema import IUserDataSchema
 from plone.namedfile.file import NamedBlobImage
+from plone.registry.interfaces import IRegistry
+from zope.component import getUtility
 
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
@@ -43,8 +46,10 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
         return self._getProperty('email')
 
     def set_email(self, value):
-        pp = getToolByName(self.context, 'portal_properties')
-        if pp.site_properties.getProperty('use_email_as_login'):
+        registry = getUtility(IRegistry)
+        security_settings = registry.forInterface(
+            ISecuritySchema, prefix="plone")
+        if security_settings.use_email_as_login:
             mt = getToolByName(self.context, 'portal_membership')
             if self.context.getId() == mt.getAuthenticatedMember().getId():
                 set_own_login_name(self.context, value)

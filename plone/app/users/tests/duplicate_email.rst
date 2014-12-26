@@ -25,7 +25,11 @@ Set up
     >>> user2_password = 'secret'
 
     >>> browser = Browser(app)
-    >>> browser.handleErrors = False
+    >>> from plone.app.users.tests.base import get_security_settings
+    >>> security_settings = get_security_settings()
+    >>> security_settings.use_email_as_login = True
+    >>> from transaction import commit
+    >>> commit()
 
 Configure security
 ------------------
@@ -94,7 +98,7 @@ Login as user two:
     >>> browser.open('http://nohost/plone/')
     >>> browser.getLink('Log in').click()
 
-    >>> browser.getControl('E-mail').value = user2_email
+    >>> browser.getControl('Login Name').value = user2_email
     >>> browser.getControl('Password').value = user2_password
     >>> browser.getControl('Log in').click()
     >>> 'Login failed' in browser.contents

@@ -230,9 +230,11 @@ Modifying user data in email mode
 
 Let's switch to using Email as Login Name
 
-    >>> portal.portal_properties.site_properties._updateProperty('use_email_as_login', True)
+    >>> from plone.app.users.tests.base import get_security_settings
+    >>> security_settings = get_security_settings()
+    >>> security_settings.use_email_as_login = True
     >>> transaction.commit()
-    >>> browser.open(view_url)
+    >>> browser.open("http://nohost/plone/" + view_name)
 
 Update our email and see if login name was synced:
 
@@ -256,3 +258,7 @@ should fail with validation errors.
     >>> browser.getControl('Save').click()
     >>> 'The email address you selected is already in use or is not valid as login name. Please choose another' in browser.contents
     True
+
+Revert back from email mode
+
+    >>> security_settings.use_email_as_login = False

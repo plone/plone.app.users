@@ -8,6 +8,8 @@ without the PloneTestCase.setupPloneSite() side effects.
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
 from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFPlone.interfaces.controlpanel import IMailSchema
+from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
@@ -15,7 +17,9 @@ from plone.app.testing.bbb import PloneTestCase
 from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
+from plone.registry.interfaces import IRegistry
 from OFS.Cache import Cacheable
+from plone.registry.interfaces import IRegistry
 from zope.component import getSiteManager
 from zope.component import getUtility
 
@@ -34,6 +38,8 @@ class BaseTestCase(PloneTestCase):
 
         self.portal._original_MailHost = self.portal.MailHost
         self.portal.MailHost = mailhost = MockMailHost('MailHost')
+        self.membership = self.portal.portal_membership
+        self.security_settings = get_security_settings()
         sm = getSiteManager(context=self.portal)
         sm.unregisterUtility(provided=IMailHost)
         sm.registerUtility(mailhost, provided=IMailHost)
@@ -89,14 +95,18 @@ class DeadParrotPassword(BasePlugin, Cacheable):
 
 # Helper methods used in doctests
 
-def setMailHost(portal):
-    setattr(portal.MailHost, 'smtp_host', 'localhost')
-    setattr(portal, 'email_from_address', 'admin@foo.com')
+def setMailHost():
+    registry = getUtility(IRegistry)
+    mail_settings = registry.forInterface(IMailSchema, prefix='plone')
+    mail_settings.smtp_host = u'localhost'
+    mail_settings.email_from_address = 'admin@foo.com'
     commit()
 
-def unsetMailHost(portal):
-    setattr(portal.MailHost, 'smtp_host', '')
-    setattr(portal, 'email_from_address', '')
+def unsetMailHost():
+    registry = getUtility(IRegistry)
+    mail_settings = registry.forInterface(IMailSchema, prefix='plone')
+    mail_settings.smtp_host = u''
+    mail_settings.email_from_address = ''
     commit()
 
 def activateDefaultPasswordPolicy(portal):
@@ -122,3 +132,7 @@ def addParrotPasswordPolicy(portal):
     commit()
 
 classImplements(DeadParrotPassword, IValidationPlugin)
+
+def get_security_settings():
+    registry = getUtility(IRegistry)
+    return registry.forInterface(ISecuritySchema, prefix="plone")
