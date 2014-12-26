@@ -35,30 +35,16 @@ class BaseTestCase(PloneTestCase):
 
     def afterSetUp(self):
         self.portal.acl_users._doAddUser('admin', 'secret', ['Manager'], [])
-
-        self.portal._original_MailHost = self.portal.MailHost
-        self.portal.MailHost = mailhost = MockMailHost('MailHost')
+        set_mock_mailhost(self.portal)
         self.membership = self.portal.portal_membership
         self.security_settings = get_security_settings()
-        sm = getSiteManager(context=self.portal)
-        sm.unregisterUtility(provided=IMailHost)
-        sm.registerUtility(mailhost, provided=IMailHost)
 
-        self.browser = Browser(self.layer['app'])
-        self.membership = self.portal.portal_membership
+        self.browser = Browser(self.layer['app']) 
         self.request = self.layer['request']
-
 
     def beforeTearDown(self):
         self.login('admin')
-        self.portal.MailHost = self.portal._original_MailHost
-        sm = getSiteManager(context=self.portal)
-        sm.unregisterUtility(provided=IMailHost)
-        sm.registerUtility(
-            aq_base(self.portal._original_MailHost),
-            provided=IMailHost
-        )
-
+        unset_mock_mailhost(self.portal)
         pas_instance = self.portal.acl_users
         plugin = getattr(pas_instance, 'test', None)
         if plugin is not None:
@@ -137,3 +123,17 @@ classImplements(DeadParrotPassword, IValidationPlugin)
 def get_security_settings():
     registry = getUtility(IRegistry)
     return registry.forInterface(ISecuritySchema, prefix="plone")
+
+def set_mock_mailhost(portal):
+    portal._original_MailHost = portal.MailHost
+    portal.MailHost = mailhost = MockMailHost('MailHost')
+    sm = getSiteManager(context=portal)
+    sm.unregisterUtility(provided=IMailHost)
+    sm.registerUtility(mailhost, provided=IMailHost)
+
+def unset_mock_mailhost(portal):
+    portal.MailHost = portal._original_MailHost
+    sm = getSiteManager(context=portal)
+    sm.unregisterUtility(provided=IMailHost)
+    sm.registerUtility(aq_base(portal._original_MailHost), provided=IMailHost)
+

@@ -1,27 +1,63 @@
 Testing the flexible user registration
 ======================================
 
-Set up
-======
-
-    >>> from plone.app.testing import TEST_USER_NAME
-    >>> from plone.testing.z2 import Browser
-
-    >>> app = layer['app']
     >>> portal = layer['portal']
-    >>> membership = portal.portal_membership
+    >>> from plone.testing.z2 import Browser
+    >>> browser = Browser(layer['app'])
+    >>> browser.open('http://nohost/plone')
+    >>> list_widget_suffix = ':list'
 
-    >>> browser = Browser(app)
+    Self-registration is disabled, user does not see 'Register' link.
+    >>> 'Register' in browser.contents
+    False
 
-    Fake that mailhost is set up properly:
+    Enable self-registration
+    >>> browser.open('http://nohost/plone/login_form')
+    >>> browser.getControl('Login Name').value = 'admin'
+    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Log in').click()
+    >>> browser.open('http://nohost/plone/@@security-controlpanel')
+    >>> browser.getControl('Enable self-registration').selected = True
+    >>> browser.getControl('Save').click()
+    >>> 'Changes saved' in browser.contents
+    True
+
+    >>> browser.getLink(url='http://nohost/plone/logout').click()
+    >>> 'Log in' in browser.contents
+    True
+
+    Logged out user should now see the register link.
+    >>> 'Register' in browser.contents
+    True
+
+    >>> browser.getLink('Register').click()
+    >>> '@@register' in browser.url
+    True
+
+    No mailhost has been set up yet. User should not be able to see the form.
+    >>> browser.contents
+    '...This site...valid email setup...cannot register at this time...'
+    >>> 'User Name' in browser.contents
+    False
+
+    Check that the form is not displayed when no mailhost is defined and users
+    cannot choose their own passwords.
+    >>> 'User Name' in browser.contents
+    False
+    >>> 'Password' in browser.contents
+    False
+    >>> 'Confirm password' in browser.contents
+    False
+
+    Set up a mailhost...
     >>> from plone.app.users.tests.base import setMailHost, unsetMailHost
+    >>> from plone.app.users.tests.base import set_mock_mailhost, unset_mock_mailhost
+    >>> set_mock_mailhost(portal)
     >>> setMailHost()
+    >>> browser.open('http://nohost/plone/@@register')
 
     The form should now be visible, sans password, since the user still cannot
     set it.
-    >>> browser = Browser(app)
-    >>> browser.open('http://nohost/plone/@@register')
-
     >>> 'User Name' in browser.contents
     True
     >>> 'Password' in browser.contents
@@ -59,7 +95,7 @@ Set up
     True
 
     Disable the mailhost and enable user ability to set their own password.
-    >>> unsetMailHost(l)
+    >>> unsetMailHost()
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
     >>> browser.getControl('Password').value = 'secret'
@@ -316,7 +352,10 @@ Set up
     True
 
     Add the default policy back in so we can test two plugins at once
+    >>> from plone.app.users.tests.base import activateDefaultPasswordPolicy
     >>> activateDefaultPasswordPolicy(portal)
+    >>> import transaction
+    >>> transaction.commit()
 
     >>> browser.getLink(url='http://nohost/plone/logout').click()
     >>> 'Log in' in browser.contents
@@ -364,3 +403,4 @@ Set up
     True
 
 
+    >>> unset_mock_mailhost(portal)

@@ -106,6 +106,7 @@ Login as user two:
 
 Should be able to access the user data panel:
 
+    >>> browser = Browser(app)
     >>> browser.open('http://nohost/plone/@@personal-information')
     >>> 'Login Name' in browser.contents
     False
