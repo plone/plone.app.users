@@ -16,6 +16,7 @@ from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
 from z3c.form import button
 from z3c.form import form
+from zope.cachedescriptors.property import Lazy as lazy_property
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.event import notify
@@ -91,6 +92,17 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     hidden_widgets = []
     successMessage = _("Changes saved.")
     noChangesMessage = _("No changes made.")
+
+    @lazy_property
+    def member(self):
+        mtool = getToolByName(self.context, 'portal_membership')
+        if self.request.get('userid'):
+            return mtool.getMemberById(self.request.get('userid'))
+        return mtool.getAuthenticatedMember()
+
+    @property
+    def label(self):
+        return self.member.getProperty('fullname') or self.member.getUserName()
 
     def _differentEmail(self, email):
         """Check if the submitted form email address differs from the existing
