@@ -63,8 +63,6 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
 
 class UserDataPanel(AccountPanelForm):
 
-    label = _(u'title_personal_information_form',
-              default=u'Personal Information')
     form_name = _(u'User Data Form')
     schema = IUserDataSchema
     enableCSRFProtection = True

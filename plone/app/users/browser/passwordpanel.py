@@ -56,7 +56,6 @@ class PasswordPanelAdapter(object):
 class PasswordPanel(AccountPanelForm):
     """Implementation of password reset form that uses z3c.form."""
 
-    label = _(u'listingheader_reset_password', default=u'Reset Password')
     description = _(u"Change Password")
     form_name = _(u'legend_password_details', default=u'Password Details')
     schema = IPasswordSchema

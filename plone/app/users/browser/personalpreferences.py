@@ -96,7 +96,6 @@ class PersonalPreferencesPanelAdapter(AccountPanelSchemaAdapter):
 class PersonalPreferencesPanel(AccountPanelForm):
     """Implementation of personalize form that uses z3c.form."""
 
-    label = _(u"heading_my_preferences", default=u"Personal Preferences")
     form_name = _(u'legend_personal_details', u'Personal Details')
     schema = IPersonalPreferences
 
