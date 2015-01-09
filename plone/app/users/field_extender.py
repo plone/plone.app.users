@@ -52,12 +52,12 @@ class UserFormSelectionAdapter(object):
         self.field = field
 
     def _get_forms(self):
-        forms = self.field.interface.queryTaggedValue(u'forms.selection', {})
-        return forms.get(self.field.__name__)
+        forms = getattr(self.field, 'forms_selection', [])
+        return forms
+
     def _set_forms(self, value):
-        forms = self.field.interface.queryTaggedValue(u'forms.selection', {})
-        forms[self.field.__name__] = value
-        self.field.interface.setTaggedValue(u'forms.selection', forms)
+        self.field.forms_selection = value
+
     forms = property(_get_forms, _set_forms)
 
 provideAdapter(UserFormSelectionAdapter, provides=IUserFormSelection)
@@ -73,14 +73,11 @@ class UserFormSelectionMetadata(object):
         name = field.__name__
         forms = fieldNode.get(ns('forms', self.namespace))
         if forms:
-            data = schema.queryTaggedValue(u'forms.selection', {})
-            data[name] = forms
-            schema.setTaggedValue(u'forms.selection', data)
-
+            field.forms_selection = forms.split('|')
+            
     def write(self, fieldNode, schema, field):
-        name = field.__name__
-        forms = schema.queryTaggedValue(u'forms.selection', {}).get(name, {})
+        forms = getattr(field, 'forms_selection', [])
         if forms:
-            fieldNode.set(ns('forms', self.namespace), forms)
+            fieldNode.set(ns('forms', self.namespace), "|".join(forms))
 
 provideUtility(component=UserFormSelectionMetadata(), name='plone.app.users.forms')
