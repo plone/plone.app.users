@@ -32,7 +32,7 @@ form_vocab = SimpleVocabulary(
 class IUserFormSelection(Interface):
     form.widget(forms=CheckBoxFieldWidget)
     forms = schema.List(title=u"Where should this field be shown",
-                        description=u"",
+                        description=u"Does not apply to username or to email fields",
                         required=True,
                         value_type=schema.Choice(vocabulary=form_vocab),
                         )
