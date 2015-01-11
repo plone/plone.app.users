@@ -43,7 +43,8 @@ from ..schema import (
     IRegisterSchema,
     IRegisterSchemaProvider,
     IAddUserSchema,
-    ICombinedRegisterSchema)
+    ICombinedRegisterSchema,
+    IUserDataSchema)
 from ..utils import notifyWidgetActionExecutionError
 from plone.app.users.browser.schemaprovider import RegisterSchemaProvider
 from .userdatapanel import UserDataPanelAdapter
@@ -87,68 +88,37 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         """Fields are dynamic in this form, to be able to handle
         different join styles.
         """
-        portal_props = getToolByName(self.context, 'portal_properties')
-        props = portal_props.site_properties
         settings = self._get_security_settings()
         use_email_as_login = settings.use_email_as_login
 
-        # Ensure all listed fields are in the schema
-        registration_fields = [f for f in props.getProperty(
-            'user_registration_fields', []) if f in self.schema]
-
-        # Check on required join fields
-        if 'username' not in registration_fields and not use_email_as_login:
-            registration_fields.insert(0, 'username')
-
-        if 'username' in registration_fields and use_email_as_login:
-            registration_fields.remove('username')
-
-        if 'email' not in registration_fields:
-            # Perhaps only when use_email_as_login is true, but also
-            # for some other cases; the email field has always been
-            # required.
-            registration_fields.append('email')
-
-        if 'password' not in registration_fields:
-            if 'username' in registration_fields:
-                base = registration_fields.index('username')
+        # Filter schema for registration
+        omitted = []
+        default_fields = IUserDataSchema.names() + IRegisterSchema.names()
+        for name in self.schema:
+            # we always preserve default fields
+            if name in default_fields:
+                omit = False
             else:
-                base = registration_fields.index('email')
-            registration_fields.insert(base + 1, 'password')
-
-        # Add password_ctl after password
-        if 'password_ctl' not in registration_fields:
-            registration_fields.insert(
-                registration_fields.index('password') + 1, 'password_ctl')
-
-        # Add email_me after password_ctl
-        if 'mail_me' not in registration_fields:
-            registration_fields.insert(
-                registration_fields.index('password_ctl') + 1, 'mail_me')
-
-        # Order/filter schema by registration_fields
-        self.schema.setTaggedValue(ORDER_KEY, [
-            (registration_fields[i],
-             'after',
-             registration_fields[i - 1] if i > 0 else '*')
-            for i in range(len(registration_fields))
-        ])
-        self.schema.setTaggedValue(OMITTED_KEY, [
-            (Interface, name, name not in registration_fields)
-            for name in self.schema
-        ])
+                forms_selection = getattr(
+                    self.schema[name], 'forms_selection', [])
+                if u'On Registration' in forms_selection:
+                    omit = False
+                else:
+                    omit = True
+            omitted.append((Interface, name, omit))
+        self.schema.setTaggedValue(OMITTED_KEY, omitted)
 
         # Finally, let autoform process the schema and any FormExtenders do
         # their thing
         super(BaseRegistrationForm, self).updateFields()
 
-        # update email field description according to set login policy
         if use_email_as_login:
             self.fields['email'].field.description = _(
                 u'help_email_creation_for_login', default=u"Enter an email "
                 "address. This will be your login name. We respect your "
                 "privacy, and will not give the address away to any third "
                 "parties or expose it anywhere.")
+            del self.fields['username']
         else:
             self.fields['email'].field.description = _(
                 u'help_email_creation',
@@ -157,11 +127,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                         u"will not give the address away to any third parties "
                         u"or expose it anywhere."
             )
-
-        # Make sure some fields are really required; a previous call
-        # might have changed the default.
-        for name in ('password', 'password_ctl'):
-            self.fields[name].field.required = True
 
         # Change the password description based on PAS Plugin The user needs a
         # list of instructions on what kind of password is required.  We'll
