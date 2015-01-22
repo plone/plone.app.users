@@ -6,41 +6,9 @@
       metal:use-macro="here/prefs_main_template/macros/master"
       i18n:domain="plone">
 
-<body>
-
 <div metal:fill-slot="prefs_configlet_content">
 
-    <div id="edit-bar"
-         tal:define="view_name view/__name__;
-                     userquery python:view.makeQuery()">
-        <ul class="contentViews" id="content-views">
-          <li tal:define="selected python:view_name=='user-information'"
-              tal:attributes="class python:selected and 'selected' or 'plain'">
-            <a href=""
-               tal:attributes="href string:$portal_url/@@user-information${userquery}"
-               i18n:translate="title_personal_information_form">Personal Information</a>
-          </li>
-          <li tal:define="selected python:view_name=='user-preferences'"
-              tal:attributes="class python:selected and 'selected' or 'plain'">
-            <a href=""
-               tal:attributes="href string:$portal_url/@@user-preferences${userquery}"
-               i18n:translate="">Personal Preferences</a>
-          </li>
-
-          <li>
-            <a href=""
-               tal:attributes="href string:$portal_url/@@usergroup-usermembership${userquery}"
-               i18n:translate="label_group_memberships">Group Memberships</a>
-          </li>
-        </ul>
-        <div class="contentActions">&nbsp;</div>
-    </div>
-
-    <article id="content">
-
-    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
-      Portal status message
-    </div>
+  <article id="content">
 
     <a
        href=""
@@ -52,13 +20,32 @@
 
     <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
 
-    <div id="content-core">
-      <metal:block use-macro="context/@@ploneform-macros/titlelessform">
-      </metal:block>
+    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+      Portal status message
     </div>
 
-    </article>
+    <div id="content-core">
+      <div class="autotabs">
+        <nav class="autotoc-nav"
+             tal:define="view_name view/__name__;
+                         userquery python:view.makeQuery()">
+          <a href="${portal_url}/@@user-information${userquery}"
+             tal:define="selected python:view_name=='user-information'"
+             tal:attributes="class python:'autotoc-level-1' + (' active' if selected else '')"
+             i18n:translate="title_personal_information_form">Personal Information</a>
+          <a href="${portal_url}/@@user-preferences${userquery}"
+             tal:define="selected python:view_name=='user-preferences'"
+             tal:attributes="class python:'autotoc-level-1' + (' active' if selected else '')"
+             i18n:translate="">Personal Preferences</a>
+          <a href="${portal_url}/@@usergroup-usermembership${userquery}"
+             i18n:translate="label_group_memberships">Group Memberships</a>
+        </nav>
+        <metal:b use-macro="context/@@ploneform-macros/titlelessform" />
+      </div>
+    </div>
+
+  </article>
 
 </div>
-</body>
+
 </html>

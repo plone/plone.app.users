@@ -7,6 +7,9 @@ CHANGES
 - Ported tests to plone.app.testing
   [gforcada, tomgross]
 
+- Adjust navigation markup for Plone 5.
+  [davisagli]
+
 - Use email_from_address from registry (Plone 5) in tests.
   [khink]
 
