@@ -7,80 +7,43 @@ without the PloneTestCase.setupPloneSite() side effects.
 """
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
-from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
-from Products.PloneTestCase.PloneTestCase import FunctionalTestCase
+from plone.app.testing.bbb import PloneTestCase
 from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
 from plone.registry.interfaces import IRegistry
 from OFS.Cache import Cacheable
-from plone.registry.interfaces import IRegistry
 from zope.component import getSiteManager
 from zope.component import getUtility
 
-# BBB Zope 2.12
-try:
-    from Testing.testbrowser import Browser
-except ImportError:
-    from Products.Five.testbrowser import Browser
+from plone.testing.z2 import Browser
+from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
+from transaction import commit
 
 
-class BaseTestCase(FunctionalTestCase):
-    """base test case which adds amin user"""
+class BaseTestCase(PloneTestCase):
+    """ base test case which adds amin user """
+
+    layer = PLONE_APP_USERS_FUNCTIONAL_TESTING
 
     def afterSetUp(self):
-        super(BaseTestCase, self).afterSetUp()
-        self.browser = Browser()
         self.portal.acl_users._doAddUser('admin', 'secret', ['Manager'], [])
-
-        self.portal._original_MailHost = self.portal.MailHost
-        self.portal.MailHost = mailhost = MockMailHost('MailHost')
+        set_mock_mailhost(self.portal)
         self.membership = self.portal.portal_membership
-        registry = getUtility(IRegistry)
-        self.security_settings = registry.forInterface(
-            ISecuritySchema, prefix="plone")
-        sm = getSiteManager(context=self.portal)
-        sm.unregisterUtility(provided=IMailHost)
-        sm.registerUtility(mailhost, provided=IMailHost)
+        self.security_settings = get_security_settings()
 
-    def addParrotPasswordPolicy(self):
-        # remove default policy
-        uf = self.portal.acl_users
-        for policy in uf.objectIds(['Default Plone Password Policy']):
-            uf.plugins.deactivatePlugin(IValidationPlugin, policy)
-
-        obj = DeadParrotPassword('test')
-        uf._setObject(obj.getId(), obj)
-        obj = uf[obj.getId()]
-        activatePluginInterfaces(self.portal, obj.getId())
-
-        portal = getUtility(ISiteRoot)
-        pas_instance = portal.acl_users
-        plugins = pas_instance._getOb('plugins')
-        validators = plugins.listPlugins(IValidationPlugin)
-        assert validators
-
-    def activateDefaultPasswordPolicy(self):
-        uf = self.portal.acl_users
-        for policy in uf.objectIds(['Default Plone Password Policy']):
-            activatePluginInterfaces(self.portal, policy)
+        self.browser = Browser(self.layer['app']) 
+        self.request = self.layer['request']
 
     def beforeTearDown(self):
-        self.portal.MailHost = self.portal._original_MailHost
-        sm = getSiteManager(context=self.portal)
-        sm.unregisterUtility(provided=IMailHost)
-        sm.registerUtility(
-            aq_base(self.portal._original_MailHost),
-            provided=IMailHost
-        )
-
-        portal = getUtility(ISiteRoot)
-        pas_instance = portal.acl_users
+        self.login('admin')
+        unset_mock_mailhost(self.portal)
+        pas_instance = self.portal.acl_users
         plugin = getattr(pas_instance, 'test', None)
         if plugin is not None:
             plugins = pas_instance._getOb('plugins')
@@ -88,21 +51,8 @@ class BaseTestCase(FunctionalTestCase):
             # plugins.deactivatePlugin(IPropertiesPlugin, 'test')
             pas_instance.manage_delObjects('test')
 
-    def setMailHost(self):
-        registry = getUtility(IRegistry)
-        mail_settings = registry.forInterface(IMailSchema, prefix='plone')
-        mail_settings.smtp_host = u'localhost'
-        mail_settings.email_from_address = 'admin@foo.com'
-
-    def unsetMailHost(self):
-        registry = getUtility(IRegistry)
-        mail_settings = registry.forInterface(IMailSchema, prefix='plone')
-        mail_settings.smtp_host = u''
-        mail_settings.email_from_address = ''
-
     def test_nothing(self):
-        """Add a dummy test here, so the base class 'passes'."""
-        pass
+        """ Add a dummy test here, so the base class 'passes'. """
 
 # Dummy password validation PAS plugin
 
@@ -128,4 +78,60 @@ class DeadParrotPassword(BasePlugin, Cacheable):
         return errors
 
 
+# Helper methods used in doctests
+
+def setMailHost():
+    registry = getUtility(IRegistry)
+    mail_settings = registry.forInterface(IMailSchema, prefix='plone')
+    mail_settings.smtp_host = u'localhost'
+    mail_settings.email_from_address = 'admin@foo.com'
+    commit()
+
+def unsetMailHost():
+    registry = getUtility(IRegistry)
+    mail_settings = registry.forInterface(IMailSchema, prefix='plone')
+    mail_settings.smtp_host = u''
+    mail_settings.email_from_address = ''
+    commit()
+
+def activateDefaultPasswordPolicy(portal):
+    uf = portal.acl_users
+    for policy in uf.objectIds(['Default Plone Password Policy']):
+        activatePluginInterfaces(portal, policy)
+
+def addParrotPasswordPolicy(portal):
+    # remove default policy
+    uf = portal.acl_users
+    for policy in uf.objectIds(['Default Plone Password Policy']):
+        uf.plugins.deactivatePlugin(IValidationPlugin, policy)
+
+    obj = DeadParrotPassword('test')
+    uf._setObject(obj.getId(), obj)
+    obj = uf[obj.getId()]
+    activatePluginInterfaces(portal, obj.getId())
+
+    #portal = getUtility(ISiteRoot)
+    plugins = uf._getOb('plugins')
+    validators = plugins.listPlugins(IValidationPlugin)
+    assert validators
+    commit()
+
 classImplements(DeadParrotPassword, IValidationPlugin)
+
+def get_security_settings():
+    registry = getUtility(IRegistry)
+    return registry.forInterface(ISecuritySchema, prefix="plone")
+
+def set_mock_mailhost(portal):
+    portal._original_MailHost = portal.MailHost
+    portal.MailHost = mailhost = MockMailHost('MailHost')
+    sm = getSiteManager(context=portal)
+    sm.unregisterUtility(provided=IMailHost)
+    sm.registerUtility(mailhost, provided=IMailHost)
+
+def unset_mock_mailhost(portal):
+    portal.MailHost = portal._original_MailHost
+    sm = getSiteManager(context=portal)
+    sm.unregisterUtility(provided=IMailHost)
+    sm.registerUtility(aq_base(portal._original_MailHost), provided=IMailHost)
+

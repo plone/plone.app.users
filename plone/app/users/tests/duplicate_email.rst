@@ -5,11 +5,14 @@ When email address is used as login name, duplicates are not allowed.
 
 Use email addresses as login name:
 
-    >>> self.security_settings.use_email_as_login = True
+    >>> from plone.app.users.tests.base import get_security_settings
+    >>> security_settings = get_security_settings()
+    >>> security_settings.use_email_as_login = True
 
 Create a new user one:
 
-    >>> mtool = self.portal.portal_membership
+    >>> portal = layer['portal']
+    >>> mtool = portal.portal_membership
     >>> mtool.addMember('userone@example.com', 'secret', [], [])
     >>> userone = mtool.getMemberById('userone@example.com')
     >>> userone.setMemberProperties({'email':'userone@example.com'})
@@ -19,31 +22,35 @@ Create a new user two:
     >>> mtool.addMember('usertwo@example.com', 'secret', [], [])
     >>> usertwo = mtool.getMemberById('usertwo@example.com')
     >>> usertwo.setMemberProperties({'email':'usertwo@example.com'})
+    >>> from transaction import commit
+    >>> commit()
 
 Login as user two:
 
-    >>> self.browser.open('http://nohost/plone/')
-    >>> self.browser.getLink('Log in').click()
+    >>> from plone.testing.z2 import Browser
+    >>> browser = Browser(layer['app'])
+    >>> browser.open('http://nohost/plone/')
+    >>> browser.getLink('Log in').click()
 
-    >>> self.browser.getControl('Login Name').value = 'usertwo@example.com'
-    >>> self.browser.getControl('Password').value = 'secret'
-    >>> self.browser.getControl('Log in').click()
-    >>> 'Login failed' in self.browser.contents
+    >>> browser.getControl('Login Name').value = 'usertwo@example.com'
+    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Log in').click()
+    >>> 'Login failed' in browser.contents
     False
 
 Now we should be able to access the user data panel:
 
-    >>> self.browser.open('http://nohost/plone/@@personal-information')
-    >>> 'Login Name' in self.browser.contents
+    >>> browser.open('http://nohost/plone/@@personal-information')
+    >>> 'Login Name' in browser.contents
     False
-    >>> self.browser.url.endswith('@@personal-information')
+    >>> browser.url.endswith('@@personal-information')
     True
 
 Setting the e-mail address to an existing one should give an error message:
 
-    >>> self.browser.getControl('E-mail').value = 'userone@example.com'
-    >>> self.browser.getControl('Save').click()
-    >>> 'The email address you selected is already in use' in self.browser.contents
+    >>> browser.getControl('E-mail').value = 'userone@example.com'
+    >>> browser.getControl('Save').click()
+    >>> 'The email address you selected is already in use' in browser.contents
     True
-    >>> 'Changes saved' in self.browser.contents
+    >>> 'Changes saved' in browser.contents
     False

@@ -11,7 +11,7 @@ long_description = '{0}\n{1}'.format(open('README.rst').read(),
 extras_require = {
     'test': [
         'Products.MailHost',
-        'Products.PloneTestCase',
+        'plone.app.testing',
         'plone.keyring',
     ]
 }

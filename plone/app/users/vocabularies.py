@@ -67,9 +67,10 @@ class GroupIdVocabulary(object):
 
       >>> from zope.component import queryUtility
       >>> from zope.schema.interfaces import IVocabularyFactory
+      >>> from zope.site.hooks import getSite
       >>> from Products.CMFCore.utils import getToolByName
 
-      >>> groups_tool = getToolByName(self.portal, 'portal_groups')
+      >>> groups_tool = getToolByName(getSite(), 'portal_groups')
       >>> groups_tool.addGroup(
       ...     'fancygroup', [], [],
       ...     title='Group Title',
@@ -80,7 +81,7 @@ class GroupIdVocabulary(object):
       >>> name = 'plone.app.users.group_ids'
       >>> util = queryUtility(IVocabularyFactory, name)
 
-      >>> fields = util(self.portal)
+      >>> fields = util(getSite())
       >>> fields
       <zope.schema.vocabulary.SimpleVocabulary object at ...>
 

@@ -1,60 +1,78 @@
+==================================================
 Test form links against different navigation roots
---------------------------------------------------
+==================================================
 
 Links that are present within each of the forms should adhere to
 the current navigation root for the site.
 
+Set up
+======
+
     >>> from Products.Five.utilities.marker import mark
     >>> from plone.app.layout.navigation.interfaces import INavigationRoot
+    >>> from plone.app.testing import SITE_OWNER_NAME
+    >>> from plone.app.testing import SITE_OWNER_PASSWORD
+    >>> from plone.testing.z2 import Browser
+
+    >>> app = layer['app']
+    >>> portal = layer['portal']
+
+    >>> browser = Browser(app)
+    >>> browser.handleErrors = False
+
+Create a folder
+---------------
 
 We'll create the test context and have the relevant navigation root marker
 interface ready to be applied:
 
-    >>> self.loginAsPortalOwner()
-    >>> self.portal.invokeFactory('Folder', id='folder_navroot', title="Navroot")
+    >>> from plone.app.testing import setRoles
+    >>> from plone.app.testing import TEST_USER_ID
+    >>> setRoles(portal, TEST_USER_ID, ['Manager'])
+    >>> portal.invokeFactory('Folder', id='folder_navroot', title="Navroot")
     'folder_navroot'
-
-
-So let's login as Plone admin:
-    >>> self.browser.open('http://nohost/plone/')
-    >>> self.browser.getLink('Log in').click()
-    >>> self.browser.getControl('Login Name').value = 'admin'
-    >>> self.browser.getControl('Password').value = 'secret'
-    >>> self.browser.getControl('Log in').click()
+    >>> from transaction import commit
+    >>> commit()
 
 Let's see if we can navigate to the user information and options forms
 in the 'Users and Groups' settings. Each of the 3 forms all use the
 same base class so if the fix works on one, it works on them all.
 
-    >>> self.browser.getLink('Navroot').click()
+    >>> browser.open('http://nohost/plone/login_form')
+    >>> browser.getControl('Login Name').value = SITE_OWNER_NAME
+    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
+    >>> browser.getControl('Log in').click()
 
-    >>> self.browser.getLink('Preferences').click()
-    >>> self.browser.url
+    >>> browser.getLink('Navroot').click()
+
+    >>> browser.getLink('Preferences').click()
+    >>> browser.url
     'http://nohost/plone/@@personal-preferences'
 
 Check the existance and links for a standard site context (navigation root
 is the Plone site itself since the marker interface isn't applied here
 yet).
 
-    >>> self.browser.getLink('Personal Information').url
+    >>> browser.getLink('Personal Information').url
     'http://nohost/plone/@@personal-information'
-    >>> self.browser.getLink('Personal Preferences').url
+    >>> browser.getLink('Personal Preferences').url
     'http://nohost/plone/@@personal-preferences'
 
 Now, let's mark this folder and see what happens.  All links should
 now be rooted to the given folder and not the Plone site proper.
 
-    >>> mark(self.portal.folder_navroot, INavigationRoot)
+    >>> mark(portal.folder_navroot, INavigationRoot)
+    >>> commit()
 
-    >>> self.browser.getLink('Navroot').click()
+    >>> browser.getLink('Navroot').click()
 
-    >>> self.browser.getLink('Preferences').click()
-    >>> self.browser.url
+    >>> browser.getLink('Preferences').click()
+    >>> browser.url
     'http://nohost/plone/folder_navroot/@@personal-preferences'
 
-    >>> self.browser.getLink('Personal Information').url
+    >>> browser.getLink('Personal Information').url
     'http://nohost/plone/folder_navroot/@@personal-information'
-    >>> self.browser.getLink('Personal Preferences').url
+    >>> browser.getLink('Personal Preferences').url
     'http://nohost/plone/folder_navroot/@@personal-preferences'
 
 
