@@ -67,10 +67,9 @@ Fill out the form, using an odd email address that should not give problems.
     >>> 'Failed to create your account' in browser.contents
     False
 
-    We can now login.
-    >>> browser.getLink('Log in').click()
-    >>> browser.getControl('Login Name').value = 'bob-jones+test@example.com'
-    >>> browser.getControl('Password').value = 'secret'
+    We can login immediately.
+    >>> 'Click the button to log in immediately.' in browser.contents
+    True
     >>> browser.getControl('Log in').click()
     >>> 'You are now logged in' in browser.contents
     True
@@ -81,9 +80,10 @@ Fill out the form, using an odd email address that should not give problems.
     True
     >>> browser.getLink(url='http://nohost/plone/logout').click()
 
-    We login as manager.
+    We login as manager. The login form now has a different label for
+    the login name.
     >>> browser.open('http://nohost/plone/login_form')
-    >>> browser.getControl('Login Name').value = SITE_OWNER_NAME
+    >>> browser.getControl('E-mail').value = SITE_OWNER_NAME
     >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
 
