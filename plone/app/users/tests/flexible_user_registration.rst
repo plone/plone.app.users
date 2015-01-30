@@ -1,7 +1,13 @@
+======================================
 Testing the flexible user registration
 ======================================
 
-    >>> browser = self.browser
+    >>> from plone.testing.z2 import Browser
+    >>> import transaction
+    >>> app = layer['app']
+    >>> portal = layer['portal']
+    >>> browser = Browser(app)
+    >>> browser.handleErrors = False
     >>> from zope.component import getUtility
     >>> from plone.keyring.interfaces import IKeyManager
     >>> import hmac
@@ -56,7 +62,13 @@ Check "Settings" links::
     True
 
 Check delete links::
+    >>> browser.getControl(name='_authenticator', index=0)
+    <Control name='_authenticator' type='hidden'>
 
+Let's add home_page to the list of registration form fields.
+(Setting this by hand since add/remove widget doesn't work properly without javascript)
+    >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['fullname', 'username', 'email', 'password'])
+    >>> transaction.commit()
     >>> 'http://nohost/plone/member-fields/fullname/@@delete' in browser.contents
     False
 

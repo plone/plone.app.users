@@ -1,14 +1,9 @@
 # -*- coding: utf-8 -*-
-from hashlib import sha1 as sha
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.interfaces import ISecuritySchema
 from plone.app.users.tests.base import BaseTestCase
+from Products.CMFCore.utils import getToolByName
 from plone.app.users.utils import uuid_userid_generator
-from plone.protect import authenticator as auth
-from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
 
-import hmac
+import transaction
 
 
 class TestNewUser(BaseTestCase):
@@ -17,14 +12,11 @@ class TestNewUser(BaseTestCase):
         self.portal.acl_users._doAddUser(
             'siteadmin', 'secret', ['Site Administrator'], []
         )
+        # make the user available
+        transaction.commit()
+
         self.browser.addHeader('Authorization', 'Basic siteadmin:secret')
-        # XXX need to use auth token here because there is one case of write
-        # on read for portlets that isn't hit here...
-        ring = auth._getKeyring('siteadmin')
-        secret = ring.random()
-        token = hmac.new(secret, 'siteadmin', sha).hexdigest()
-        self.browser.open('http://nohost/plone/new-user?_authenticator=%s' % (
-            token))
+        self.browser.open('http://nohost/plone/new-user')
         self.browser.getControl('User Name').value = 'newuser'
         self.browser.getControl('E-mail').value = 'newuser@example.com'
         self.browser.getControl('Password').value = 'foobar'
@@ -50,15 +42,13 @@ class TestGenerateUserIdLoginName(BaseTestCase):
         self.portal.acl_users._doAddUser(
             'siteadmin', 'secret', ['Site Administrator'], []
         )
-        self.browser.handleErrors = False
+        transaction.commit() 
         self.browser.addHeader('Authorization', 'Basic siteadmin:secret')
-        registry = getUtility(IRegistry)
-        self.security_settings = registry.forInterface(
-            ISecuritySchema, prefix="plone")
 
     def test_uuid_disabled_email_as_login_disabled(self):
         self.security_settings.use_uuid_as_userid = False
         self.security_settings.use_email_as_login = False
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
@@ -79,6 +69,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     def test_uuid_disabled_email_as_login_enabled_no_full_name(self):
         self.security_settings.use_uuid_as_userid = False
         self.security_settings.use_email_as_login = True
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
@@ -99,6 +90,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     def test_uuid_disabled_email_as_login_enabled_no_full_name_uppercase(self):
         self.security_settings.use_uuid_as_userid = False
         self.security_settings.use_email_as_login = True
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
@@ -118,6 +110,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     def test_uuid_disabled_email_as_login_enabled_has_full_name(self):
         self.security_settings.use_uuid_as_userid = False
         self.security_settings.use_email_as_login = True
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
@@ -139,6 +132,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     def test_uuid_enabled_email_as_login_disabled(self):
         self.security_settings.use_uuid_as_userid = True
         self.security_settings.use_email_as_login = False
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
@@ -162,6 +156,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     def test_uuid_enabled_email_as_login_enabled(self):
         self.security_settings.use_uuid_as_userid = True
         self.security_settings.use_email_as_login = True
+        transaction.commit()
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')

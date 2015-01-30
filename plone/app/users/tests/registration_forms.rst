@@ -1,7 +1,9 @@
 Testing the flexible user registration
 ======================================
 
-    >>> browser = self.browser
+    >>> portal = layer['portal']
+    >>> from plone.testing.z2 import Browser
+    >>> browser = Browser(layer['app'])
     >>> browser.open('http://nohost/plone')
     >>> list_widget_suffix = ':list'
 
@@ -48,7 +50,10 @@ Testing the flexible user registration
     False
 
     Set up a mailhost...
-    >>> self.setMailHost()
+    >>> from plone.app.users.tests.base import setMailHost, unsetMailHost
+    >>> from plone.app.users.tests.base import set_mock_mailhost, unset_mock_mailhost
+    >>> set_mock_mailhost(portal)
+    >>> setMailHost()
     >>> browser.open('http://nohost/plone/@@register')
 
     The form should now be visible, sans password, since the user still cannot
@@ -90,7 +95,7 @@ Testing the flexible user registration
     True
 
     Disable the mailhost and enable user ability to set their own password.
-    >>> self.unsetMailHost()
+    >>> unsetMailHost()
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
     >>> browser.getControl('Password').value = 'secret'
@@ -222,7 +227,7 @@ Testing the flexible user registration
     >>> browser.getLink('user3').click()
 
     Set up the mailhost and try again.
-    >>> self.setMailHost()
+    >>> setMailHost()
     >>> browser.open('http://nohost/plone/@@new-user')
     >>> 'Password' in browser.contents
     True
@@ -275,12 +280,13 @@ Testing the flexible user registration
 
     Now let's test using a PAS Password validation plugin. Add a test plugin.
 
-    >>> self.addParrotPasswordPolicy()
+    >>> from plone.app.users.tests.base import addParrotPasswordPolicy
+    >>> addParrotPasswordPolicy(portal)
 
     Enable setting own password
 
     Disable the mailhost and enable user ability to set their own password.
-    >>> self.unsetMailHost()
+    >>> unsetMailHost()
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
     >>> browser.getControl('Password').value = 'secret'
@@ -346,7 +352,10 @@ Testing the flexible user registration
     True
 
     Add the default policy back in so we can test two plugins at once
-    >>> self.activateDefaultPasswordPolicy()
+    >>> from plone.app.users.tests.base import activateDefaultPasswordPolicy
+    >>> activateDefaultPasswordPolicy(portal)
+    >>> import transaction
+    >>> transaction.commit()
 
     >>> browser.getLink(url='http://nohost/plone/logout').click()
     >>> 'Log in' in browser.contents
@@ -394,3 +403,4 @@ Testing the flexible user registration
     True
 
 
+    >>> unset_mock_mailhost(portal)

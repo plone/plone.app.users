@@ -12,12 +12,6 @@ from zope.component import getUtility
 
 class TestGenerateUserId(BaseTestCase):
 
-    def afterSetUp(self):
-        super(TestGenerateUserId, self).afterSetUp()
-        registry = getUtility(IRegistry)
-        self.security_settings = registry.forInterface(
-            ISecuritySchema, prefix="plone")
-
     def test_custom_generator(self):
         """Test if a custom user id generator overrides the default
         behavior.

@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-from Testing.makerequest import makerequest
-from OFS.SimpleItem import SimpleItem
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-
-import unittest
+from plone.app.users.tests.base import BaseTestCase
 
 
 class DummyPortalMembership(object):
@@ -21,27 +18,24 @@ class DummyPortalMembership(object):
         return self.allowed
 
 
-class TestAccountPanelSchemaAdapter(unittest.TestCase):
+class TestAccountPanelSchemaAdapter(BaseTestCase):
 
     def test__init__no_userid(self):
-        # should edit current user
-        context = makerequest(SimpleItem('foo'))
-        context.portal_membership = DummyPortalMembership(False)
-        adapter = AccountPanelSchemaAdapter(context)
+        """Should edit current user."""
+        self.request.portal_membership = DummyPortalMembership(False)
+        adapter = AccountPanelSchemaAdapter(self.request)
         self.assertEqual('(authenticated)', adapter.context)
 
     def test__init__userid_in_request_form_for_non_manager(self):
-        # disallow for non-privileged users
-        context = makerequest(SimpleItem('foo'))
-        context.portal_membership = DummyPortalMembership(False)
-        context.REQUEST.form['userid'] = 'bob'
-        adapter = AccountPanelSchemaAdapter(context)
+        """Disallow for non-privileged users."""
+        self.request.portal_membership = DummyPortalMembership(False)
+        self.request.REQUEST.form['userid'] = 'bob'
+        adapter = AccountPanelSchemaAdapter(self.request)
         self.assertEqual('(authenticated)', adapter.context)
 
     def test__init__userid_in_request_form_for_manager(self):
-        # should allow for privileged users
-        context = makerequest(SimpleItem('foo'))
-        context.portal_membership = DummyPortalMembership(True)
-        context.REQUEST.form['userid'] = 'bob'
-        adapter = AccountPanelSchemaAdapter(context)
+        """Should allow for privileged users."""
+        self.request.portal_membership = DummyPortalMembership(True)
+        self.request.REQUEST.form['userid'] = 'bob'
+        adapter = AccountPanelSchemaAdapter(self.request)
         self.assertEqual('bob', adapter.context)

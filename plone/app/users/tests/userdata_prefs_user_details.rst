@@ -1,34 +1,52 @@
 Admin modifies user information thru 'Users and groups'
 ---------------------------------------------------------------------
 
+Set Up
+======
+
+    >>> from plone.app.testing import TEST_USER_ID
+    >>> from plone.app.testing import TEST_USER_NAME
+    >>> from plone.testing.z2 import Browser
+
+    >>> import transaction
+
+    >>> app = layer['app']
+    >>> portal = layer['portal']
+    >>> membership = portal.portal_membership
+
+    >>> user_information_url = 'http://nohost/plone/@@user-information?userid={0}'.format(TEST_USER_ID)
+
+    >>> browser = Browser(app)
+    >>> browser.handleErrors = False
+
 An admin can modify user information thru the @@user-information form in Users and Groups
 config page.
 
 So let's login as Plone admin:
-    >>> self.browser.open('http://nohost/plone/')
-    >>> self.browser.getLink('Log in').click()
-    >>> self.browser.getControl('Login Name').value = 'admin'
-    >>> self.browser.getControl('Password').value = 'secret'
-    >>> self.browser.getControl('Log in').click()
+    >>> browser.open('http://nohost/plone/')
+    >>> browser.getLink('Log in').click()
+    >>> browser.getControl('Login Name').value = 'admin'
+    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Log in').click()
 
 Let's see if we can navigate to the user information form in Users and groups
-    >>> self.browser.getLink('Site Setup').click()
-    >>> self.browser.getLink('Users and Groups').click()
-    >>> self.browser.getLink('test_user_1_').click()
-    >>> self.browser.getLink('Personal Information').click()
-    >>> self.browser.url
-    'http://nohost/plone/@@user-information?userid=test_user_1_'
+    >>> browser.getLink('Site Setup').click()
+    >>> browser.getLink('Users and Groups').click()
+    >>> browser.getLink(TEST_USER_NAME).click()
+    >>> browser.getLink('Personal Information').click()
+    >>> browser.url == user_information_url
+    True
 
 We have these controls in the form:
 
-    >>> self.browser.getControl('Full Name').value
+    >>> browser.getControl('Full Name').value
     ''
-    >>> self.browser.getControl('E-mail').value
+    >>> browser.getControl('E-mail').value
     ''
 
 The form should be using CSRF protection:
 
-    >>> self.browser.getControl(name='_authenticator', index=0)
+    >>> browser.getControl(name='_authenticator', index=0)
     <Control name='_authenticator' type='hidden'>
 
 
@@ -36,23 +54,23 @@ Modifying user data
 -------------------
 
     >>> full_name = 'Plone user'
-    >>> self.browser.getControl('Full Name').value = full_name
+    >>> browser.getControl('Full Name').value = full_name
 
     >>> email_address = 'person@example.com'
-    >>> self.browser.getControl('E-mail').value = email_address
+    >>> browser.getControl('E-mail').value = email_address
 
     >>> self.browser.getControl('Save').click()
     >>> 'Required input is missing.' in self.browser.contents
     False
-    >>> 'No changes made.' in self.browser.contents
+    >>> 'No changes made.' in browser.contents
     False
-    >>> 'Changes saved.' in self.browser.contents
+    >>> 'Changes saved.' in browser.contents
     True
 
 We should be able to check that value for email address now is the same as what
 we put in.
 
-    >>> member = self.membership.getMemberById('test_user_1_')
+    >>> member = membership.getMemberById(TEST_USER_ID)
     >>> fullname_value = member.getProperty('fullname','')
     >>> fullname_value == full_name
     True
@@ -64,8 +82,8 @@ we put in.
 Finally let's see if Cancel button still leaves us on selected user Personal
 Information form::
 
-    >>> self.browser.getControl('Cancel').click()
-    >>> 'Changes canceled.' in self.browser.contents
+    >>> browser.getControl('Cancel').click()
+    >>> 'Changes canceled.' in browser.contents
     True
-    >>> 'Change personal information for test_user_1_' in self.browser.contents
+    >>> 'Change personal information for test_user_1_' in browser.contents
     True
