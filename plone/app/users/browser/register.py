@@ -47,7 +47,7 @@ from ..schema import (
     IUserDataSchema)
 from ..utils import notifyWidgetActionExecutionError
 from plone.app.users.browser.schemaprovider import RegisterSchemaProvider
-from .userdatapanel import UserDataPanelAdapter
+from .account import AccountPanelSchemaAdapter
 
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
@@ -558,7 +558,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 # just insert a relevant adapter for it
                 if INavigationRoot.providedBy(self.context):
                     provideAdapter(
-                        UserDataPanelAdapter,
+                        AccountPanelSchemaAdapter,
                         (INavigationRoot,),
                         schema
                     )
