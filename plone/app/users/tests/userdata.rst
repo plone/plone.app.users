@@ -92,8 +92,8 @@ If we do set an e-mail address, we should be able to save the form.
     >>> email_address = 'person@example.com'
     >>> browser.getControl('E-mail').value = email_address
 
-    >>> self.browser.getControl('Save').click()
-    >>> 'Required input is missing.' in self.browser.contents
+    >>> browser.getControl('Save').click()
+    >>> 'Required input is missing.' in browser.contents
     False
     >>> 'No changes made.' in browser.contents
     False
@@ -121,9 +121,9 @@ Clearing user data
 If we empty all non-required inputs, the corresponding fields should
 be cleared, instead of keeping their old value
 
-    >>> self.browser.getControl('Full Name').value = ''
-    >>> self.browser.getControl('Save').click()
-    >>> 'Required input is missing.' in self.browser.contents
+    >>> browser.getControl('Full Name').value = ''
+    >>> browser.getControl('Save').click()
+    >>> 'Required input is missing.' in browser.contents
     False
     >>> 'No changes made.' in browser.contents
     False

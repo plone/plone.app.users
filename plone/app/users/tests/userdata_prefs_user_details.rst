@@ -59,8 +59,8 @@ Modifying user data
     >>> email_address = 'person@example.com'
     >>> browser.getControl('E-mail').value = email_address
 
-    >>> self.browser.getControl('Save').click()
-    >>> 'Required input is missing.' in self.browser.contents
+    >>> browser.getControl('Save').click()
+    >>> 'Required input is missing.' in browser.contents
     False
     >>> 'No changes made.' in browser.contents
     False
