@@ -53,8 +53,6 @@ We have two controls, one for the editor and one for the language:
 
     >>> isEmptyMarker(browser.getControl('Wysiwyg editor').value)
     True
-    >>> browser.getControl('Enable external editing').selected
-    False
     >>> isEmptyMarker(browser.getControl('Language', index=0).value)
     True
 
@@ -79,7 +77,6 @@ Modifying values
 
     >>> browser.open('http://nohost/plone/' + view_name)
     >>> browser.getControl('Wysiwyg editor').value = ['TinyMCE']
-    >>> browser.getControl('Enable external editing').selected = True
     >>> browser.getControl('Language', index=0).value = ['en']
     >>> browser.getControl('Save').click()
     >>> 'Changes saved' in browser.contents
@@ -101,8 +98,6 @@ And that the form still has the according values:
     False
     >>> browser.getControl('Wysiwyg editor').value
     ['TinyMCE']
-    >>> browser.getControl('Enable external editing').selected
-    True
     >>> browser.getControl('Language', index=0).value
     ['en']
 
@@ -114,7 +109,6 @@ Making an input empty should result in a stored empty string.
 
     >>> browser.open('http://nohost/plone/' + view_name)
     >>> browser.getControl('Wysiwyg editor').value = [empty_marker]
-    >>> browser.getControl('Enable external editing').selected = False
     >>> browser.getControl('Language', index=0).value = [empty_marker]
     >>> browser.getControl('Save').click()
     >>> 'Changes saved' in browser.contents
@@ -134,7 +128,5 @@ And that the form still has the according values:
 
     >>> isEmptyMarker(browser.getControl('Wysiwyg editor').value)
     True
-    >>> browser.getControl('Enable external editing').selected
-    False
     >>> isEmptyMarker(browser.getControl('Language', index=0).value)
     True
