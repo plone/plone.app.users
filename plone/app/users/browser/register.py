@@ -10,13 +10,6 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZODB.POSException import ConflictError
 from plone.app.layout.navigation.interfaces import INavigationRoot
-from plone.app.users.browser.interfaces import ILoginNameGenerator
-from plone.app.users.browser.interfaces import IUserIdGenerator
-from plone.app.users.schema import IAddUserSchema
-from plone.app.users.schema import ICombinedRegisterSchema
-from plone.app.users.schema import IRegisterSchema
-from plone.app.users.utils import notifyWidgetActionExecutionError
-from plone.app.users.utils import uuid_userid_generator
 from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.interfaces import OMITTED_KEY
 from plone.autoform.interfaces import ORDER_KEY
@@ -28,12 +21,11 @@ from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import DISPLAY_MODE
 from zExceptions import Forbidden
-from zope.component import getAdapter
-from zope.component import getMultiAdapter
 from zope.component import (
     getUtility,
     queryUtility,
     getAdapter,
+    getMultiAdapter,
     provideAdapter)
 from zope.interface import Interface
 from zope.schema import getFieldNames
@@ -45,8 +37,13 @@ from ..schema import (
     IAddUserSchema,
     ICombinedRegisterSchema,
     IUserDataSchema)
-from ..utils import notifyWidgetActionExecutionError
+from ..utils import (
+    notifyWidgetActionExecutionError,
+    uuid_userid_generator,
+    )
 from plone.app.users.browser.schemaprovider import RegisterSchemaProvider
+from plone.app.users.browser.interfaces import ILoginNameGenerator
+from plone.app.users.browser.interfaces import IUserIdGenerator
 from .account import AccountPanelSchemaAdapter
 
 # Number of retries for creating a user id like bob-jones-42:
@@ -564,6 +561,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                     )
                 adapters[schema] = adapter = getAdapter(portal, schema)
                 adapter.context = member
+                adapter.schema = schema
 
             # finally set value
             setattr(adapter, k, value)
