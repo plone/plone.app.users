@@ -51,6 +51,12 @@ field_type_mapping = {
     "NamedBlobImage": ''
 }
 
+DEFAULT_VALUES = {
+    'text': '',
+    'int': 0,
+    'float': 0.0,
+    'boolean': False,
+}
 
 re_flags = re.S | re.U | re.X
 
@@ -133,7 +139,10 @@ def updateSchema(object, event):
             continue
         if field_id in existing:
             pm._delProperty(field_id)
-        pm._setProperty(field_id, '', field_type)
+        pm._setProperty(
+            field_id,
+            DEFAULT_VALUES.get(field_type, ''),
+            field_type)
 
     if old_schema:
         to_remove = [field_id
