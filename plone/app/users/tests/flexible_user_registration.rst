@@ -54,16 +54,12 @@ Check default form fields
     >>> form_control_ids
     ['form-widgets-fullname', 'form-widgets-email']
 
-Check "Settings" links::
+Check default form fields are not editable::
     >>> 'href="http://nohost/plone/member-fields/fullname"' in browser.contents
-    True
+    False
 
     >>> 'href="http://nohost/plone/member-fields/email"' in browser.contents
-    True
-
-Check delete links::
-    >>> browser.getControl(name='_authenticator', index=0)
-    <Control name='_authenticator' type='hidden'>
+    False
 
 Let's add home_page to the list of registration form fields.
 (Setting this by hand since add/remove widget doesn't work properly without javascript)
@@ -74,36 +70,6 @@ Let's add home_page to the list of registration form fields.
 
     >>> 'http://nohost/plone/member-fields/email/@@delete' in browser.contents
     False
-
-Let's try editing a required field::
-
-    >>> settings_link = browser.getLink('Settings')
-    >>> settings_link.url
-    'http://nohost/plone/member-fields/fullname'
-
-    >>> settings_link.click()
-    >>> browser.url
-    'http://nohost/plone/member-fields/fullname'
-    >>> browser.getControl(label='Title').value
-    'Full Name'
-    >>> browser.getControl(label='Required').selected
-    True
-
-    >>> browser.getControl(label='Title').value = 'Long Name'
-    >>> required = browser.getControl(label='Required')
-    >>> required.click()
-    >>> browser.getControl(label='Save').click()
-    >>> browser.url
-    'http://nohost/plone/member-fields'
-    >>> self.security_settings.use_email_as_login = False
-
-    >>> settings_link = browser.getLink('Settings')
-    >>> settings_link.click()
-
-    >>> browser.getControl(label='Title').value
-    'Long Name'
-    >>> browser.getControl(label='Required').selected
-    True
 
 We should be able to add a field::
 

@@ -38,6 +38,7 @@ SPLITTER = '_//_'
 field_type_mapping = {
     "ASCIILine": 'text',
     "TextLine": 'text',
+    "ProtectedTextLine": 'text',
     "Text": 'text',
     "Int": 'int',
     "Float": 'float',
@@ -47,6 +48,7 @@ field_type_mapping = {
     "Choice": 'text',
     "List": 'text',
     "Email": 'text',
+    "ProtectedEmail": 'text',
     "URI": 'text',
     "NamedBlobImage": ''
 }

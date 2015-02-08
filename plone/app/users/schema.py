@@ -5,12 +5,14 @@ from Products.CMFDefault.exceptions import EmailAddressInvalid
 from Products.CMFPlone import PloneMessageFactory as _
 from zope import schema
 from zope.component import getUtility
-from zope.interface import Interface
+from zope.interface import Interface, implements
 from ZTUtils import make_query
 from plone.autoform import directives as form
 from plone.formwidget.namedfile.widget import NamedImageWidget
 from plone.namedfile.field import NamedBlobImage
 from plone.namedfile.interfaces import INamedImageField
+from plone.schemaeditor.fields import FieldFactory
+from plone.schemaeditor.interfaces import IFieldFactory
 from zope import schema
 from z3c.form.interfaces import IFieldWidget
 from z3c.form.interfaces import IFormLayer
@@ -39,17 +41,47 @@ def checkEmailAddress(value):
     return True
 
 
+class ProtectedTextLine(schema.TextLine):
+    """ TextLine field which cannot be edited via shema editor
+    """
+    pass
+
+
+class ProtectedEmail(Email):
+    """ Email field which cannot be edited via shema editor
+    """
+    pass
+
+
+class NotEditableFieldFactory(FieldFactory):
+    implements(IFieldFactory)
+
+    def editable(self, field):
+        return False
+
+
+FullnameFieldFactory = NotEditableFieldFactory(
+    ProtectedTextLine,
+    _(u'label_full_name', default=u'Full Name'),
+)
+
+EmailFieldFactory = NotEditableFieldFactory(
+    ProtectedTextLine,
+    _(u'label_email', default=u'E-mail'),
+)
+
+
 class IUserDataSchema(Interface):
     """
     """
 
-    fullname = schema.TextLine(
+    fullname = ProtectedTextLine(
         title=_(u'label_full_name', default=u'Full Name'),
         description=_(u'help_full_name_creation',
                       default=u"Enter full name, e.g. John Smith."),
         required=False)
 
-    email = Email(
+    email = ProtectedEmail(
         title=_(u'label_email', default=u'E-mail'),
         description=u'We will use this address if you need to recover your '
                     u'password',

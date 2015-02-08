@@ -54,5 +54,11 @@
       factory=".field_extender.get_user_form_selection"
       />
 
+    <utility name="plone.app.users.schema.ProtectedTextLine"
+             provides="plone.schemaeditor.interfaces.IFieldFactory"
+             component=".schema.FullnameFieldFactory" />
+    <utility name="plone.app.users.schema.ProtectedEmail"
+             provides="plone.schemaeditor.interfaces.IFieldFactory"
+             component=".schema.EmailFieldFactory" />
 
 </configure>
