@@ -12,10 +12,11 @@ from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.namedfile.file import NamedBlobImage
 from plone.app.layout.navigation.interfaces import INavigationRoot
+from plone.autoform.interfaces import OMITTED_KEY
 from plone.registry.interfaces import IRegistry
 from zope.component import getUtility
 
-from ..schema import IUserDataSchemaProvider
+from ..schema import IUserDataSchemaProvider, IUserDataSchema
 
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
@@ -83,6 +84,31 @@ class UserDataPanel(AccountPanelForm):
         # as schema is a generated supermodel, just insert a relevant
         # adapter for it
         provideAdapter(UserDataPanelAdapter, (INavigationRoot,), self.schema)
+
+    def updateFields(self):
+        """Fields are dynamic in this form
+        """
+
+        # Filter schema for user profile
+        omitted = []
+        default_fields = IUserDataSchema.names()
+        for name in self.schema:
+            # we always preserve default fields
+            if name in default_fields:
+                omit = False
+            else:
+                forms_selection = getattr(
+                    self.schema[name], 'forms_selection', [])
+                if u'In User Profile' in forms_selection:
+                    omit = False
+                else:
+                    omit = True
+            omitted.append((Interface, name, omit))
+        self.schema.setTaggedValue(OMITTED_KEY, omitted)
+
+        # Finally, let autoform process the schema and any FormExtenders do
+        # their thing
+        super(AccountPanelForm, self).updateFields()
 
     @property
     def description(self):

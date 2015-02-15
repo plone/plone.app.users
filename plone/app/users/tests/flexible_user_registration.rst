@@ -108,6 +108,12 @@ Check our new field's settings::
 The new field should be editable::
 
     >>> browser.getControl(label='Title').value ='Favourite CMS'
+
+We make it appear in both registration and user profile::
+
+    >>> chkboxes = browser.getControl(name='form.widgets.IUserFormSelection.forms:list')
+    >>> chkboxes.controls[0].selected = True
+    >>> chkboxes.controls[1].selected = True
     >>> browser.getControl(label='Save').click()
     >>> 'Favourite CMS' in browser.contents
     True

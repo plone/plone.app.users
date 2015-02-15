@@ -19,14 +19,12 @@ from plone.autoform import directives as form
 
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 
-form_vocab = SimpleVocabulary(
-    [SimpleTerm(value=u'On Registration',
-                title=u'On Registration'),
-     SimpleTerm(value=u'User Profile View',
-                title=u'User Profile View'),
-     SimpleTerm(value=u'User Profile Edit',
-                title=u'User Profile Edit'),]
-)
+form_vocab = SimpleVocabulary([
+    SimpleTerm(value=u'On Registration',
+        title=u'On Registration'),
+    SimpleTerm(value=u'In User Profile',
+        title=u'In User Profile'),
+    ])
 
 
 class IUserFormSelection(Interface):
