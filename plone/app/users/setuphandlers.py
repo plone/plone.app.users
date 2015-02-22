@@ -23,4 +23,3 @@ def export_schema(context):
     schema = ttw.serialize_ttw_schema()
     logger.info('Exported schema')
     context.writeDataFile(FILE, schema, 'text/xml')
-
