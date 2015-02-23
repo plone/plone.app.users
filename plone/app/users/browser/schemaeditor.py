@@ -34,23 +34,31 @@ USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
 USERS_PREFIX = 'users'
 SPLITTER = '_//_'
 
-
+ALLOWED_FIELDS = [
+    u'zope.schema._bootstrapfields.TextLine',
+    u'zope.schema._bootstrapfields.Text',
+    u'plone.app.textfield.RichText',
+    u'zope.schema._bootstrapfields.Bool',
+    u'zope.schema._bootstrapfields.Int',
+    u'zope.schema._field.Float',
+    u'zope.schema._field.Set',
+    u'zope.schema._field.Choice',
+    u'zope.schema._field.Date',
+    u'plone.namedfile.field.NamedBlobImage',
+]
 field_type_mapping = {
-    "ASCIILine": 'text',
-    "TextLine": 'text',
-    "ProtectedTextLine": 'text',
+    "ProtectedEmail": 'string',
+    "ProtectedTextLine": 'string',
+    "TextLine": 'string',
     "Text": 'text',
+    "RichText": 'text',
+    "Bool": 'boolean',
     "Int": 'int',
     "Float": 'float',
-    "Bool": 'boolean',
-    "Datetime": 'date',
+    "Set": 'lines',
+    "Choice": 'string',
     "Date": 'date',
-    "Choice": 'text',
-    "List": 'text',
-    "Email": 'text',
-    "ProtectedEmail": 'text',
-    "URI": 'text',
-    "NamedBlobImage": ''
+    "NamedBlobImage": '__portrait__'
 }
 
 DEFAULT_VALUES = {
@@ -102,6 +110,7 @@ class MemberSchemaContext(SchemaContext):
         schema = copy_schema(self.baseSchema, filter_serializable=True)
         self.fieldsWhichCannotBeDeleted = ['fullname', 'email']
         self.enableFieldsets = False
+        self.allowedFields = ALLOWED_FIELDS
         super(MemberSchemaContext, self).__init__(
             schema,
             request,
@@ -140,6 +149,8 @@ def updateSchema(object, event):
                 field_id,
                 new_schema[field_id].__class__.__name__))
             continue
+        if field_type == '__portrait__':
+            continue
         if field_id in existing:
             pm._delProperty(field_id)
         pm._setProperty(
@@ -152,6 +163,11 @@ def updateSchema(object, event):
                      for field_id in [a for a in old_schema]
                      if field_id not in [a for a in new_schema]]
         for field_id in to_remove:
+            field_type = field_type_mapping.get(
+                old_schema[field_id].__class__.__name__,
+                None)
+            if field_type == '__portrait__':
+                continue
             pm._delProperty(field_id)
 
 

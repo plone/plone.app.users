@@ -9,9 +9,11 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZTUtils import make_query
 from plone.app.controlpanel.events import ConfigurationChangedEvent
+from plone.app.textfield.value import RichTextValue
 from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.autoform.form import AutoExtensibleForm
+from plone.namedfile.file import NamedBlobImage
 from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
 from z3c.form import button
@@ -63,10 +65,17 @@ class AccountPanelSchemaAdapter(object):
     def _setProperty(self, name, value):
         if value is None:
             value = ''
+        if isinstance(value, RichTextValue):
+            value = value.raw
+        if type(value) is set:
+            value = list(value)
         return self.context.setMemberProperties({name: value})
 
     def __getattr__(self, name):
         if name in self.schema:
+            if self.schema[name].__class__.__name__ == 'NamedBlobImage':
+                # any image is the portrait
+                return self.get_portrait()
             # In schema and no explicit handler, assume it's in the property
             # sheet
             return self._getProperty(name)
@@ -78,7 +87,34 @@ class AccountPanelSchemaAdapter(object):
             # property
             return super(AccountPanelSchemaAdapter, self).__setattr__(name,
                                                                       value)
+        if value.__class__.__name__ == 'NamedBlobImage':
+            # any image is stored as portrait
+            return self.set_portrait(value)
+
         return self._setProperty(name, value)
+
+    def get_portrait(self):
+        """If user has default portrait, return none"""
+        portal = getToolByName(self.context, 'portal_url').getPortalObject()
+        mt = getToolByName(self.context, 'portal_membership')
+        value = mt.getPersonalPortrait(self.context.getId())
+        if aq_inner(value) == aq_inner(getattr(portal,
+                                               default_portrait,
+                                               None)):
+            return None
+        return NamedBlobImage(value.data, contentType=value.content_type,
+                              filename=getattr(value, 'filename', None))
+
+    def set_portrait(self, value):
+        mt = getToolByName(self.context, 'portal_membership')
+        if value is None:
+            mt.deletePersonalPortrait(str(self.context.getId()))
+        else:
+            portrait_file = value.open()
+            portrait_file.filename = value.filename
+            mt.changeMemberPortrait(portrait_file, str(self.context.getId()))
+
+    portrait = property(get_portrait, set_portrait)
 
 
 class AccountPanelForm(AutoExtensibleForm, form.Form):

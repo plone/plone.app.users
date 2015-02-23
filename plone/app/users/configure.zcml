@@ -60,5 +60,4 @@
     <utility name="plone.app.users.schema.ProtectedEmail"
              provides="plone.schemaeditor.interfaces.IFieldFactory"
              component=".schema.EmailFieldFactory" />
-
 </configure>

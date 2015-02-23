@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from Acquisition import aq_inner
 from zope.component import getUtility, provideAdapter
 from zope.interface import Interface
 from Products.CMFCore.utils import getToolByName
@@ -10,7 +9,6 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.PlonePAS.tools.membership import default_portrait
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from plone.namedfile.file import NamedBlobImage
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.autoform.interfaces import OMITTED_KEY
 from plone.registry.interfaces import IRegistry
@@ -30,29 +28,6 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
         # we force self.schema as it can be a
         # generated supermodel with TTw fields
         provideAdapter(self.__class__, (Interface,), self.schema)
-
-    def get_portrait(self):
-        """If user has default portrait, return none"""
-        portal = getToolByName(self.context, 'portal_url').getPortalObject()
-        mt = getToolByName(self.context, 'portal_membership')
-        value = mt.getPersonalPortrait(self.context.getId())
-        if aq_inner(value) == aq_inner(getattr(portal,
-                                               default_portrait,
-                                               None)):
-            return None
-        return NamedBlobImage(value.data, contentType=value.content_type,
-                              filename=getattr(value, 'filename', None))
-
-    def set_portrait(self, value):
-        mt = getToolByName(self.context, 'portal_membership')
-        if value is None:
-            mt.deletePersonalPortrait(str(self.context.getId()))
-        else:
-            portrait_file = value.open()
-            portrait_file.filename = value.filename
-            mt.changeMemberPortrait(portrait_file, str(self.context.getId()))
-
-    portrait = property(get_portrait, set_portrait)
 
     def get_email(self):
         return self._getProperty('email')
