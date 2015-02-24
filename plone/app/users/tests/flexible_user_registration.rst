@@ -74,7 +74,7 @@ Let's add home_page to the list of registration form fields.
 We should be able to add a field::
 
     >>> browser.open('http://nohost/plone/@@member-fields')
-    >>> browser.getForm(id="add-field").submit()
+    >>> browser.getLink(id="add-field").click()
     >>> print browser.url
     http://nohost/plone/member-fields/@@add-field...
 

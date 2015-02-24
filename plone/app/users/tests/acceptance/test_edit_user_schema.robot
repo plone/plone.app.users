@@ -13,7 +13,7 @@ Test Teardown  Close all browsers
 Manager can edit the user schema
     Given I'm logged in as a 'Manager'
      then I go to Member fields editor
-     and I add a new Text line (String) field 'Office name'
+     and I add a new Text line (String) field 'office_name'
      and I do not see the 'office_name' field in user form
      and I make 'office_name' field appear In User Profile form
      and I see the 'office_name' field in user form
@@ -24,10 +24,10 @@ Manager can edit the user schema
 
 Fields order is honored
     Given I'm logged in as a 'Manager'
-     then I add a new Text line (String) field 'Office name'
+     then I add a new Text line (String) field 'office_name'
      and I make 'office_name' field appear In User Profile form
      and I make 'office_name' field appear On Registration form
-     and I add a new Text line (String) field 'Job title'
+     and I add a new Text line (String) field 'job_title'
      and I make 'job_title' field appear In User Profile form
      and I make 'job_title' field appear On Registration form
      and 'office_name' is before 'job_title' in registration form
@@ -35,7 +35,7 @@ Fields order is honored
 
 Requirement constraint is honored
     Given I'm logged in as a 'Manager'
-     then I add a new Text line (String) field 'Office name'
+     then I add a new Text line (String) field 'office_name'
      and I make 'office_name' field appear In User Profile form
      and 'office_name' is not required
      and I make the 'office_name' field required
@@ -43,14 +43,14 @@ Requirement constraint is honored
 
 Type constraint is honored
     Given I'm logged in as a 'Manager'
-     and I add a new Integer field 'Favorite Star wars episode'
+     and I add a new Integer field 'favorite_star_wars_episode'
      and I make 'favorite_star_wars_episode' field appear In User Profile form
      and 'favorite_star_wars_episode' cannot be IV
      and 'favorite_star_wars_episode' can be 5
 
 Min/max constraint is honored
     Given I'm logged in as a 'Manager'
-     and I add a new Integer field 'Favorite Star wars episode'
+     and I add a new Integer field 'favorite_star_wars_episode'
      and I make 'favorite_star_wars_episode' field appear In User Profile form
      and I restrict 'favorite_star_wars_episode' value to min 4 and max 6
      and value 3 is too small for 'favorite_star_wars_episode'
@@ -67,13 +67,15 @@ I go to Member fields editor
     Click link  link=Users and Groups
     Click link  link=Member fields
 
-I add a new ${field_type} field '${field_name}'
+I add a new ${field_type} field '${field_id}'
     Go to  ${PLONE_URL}/@@member-fields
-    Click button    css=#add-field input[type='submit']
+    Wait Until Element Is visible  css=#add-field  timeout=5
+    Click link   css=#add-field
     Wait Until Element Is visible  css=#add-field-form  timeout=5
-    Input Text      css=#add-field-form #form-widgets-title    ${field_name}
+    Input Text      css=#add-field-form #form-widgets-title     ${field_id}
+    Input Text      css=#add-field-form #form-widgets-__name__  ${field_id}
     Select From List    css=#form-widgets-factory   ${field_type}
-    Click button    css=#add-field-form input[name='form.buttons.add']
+    Click button        css=.pattern-modal-buttons input#form-buttons-add
 
 I make '${field_id}' field appear ${FORM} form
     Go to  ${PLONE_URL}/@@member-fields
@@ -81,7 +83,7 @@ I make '${field_id}' field appear ${FORM} form
     Click link      css=div[data-field_id='${field_id}'] a.fieldSettings
     Wait Until Element Is visible  css=#edit-field-form  timeout=5
     Select Checkbox     css=#edit-field-form input[value='${FORM}']
-    Click button        css=#edit-field-form input[name='form.buttons.save']
+    Click button        css=.pattern-modal-buttons input#form-buttons-save
 
 I do not see the '${field_id}' field in user form
     Go to  ${PLONE_URL}/@@overview-controlpanel
@@ -115,7 +117,7 @@ I make the '${field_id}' field required
     Click link      css=div[data-field_id='${field_id}'] a.fieldSettings
     Wait Until Element Is visible  css=#edit-field-form  timeout=5
     Select Checkbox     css=#form-widgets-required-0
-    Click button        css=#edit-field-form input[name='form.buttons.save']
+    Click button        css=.pattern-modal-buttons input#form-buttons-save
 
 '${field_1}' is before '${field_2}' in registration form
     Go to  ${PLONE_URL}/@@overview-controlpanel
@@ -157,7 +159,7 @@ I restrict '${field_id}' value to min ${min_val} and max ${max_val}
     Wait Until Element Is visible  css=#edit-field-form  timeout=5
     Input Text      css=#form-widgets-min  ${min_val}
     Input Text      css=#form-widgets-max  ${max_val}
-    Click button        css=#edit-field-form input[name='form.buttons.save']
+    Click button        css=.pattern-modal-buttons input#form-buttons-save
 
 value ${value} is too small for '${field_id}'
     Go to  ${PLONE_URL}/@@overview-controlpanel
