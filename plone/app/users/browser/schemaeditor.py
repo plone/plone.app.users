@@ -120,7 +120,6 @@ class MemberSchemaContext(SchemaContext):
         provideAdapter(UserDataPanelAdapter, (INavigationRoot,), schema)
 
 
-
 def updateSchema(object, event):
     CACHE_CONTAINER.clear()
     site = getSite()
@@ -190,6 +189,7 @@ def get_ttw_edited_schema():
         return ttwschema
     return ''
 
+
 class UsersMetadataSchemaExporter(object):
     """Support the security: namespace in model definitions.
     """
@@ -215,7 +215,6 @@ class UsersMetadataSchemaExporter(object):
             if value is not None:
                 v = self.serialize(value)
                 fieldNode.set(ns(attr, self.ns), v)
-
 
     def load(self, value):
         listre = re.compile('(?P<type>list|set|tuple)'

@@ -12,7 +12,6 @@ from ZODB.POSException import ConflictError
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.interfaces import OMITTED_KEY
-from plone.autoform.interfaces import ORDER_KEY
 from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
 from z3c.form import button
@@ -40,7 +39,7 @@ from ..schema import (
 from ..utils import (
     notifyWidgetActionExecutionError,
     uuid_userid_generator,
-    )
+)
 from plone.app.users.browser.schemaprovider import RegisterSchemaProvider
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.interfaces import IUserIdGenerator
@@ -73,7 +72,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         """Return security settings from the registry."""
         registry = getUtility(IRegistry)
         return registry.forInterface(ISecuritySchema, prefix="plone")
-
 
     def render(self):
         if self._finishedRegister:

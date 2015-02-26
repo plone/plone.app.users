@@ -5,22 +5,16 @@ from Products.CMFDefault.exceptions import EmailAddressInvalid
 from Products.CMFPlone import PloneMessageFactory as _
 from zope import schema
 from zope.component import getUtility
-from zope.interface import Interface, implements
+from zope.interface import Interface, implements, implementer
 from ZTUtils import make_query
-from plone.autoform import directives as form
 from plone.formwidget.namedfile.widget import NamedImageWidget
-from plone.namedfile.field import NamedBlobImage
 from plone.namedfile.interfaces import INamedImageField
 from plone.schemaeditor.fields import FieldFactory
 from plone.schemaeditor.interfaces import IFieldFactory
-from zope import schema
 from z3c.form.interfaces import IFieldWidget
 from z3c.form.interfaces import IFormLayer
 from z3c.form.widget import FieldWidget
 from zope.component import adapter
-from zope.component import getUtility
-from zope.interface import Interface
-from zope.interface import implementer
 
 from plone.schema.email import Email
 
@@ -87,7 +81,7 @@ class IUserDataSchema(Interface):
                     u'password',
         required=True,
         constraint=checkEmailAddress,
-        )
+    )
 
 
 class IRegisterSchema(Interface):

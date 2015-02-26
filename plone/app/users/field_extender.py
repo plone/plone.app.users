@@ -4,7 +4,6 @@ from zope.component import provideUtility
 
 from zope.component import provideAdapter, adapter, adapts
 from zope.schema.interfaces import IField
-from plone.schemaeditor.interfaces import ISchemaContext
 from plone.schemaeditor.interfaces import IFieldEditorExtender
 from plone.supermodel.interfaces import IFieldMetadataHandler
 from plone.supermodel.utils import ns
@@ -21,26 +20,31 @@ from z3c.form.browser.checkbox import CheckBoxFieldWidget
 
 form_vocab = SimpleVocabulary([
     SimpleTerm(value=u'On Registration',
-        title=u'On Registration'),
+               title=u'On Registration'),
     SimpleTerm(value=u'In User Profile',
-        title=u'In User Profile'),
-    ])
+               title=u'In User Profile'),
+])
 
 
 class IUserFormSelection(Interface):
     form.widget(forms=CheckBoxFieldWidget)
-    forms = schema.List(title=u"Where should this field be shown",
-                        description=u"Does not apply to username or to email fields",
-                        required=True,
-                        value_type=schema.Choice(vocabulary=form_vocab),
-                        )
+    forms = schema.List(
+        title=u"Where should this field be shown",
+        description=u"Does not apply to username or to email fields",
+        required=True,
+        value_type=schema.Choice(vocabulary=form_vocab),
+    )
 
 
 @adapter(IMemberSchemaContext, IField)
 def get_user_form_selection(schema_context, field):
     return IUserFormSelection
 
-provideAdapter(get_user_form_selection, provides=IFieldEditorExtender, name='plone.app.users.userformselection')
+provideAdapter(
+    get_user_form_selection,
+    provides=IFieldEditorExtender,
+    name='plone.app.users.userformselection'
+)
 
 
 class UserFormSelectionAdapter(object):
@@ -68,7 +72,6 @@ class UserFormSelectionMetadata(object):
     prefix = USERS_PREFIX
 
     def read(self, fieldNode, schema, field):
-        name = field.__name__
         forms = fieldNode.get(ns('forms', self.namespace))
         if forms:
             field.forms_selection = forms.split('|')
@@ -78,4 +81,7 @@ class UserFormSelectionMetadata(object):
         if forms:
             fieldNode.set(ns('forms', self.namespace), "|".join(forms))
 
-provideUtility(component=UserFormSelectionMetadata(), name='plone.app.users.forms')
+provideUtility(
+    component=UserFormSelectionMetadata(),
+    name='plone.app.users.forms'
+)

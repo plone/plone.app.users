@@ -5,6 +5,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import safe_unicode
+from Products.PlonePAS.tools.membership import default_portrait
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZTUtils import make_query

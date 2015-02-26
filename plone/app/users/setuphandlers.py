@@ -6,6 +6,7 @@ logger = logging.getLogger('plone.app.users.setuphandlers')
 
 FILE = 'userschema.xml'
 
+
 def import_schema(context):
     """Import TTW Schema """
     data = context.readDataFile(FILE)
