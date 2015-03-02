@@ -32,7 +32,7 @@ Login as user two:
     >>> browser.open('http://nohost/plone/')
     >>> browser.getLink('Log in').click()
 
-    >>> browser.getControl('Login Name').value = 'usertwo@example.com'
+    >>> browser.getControl('E-mail').value = 'usertwo@example.com'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Log in').click()
     >>> 'Login failed' in browser.contents

@@ -147,6 +147,8 @@ Check render register form in 'Use Email As Login' mode.
     >>> browser.getControl('Password').value = 'testpassword'
     >>> browser.getControl('Confirm password').value = 'testpassword'
     >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...Welcome!...You have been registered...'
 
 Revert email mode.
 
