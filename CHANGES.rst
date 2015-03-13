@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.2 (unreleased)
+2.2 (2015-03-13)
 ----------------
 
 - Read security settings from new Plone 5 registry.
