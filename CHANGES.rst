@@ -4,7 +4,8 @@ CHANGES
 2.2.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Removed CMFDefault dependency
+  [tomgross]
 
 
 2.2 (2015-03-13)

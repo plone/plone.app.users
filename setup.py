@@ -47,7 +47,6 @@ setup(
         'AccessControl',
         'Acquisition',
         'Products.CMFCore',
-        'Products.CMFDefault',
         'Products.CMFPlone',
         'Products.PlonePAS',
         'Products.statusmessages',
