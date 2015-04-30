@@ -44,13 +44,24 @@ Now we should be able to access the change password form:
     >>> browser.url.endswith(view_name)
     True
 
-Let's try to change the password:
+Let's try to change the password with a new one containing non-ascii chars:
 
     >>> browser.getControl(name='_authenticator', index=0)
     <Control name='_authenticator' type='hidden'>
     >>> browser.getControl('Current password').value = 'secret'
-    >>> browser.getControl('New password').value = 'super-secret'
-    >>> browser.getControl('Confirm password').value = 'super-secret'
+    >>> browser.getControl('New password').value = 'super-secrét'
+    >>> browser.getControl('Confirm password').value = 'super-secrét'
+    >>> browser.getControl('Change Password').click()
+    >>> 'Password changed' in browser.contents
+    True
+
+Let's try to change the password with the current one containing non-ascii chars:
+
+    >>> browser.getControl(name='_authenticator', index=0)
+    <Control name='_authenticator' type='hidden'>
+    >>> browser.getControl('Current password').value = 'super-secrét'
+    >>> browser.getControl('New password').value = 'super-sécrét'
+    >>> browser.getControl('Confirm password').value = 'super-sécrét'
     >>> browser.getControl('Change Password').click()
     >>> 'Password changed' in browser.contents
     True
@@ -61,7 +72,7 @@ Okay the password has been changed, let's logout and login again with the new pa
     >>> browser.open('http://nohost/plone/')
     >>> browser.getLink('Log in').click()
     >>> browser.getControl('Login Name').value = TEST_USER_NAME
-    >>> browser.getControl('Password').value = 'super-secret'
+    >>> browser.getControl('Password').value = 'super-sécrét'
     >>> browser.getControl('Log in').click()
 
 If we are logged in the change password form is available
@@ -90,7 +101,7 @@ Check that we are given instructions on what is a valid password
 
 Let's try to change the password with an invalid password:
 
-    >>> browser.getControl('Current password').value = 'super-secret'
+    >>> browser.getControl('Current password').value = 'super-sécrét'
     >>> browser.getControl('New password').value = 'dead parrot'
     >>> browser.getControl('Confirm password').value = 'dead parrot'
     >>> browser.getControl('Change Password').click()
@@ -100,7 +111,7 @@ Let's try to change the password with an invalid password:
 
 Now try a valid password
 
-    >>> browser.getControl('Current password').value = 'super-secret'
+    >>> browser.getControl('Current password').value = 'super-sécrét'
     >>> browser.getControl('New password').value = 'fish'
     >>> browser.getControl('Confirm password').value = 'fish'
     >>> browser.getControl('Change Password').click()
