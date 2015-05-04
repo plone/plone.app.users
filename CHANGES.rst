@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.2.1 (unreleased)
+2.2.1 (2015-05-04)
 ------------------
 
 - Removed CMFDefault dependency
