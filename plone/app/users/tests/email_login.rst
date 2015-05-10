@@ -69,7 +69,7 @@ Fill out the form, using an odd email address that should not give problems.
 
     We can now login.
     >>> browser.getLink('Log in').click()
-    >>> browser.getControl('Login Name').value = 'bob-jones+test@example.com'
+    >>> browser.getControl('E-mail').value = 'bob-jones+test@example.com'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Log in').click()
     >>> 'You are now logged in' in browser.contents
@@ -83,7 +83,7 @@ Fill out the form, using an odd email address that should not give problems.
 
     We login as manager.
     >>> browser.open('http://nohost/plone/login_form')
-    >>> browser.getControl('Login Name').value = SITE_OWNER_NAME
+    >>> browser.getControl('E-mail').value = SITE_OWNER_NAME
     >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
 
