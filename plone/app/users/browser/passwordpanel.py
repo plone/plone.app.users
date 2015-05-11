@@ -83,7 +83,8 @@ class PasswordPanel(AccountPanelForm):
         # check if password is correct
         current_password = data.get('current_password')
         if current_password:
-            current_password = current_password.encode('ascii', 'ignore')
+            if isinstance(current_password, unicode):
+                current_password = current_password.encode('utf8')
 
             if not membertool.testCurrentPassword(current_password):
                 # add error to current_password widget
@@ -122,6 +123,8 @@ class PasswordPanel(AccountPanelForm):
         membertool = getToolByName(self.context, 'portal_membership')
 
         password = data['new_password']
+        if isinstance(password, unicode):
+            password = password.encode('utf8')
 
         try:
             membertool.setPassword(password, None, REQUEST=self.request)

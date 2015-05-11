@@ -12,6 +12,10 @@ CHANGES
 
 - Removed CMFDefault dependency
   [tomgross]
+- Fixed @@change-password to accept current password containing non-ascii chars
+  [sgeulette]
+- Fixed @@change-password to accept new password containing non-ascii chars
+  [sgeulette]
 
 
 2.2 (2015-03-13)
