@@ -33,7 +33,7 @@
     </genericsetup:exportStep>
     <genericsetup:importStep
           name="usersschema"
-          title="Export member custom TTW schema"
+          title="Import member custom TTW schema"
           description="Import member custom TTW schema"
           handler="plone.app.users.setuphandlers.import_schema">
         <depends name="plone-content"/>
