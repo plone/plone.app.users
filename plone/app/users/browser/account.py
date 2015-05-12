@@ -10,7 +10,6 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZTUtils import make_query
 from plone.app.controlpanel.events import ConfigurationChangedEvent
-from plone.app.textfield.value import RichTextValue
 from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.autoform.form import AutoExtensibleForm
@@ -66,8 +65,6 @@ class AccountPanelSchemaAdapter(object):
     def _setProperty(self, name, value):
         if value is None:
             value = ''
-        if isinstance(value, RichTextValue):
-            value = value.raw
         if type(value) is set:
             value = list(value)
         return self.context.setMemberProperties({name: value})

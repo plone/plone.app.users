@@ -37,7 +37,6 @@ SPLITTER = '_//_'
 ALLOWED_FIELDS = [
     u'zope.schema._bootstrapfields.TextLine',
     u'zope.schema._bootstrapfields.Text',
-    u'plone.app.textfield.RichText',
     u'zope.schema._bootstrapfields.Bool',
     u'zope.schema._bootstrapfields.Int',
     u'zope.schema._field.Float',
@@ -51,7 +50,6 @@ field_type_mapping = {
     "ProtectedTextLine": 'string',
     "TextLine": 'string',
     "Text": 'text',
-    "RichText": 'text',
     "Bool": 'boolean',
     "Int": 'int',
     "Float": 'float',
