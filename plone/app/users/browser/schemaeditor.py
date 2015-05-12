@@ -107,6 +107,7 @@ class MemberSchemaContext(SchemaContext):
         self.baseSchema = getUtility(IUserDataSchemaProvider).getSchema()
         schema = copy_schema(self.baseSchema, filter_serializable=True)
         self.fieldsWhichCannotBeDeleted = ['fullname', 'email']
+        self.showSaveDefaults = False
         self.enableFieldsets = False
         self.allowedFields = ALLOWED_FIELDS
         super(MemberSchemaContext, self).__init__(
