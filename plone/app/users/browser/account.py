@@ -68,7 +68,9 @@ class AccountPanelSchemaAdapter(object):
             value = list(value)
         if value and isinstance(self.schema[name], schema.Choice):
             value = str(value)
-        return self.context.setMemberProperties({name: value}, force_empty=True)
+        return self.context.setMemberProperties(
+            {name: value}, force_empty=True
+        )
 
     def __getattr__(self, name):
         if name in self.schema:

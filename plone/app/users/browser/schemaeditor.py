@@ -128,6 +128,11 @@ def updateSchema(object, event):
 
     # serialize the current schema
     snew_schema = serialize_ttw_schema(object.schema)
+    
+    # check if more than 2 image fields:
+    if snew_schema.count('NamedBlobImage') > 1:
+        site.plone_utils.addPortalMessage(_(u'One image field maximum.'), 'error')
+        return
 
     # store the current schema in the annotation
     set_schema(snew_schema)
