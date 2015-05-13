@@ -75,7 +75,7 @@ class UserFormSelectionMetadata(object):
         forms = fieldNode.get(ns('forms', self.namespace))
         if forms:
             field.forms_selection = forms.split('|')
-            
+
     def write(self, fieldNode, schema, field):
         forms = getattr(field, 'forms_selection', [])
         if forms:
