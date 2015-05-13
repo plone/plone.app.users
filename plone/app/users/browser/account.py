@@ -18,6 +18,7 @@ from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
 from z3c.form import button
 from z3c.form import form
+from zope import schema
 from zope.cachedescriptors.property import Lazy as lazy_property
 from zope.component import getMultiAdapter
 from zope.component import getUtility
@@ -65,11 +66,13 @@ class AccountPanelSchemaAdapter(object):
     def _setProperty(self, name, value):
         if type(value) is set:
             value = list(value)
+        if value and isinstance(self.schema[name], schema.Choice):
+            value = str(value)
         return self.context.setMemberProperties({name: value}, force_empty=True)
 
     def __getattr__(self, name):
         if name in self.schema:
-            if self.schema[name].__class__.__name__ == 'NamedBlobImage':
+            if isinstance(self.schema[name], NamedBlobImage):
                 # any image is the portrait
                 return self.get_portrait()
             # In schema and no explicit handler, assume it's in the property
@@ -83,7 +86,7 @@ class AccountPanelSchemaAdapter(object):
             # property
             return super(AccountPanelSchemaAdapter, self).__setattr__(name,
                                                                       value)
-        if value.__class__.__name__ == 'NamedBlobImage':
+        if isinstance(value, NamedBlobImage):
             # any image is stored as portrait
             return self.set_portrait(value)
 
