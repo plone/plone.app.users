@@ -119,10 +119,10 @@ changed:
 
     >>> member = membership.getMemberById('test_user_1_')
     >>> marker = object
-    >>> member.getProperty('wysiwyg_editor', object)
-    ''
-    >>> member.getProperty('language', object)
-    ''
+    >>> not member.getProperty('wysiwyg_editor', object)
+    True
+    >>> not member.getProperty('language', object)
+    True
 
 And that the form still has the according values:
 

@@ -63,11 +63,9 @@ class AccountPanelSchemaAdapter(object):
         return value
 
     def _setProperty(self, name, value):
-        if value is None:
-            value = ''
         if type(value) is set:
             value = list(value)
-        return self.context.setMemberProperties({name: value})
+        return self.context.setMemberProperties({name: value}, force_empty=True)
 
     def __getattr__(self, name):
         if name in self.schema:

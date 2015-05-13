@@ -96,10 +96,10 @@ Verify that the settings have actually been
 changed:
 
     >>> member = membership.getMemberById('test_user_1_')
-    >>> member.getProperty('wysiwyg_editor', marker)
-    ''
-    >>> member.getProperty('language', marker)
-    ''
+    >>> not member.getProperty('wysiwyg_editor', marker)
+    True
+    >>> not member.getProperty('language', marker)
+    True
 
 And that the form still has the according values:
 

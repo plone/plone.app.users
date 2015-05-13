@@ -38,6 +38,9 @@ Requirement constraint is honored
      then I add a new Text line (String) field 'office_name'
      and I make 'office_name' field appear In User Profile form
      and 'office_name' is not required
+     and I add a new Integer field 'favorite_star_wars_episode'
+     and I make 'favorite_star_wars_episode' field appear In User Profile form
+     and 'favorite_star_wars_episode' is not required
      and I make the 'office_name' field required
      and 'office_name' is required
 

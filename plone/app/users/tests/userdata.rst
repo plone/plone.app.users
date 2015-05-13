@@ -134,8 +134,8 @@ Check the values
 
     >>> member = membership.getMemberById(TEST_USER_ID)
     >>> marker = object()
-    >>> member.getProperty('fullname', marker)
-    ''
+    >>> not member.getProperty('fullname', marker)
+    True
     >>> member.getProperty('email', marker) == email_address
     True
 
