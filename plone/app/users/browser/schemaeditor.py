@@ -43,7 +43,9 @@ ALLOWED_FIELDS = [
     u'zope.schema._field.Set',
     u'zope.schema._field.Choice',
     u'zope.schema._field.Date',
+    u'zope.schema._field.Datetime',
     u'plone.namedfile.field.NamedBlobImage',
+    u'zope.schema.URI',
 ]
 field_type_mapping = {
     "ProtectedEmail": 'string',
@@ -56,7 +58,9 @@ field_type_mapping = {
     "Set": 'lines',
     "Choice": 'string',
     "Date": 'date',
-    "NamedBlobImage": '__portrait__'
+    "Datetime": 'date',
+    "NamedBlobImage": '__portrait__',
+    "URI": 'text',
 }
 
 DEFAULT_VALUES = {
@@ -128,10 +132,11 @@ def updateSchema(object, event):
 
     # serialize the current schema
     snew_schema = serialize_ttw_schema(object.schema)
-    
+
     # check if more than 2 image fields:
     if snew_schema.count('NamedBlobImage') > 1:
-        site.plone_utils.addPortalMessage(_(u'One image field maximum.'), 'error')
+        site.plone_utils.addPortalMessage(
+            _(u'One image field maximum.'), 'error')
         return
 
     # store the current schema in the annotation
