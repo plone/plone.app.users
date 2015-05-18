@@ -603,10 +603,15 @@ class AddUserForm(BaseRegistrationForm):
             else:
                 defaultFields['mail_me'].field.default = False
 
-        # Append the manager-focused fields
-        allFields = defaultFields + form.Fields(IAddUserSchema)
-
-        allFields['groups'].custom_widget = MultiCheckBoxVocabularyWidget
+        portal_props = getToolByName(self.context, 'portal_properties')
+        props = portal_props.site_properties
+        many_groups = props.getProperty('many_groups', False)
+        if not many_groups:
+            # Append the manager-focused fields
+            allFields = defaultFields + form.Fields(IAddUserSchema)
+            allFields['groups'].custom_widget = MultiCheckBoxVocabularyWidget
+        else:
+            allFields = defaultFields
 
         return allFields
 

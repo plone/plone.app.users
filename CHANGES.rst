@@ -4,7 +4,9 @@ Changelog
 1.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed "Add new user" form when there are too many groups.
+  Fixes https://github.com/plone/plone.app.users/issues/33
+  [avoinea]
 
 
 1.2.1 (2014-10-21)
