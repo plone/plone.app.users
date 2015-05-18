@@ -4,7 +4,9 @@ CHANGES
 2.2.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fixed "Add new user" form when there are too many groups.
+  Fixes https://github.com/plone/plone.app.users/issues/33
+  [avoinea]
 
 
 2.2.1 (2015-05-04)
