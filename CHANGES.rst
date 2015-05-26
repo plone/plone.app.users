@@ -1,17 +1,11 @@
 CHANGES
 =======
 
-2.2 (unreleased)
-----------------
+2.2.1 (unreleased)
+------------------
 
-- Ported tests to plone.app.testing
-  [gforcada, tomgross]
-
-- Adjust navigation markup for Plone 5.
-  [davisagli]
-
-- Use email_from_address from registry (Plone 5) in tests.
-  [khink]
+- Implement ttw editable schemas
+  [ebrehault, kiorky]
 
 - Added upgrade step to move past Plone to user editable member schema.
   [ianderso]
@@ -27,6 +21,22 @@ CHANGES
 
 - Removed ext_editor and visible_ids preferences.
   [davisagli]
+
+
+2.2 (2015-03-13)
+----------------
+
+- Read security settings from new Plone 5 registry.
+  [jure]
+
+- Ported tests to plone.app.testing
+  [gforcada, tomgross]
+
+- Adjust navigation markup for Plone 5.
+  [davisagli]
+
+- Use email_from_address from registry (Plone 5) in tests.
+  [khink]
 
 
 2.1.0 (2014-10-23)

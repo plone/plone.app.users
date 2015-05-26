@@ -140,8 +140,16 @@ Log out. Assert that we now have the home_page in the join form.
     True
     >>> 'User Name' in browser.contents
     True
-    >>> 'E-mail' in browser.contents
-    True
+    >>> browser.contents
+    '...E-mail...Password...Confirm password...'
+    >>> browser.getControl('User Name').value = 'test1'
+    >>> browser.getControl('Full Name').value = 'Mister test1'
+    >>> browser.getControl('E-mail').value = 'test1@example.com'
+    >>> browser.getControl('Password').value = 'testpassword'
+    >>> browser.getControl('Confirm password').value = 'testpassword'
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...Welcome!...You have been registered...'
 
 Log in again
 
