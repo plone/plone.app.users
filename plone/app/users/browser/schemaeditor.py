@@ -124,14 +124,16 @@ class MemberSchemaContext(SchemaContext):
 
 
 def updateSchema(object, event):
+    snew_schema = serialize_ttw_schema(object.schema)
+    applySchema(snew_schema)
+
+
+def applySchema(snew_schema):
     CACHE_CONTAINER.clear()
     site = getSite()
 
     # get the old schema (currently stored in the annotation)
     old_schema = get_ttw_edited_schema()
-
-    # serialize the current schema
-    snew_schema = serialize_ttw_schema(object.schema)
 
     # check if more than 2 image fields:
     if snew_schema.count('NamedBlobImage') > 1:
