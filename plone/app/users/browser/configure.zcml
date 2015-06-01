@@ -70,6 +70,12 @@
         permission="plone.app.controlpanel.UsersAndGroups"
         allowed_interface="OFS.interfaces.IItem" />
 
+  <browser:page
+      name="edit"
+      for=".schemaeditor.IMemberSchemaContext"
+      class=".schemaeditor.SchemaListingPage"
+      permission="zope2.View" />
+
     <browser:page
       name="member-search"
       for="*"

@@ -12,14 +12,17 @@ from zope.interface import Interface, implements
 
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
 from plone.schemaeditor.browser.schema.traversal import SchemaContext
+from plone.schemaeditor.browser.schema.listing import SchemaListing
 from plone.supermodel.model import Model, finalizeSchemas, SchemaClass
 from plone.supermodel.parser import IFieldMetadataHandler
 from plone.supermodel.serializer import serialize
 from plone.supermodel.utils import ns
 from plone.supermodel import loadString
 from plone.app.layout.navigation.interfaces import INavigationRoot
+from plone.z3cform.layout import FormWrapper
 
 from plone.app.users.browser.userdatapanel import UserDataPanelAdapter
 from plone.app.users.schema import (
@@ -85,6 +88,12 @@ class IMemberFieldValidator(Interface):
 
 class IMemberSchemaContext(Interface):
     """ """
+
+
+class SchemaListingPage(FormWrapper):
+
+    form = SchemaListing
+    index = ViewPageTemplateFile('schema_layout.pt')
 
 
 def copy_schema(schema, filter_serializable=False):
