@@ -4,6 +4,10 @@ CHANGES
 2.2.2 (unreleased)
 ------------------
 
+- Import ConfigurationChangedEvent from Products.CMFPlone instead of from
+  plone.app.controlpanel (which will be removed in Plone 5).
+  [timo]
+
 - Fixed "Add new user" form when there are too many groups.
   Fixes https://github.com/plone/plone.app.users/issues/33
   [avoinea]
