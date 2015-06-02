@@ -48,7 +48,7 @@ ALLOWED_FIELDS = [
     u'zope.schema._field.Date',
     u'zope.schema._field.Datetime',
     u'plone.namedfile.field.NamedBlobImage',
-    u'zope.schema.URI',
+    u'zope.schema._field.URI',
 ]
 field_type_mapping = {
     "ProtectedEmail": 'string',
