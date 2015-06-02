@@ -50,8 +50,10 @@ class ProtectedEmail(Email):
 class NotEditableFieldFactory(FieldFactory):
     implements(IFieldFactory)
 
-    def editable(self, field):
-        return False
+    title = _(u'(protected)')
+
+    def protected(self, field):
+        return True
 
 
 FullnameFieldFactory = NotEditableFieldFactory(
