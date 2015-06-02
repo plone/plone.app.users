@@ -8,7 +8,7 @@ from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZTUtils import make_query
-from plone.app.controlpanel.events import ConfigurationChangedEvent
+from Products.CMFPlone.controlpanel.events import ConfigurationChangedEvent
 from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.autoform.form import AutoExtensibleForm
