@@ -2,7 +2,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-version = '2.2.1.dev0'
+version = '2.2.2.dev0'
 
 long_description = '{0}\n{1}'.format(open('README.rst').read(),
                                      open('CHANGES.rst').read())
@@ -46,7 +46,6 @@ setup(
         'AccessControl',
         'Acquisition',
         'Products.CMFCore',
-        'Products.CMFDefault',
         'Products.CMFPlone',
         'Products.PlonePAS',
         'Products.statusmessages',

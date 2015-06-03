@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.2.1 (unreleased)
+2.2.2 (unreleased)
 ------------------
 
 - Implement ttw editable schemas
@@ -21,6 +21,25 @@ CHANGES
 
 - Removed ext_editor and visible_ids preferences.
   [davisagli]
+
+- Import ConfigurationChangedEvent from Products.CMFPlone instead of from
+  plone.app.controlpanel (which will be removed in Plone 5).
+  [timo]
+
+- Fixed "Add new user" form when there are too many groups.
+  Fixes https://github.com/plone/plone.app.users/issues/33
+  [avoinea]
+
+
+2.2.1 (2015-05-04)
+------------------
+
+- Removed CMFDefault dependency
+  [tomgross]
+- Fixed @@change-password to accept current password containing non-ascii chars
+  [sgeulette]
+- Fixed @@change-password to accept new password containing non-ascii chars
+  [sgeulette]
 
 
 2.2 (2015-03-13)

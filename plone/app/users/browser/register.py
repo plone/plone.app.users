@@ -664,10 +664,14 @@ class AddUserForm(BaseRegistrationForm):
                 defaultFields['mail_me'].field.default = False
 
         # Append the manager-focused fields
-        allFields = defaultFields + field.Fields(IAddUserSchema)
-
-        allFields['groups'].widgetFactory = CheckBoxFieldWidget
-
+        portal_props = getToolByName(self.context, 'portal_properties')
+        props = portal_props.site_properties
+        many_groups = props.getProperty('many_groups', False)
+        if not many_groups:
+            allFields = defaultFields + field.Fields(IAddUserSchema)
+            allFields['groups'].widgetFactory = CheckBoxFieldWidget
+        else:
+            allFields = defaultFields
         self.fields = allFields
 
     def updateWidgets(self):
