@@ -8,6 +8,8 @@ Library  Remote  ${PLONE_URL}/RobotRemote
 Test Setup  Open test browser
 Test Teardown  Close all browsers
 
+Suite setup  Set Selenium speed  0.5s
+
 *** Test Cases ***
 
 Manager can edit the user schema
