@@ -1,10 +1,12 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone.app.users">
 
     <include package="plone.supermodel" />
     <include package="plone.autoform" />
     <include package="plone.namedfile" />
+    <include package="plone.schema" />
     <include package="plone.formwidget.namedfile" />
     <include package="Products.CMFCore" file="permissions.zcml" />
     <include package=".browser" />
@@ -15,4 +17,47 @@
              component=".vocabularies.GroupIdVocabularyFactory"
              name="plone.app.users.group_ids"/>
 
+    <genericsetup:registerProfile
+          name='default'
+          title='Import User Data'
+          directory='profiles/default'
+          description='Import default schema'
+          provides='Products.GenericSetup.interfaces.EXTENSION'
+        />
+
+    <genericsetup:exportStep
+          name="usersschema"
+          title="Export member custom TTW schema"
+          description="Export member custom TTW schema"
+          handler="plone.app.users.setuphandlers.export_schema">
+    </genericsetup:exportStep>
+    <genericsetup:importStep
+          name="usersschema"
+          title="Import member custom TTW schema"
+          description="Import member custom TTW schema"
+          handler="plone.app.users.setuphandlers.import_schema">
+        <depends name="plone-content"/>
+    </genericsetup:importStep>
+
+    <genericsetup:upgradeStep
+        title="Upgrade to TTW Schema editing for user information form"
+        description=""
+        source="*"
+        destination="*"
+        handler=".upgrades.upgrade_to_ttw"
+        profile="plone.app.users:default" />
+
+
+    <adapter
+      provides=".field_extender.IUserFormSelection"
+      for=".browser.schemaeditor.IMemberSchemaContext"
+      factory=".field_extender.get_user_form_selection"
+      />
+
+    <utility name="plone.app.users.schema.ProtectedTextLine"
+             provides="plone.schemaeditor.interfaces.IFieldFactory"
+             component=".schema.FullnameFieldFactory" />
+    <utility name="plone.app.users.schema.ProtectedEmail"
+             provides="plone.schemaeditor.interfaces.IFieldFactory"
+             component=".schema.EmailFieldFactory" />
 </configure>

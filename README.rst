@@ -1,85 +1,62 @@
 Introduction
 ============
 
-This package provide the registration form for new users using z3c.form forms.
-It allows the site administrator to select fields from a schema to appear on
-the registration form.
+This package provides the registration form and the user profile form.
+It allows the site administrator to define the fields those forms will display.
 
 Overriding / extending the default schema
 =========================================
 
-Thanks to FormExtenders, the form can be manipulated in many ways. The
-following example is from `collective.examples.userdata`_, see there for more
-information.
+Manipulating the user schema through the web
+--------------------------------------------
 
-Overriding userdata form fields
--------------------------------
+In Plone setup / Users and Groups / Member fields, we can add and modify the user fields using the `plone.schemaeditor`_ interface.
 
-We can register a IFormExtender to add fields and modify the form. First
-register it in the ZCML::
+Once a new field is added, we can access its settings, and more specifically, we can choose where the field must be shown (in the registration form, in the user profile form, or in both).
 
-  <adapter
-    factory="my.customschemachema.UserDataPanelExtender"
-    provides="plone.z3cform.fieldsets.interfaces.IFormExtender" />
+The entire schema can be freely modified, but:
 
-Where the `customschemachema.py` contains::
+- the Fullname and the Email fields cannot be removed nor changed,
+- we can only add one Image field (that will be used as the user portrait), and no more.
 
-    from zope.publisher.interfaces.browser import IDefaultBrowserLayer
-    from zope.component import adapter
-    from zope.interface import Interface
+Defining the user schema in a GenericSetup profile
+--------------------------------------------------
 
-    from z3c.form.field import Fields
+The user schema can be defined in our GenericSetup profile in a file named ``userschema.xml``.
 
-    from plone.app.users.browser.userdatapanel import UserDataPanel
-    from plone.supermodel import model
-    from plone.z3cform.fieldsets import extensible
+Its content must be compliant with the `plone.supermodel`_ format. Example::
 
+    <model
+      xmlns:lingua="http://namespaces.plone.org/supermodel/lingua"
+      xmlns:users="http://namespaces.plone.org/supermodel/users"
+      xmlns:form="http://namespaces.plone.org/supermodel/form"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:security="http://namespaces.plone.org/supermodel/security"
+      xmlns:marshal="http://namespaces.plone.org/supermodel/marshal"
+      xmlns="http://namespaces.plone.org/supermodel/schema"
+      i18n:domain="plone">
+      <schema name="member-fields">
+        <field name="birthdate" type="zope.schema.Date">
+          <description/>
+          <required>False</required>
+          <title>Birthdate</title>
+        </field>
+        <field name="department" type="zope.schema.Choice">
+          <description/>
+          <required>False</required>
+          <title>Department</title>
+          <values>
+            <element>Marketing</element>
+            <element>Production</element>
+            <element>HR</element>
+          </values>
+        </field>
+      </schema>
+    </model>
 
-    class IEnhancedUserDataSchema(model.Schema):
-        . . . all the custom fields to add . . .
+This file can imported or exported using ``portal_setup``.
 
+Note: the ``userschema.xml`` importation will automatically refresh the memberdata attributes, so the ``memberdata_properties.xml`` file is not needed.
 
-    @adapter(Interface, IDefaultBrowserLayer, UserDataPanel)
-    class UserDataPanelExtender(extensible.FormExtender):
-        def update(self):
-            fields = Fields(
-                IEnhancedUserDataSchema,
-                prefix="IEnhancedUserDataSchema")
-            self.add(fields)
-
-Storing / retreiving custom fields
-----------------------------------
-
-To store the values alongside default fields, we need to add fields to
-``profiles/default/memberdata_properties.xml``. For example::
-
-    <?xml version="1.0"?>
-    <object name="portal_memberdata" meta_type="Plone Memberdata Tool">
-      <property name="country" type="string"></property>
-    </object>
-
-Before values can be read and written, there needs to be a data manager to
-fetch the values. The default manager will read/write any field defined in
-the schema, so most of the work is done for you::
-
-    from plone.app.users.browser.account import AccountPanelSchemaAdapter
-
-    class EnhancedUserDataSchemaAdapter(AccountPanelSchemaAdapter):
-        schema = IEnhancedUserDataSchema
-
-If you want to do something different, add a property for that field to
-override the default behavior.
-
-Finally, register the data manager in ZCML::
-
-    <adapter
-      provides="my.customschemachema.IEnhancedUserDataSchema"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      factory=".adapter.EnhancedUserDataSchemaAdapter"
-      />
-
-For more information, see `collective.examples.userdata`_.
-
-.. _formlib: http://pypi.python.org/pypi/zope.formlib
-.. _plone.app.controlpanel: http://pypi.python.org/pypi/plone.app.controlpanel
-.. _`collective.examples.userdata`: http://pypi.python.org/pypi/collective.examples.userdata
+.. _plone.schemaeditor: https://github.com/plone/plone.schemaeditor
+.. _plone.supermodel: https://github.com/plone/plone.supermodel

@@ -64,6 +64,19 @@
       />
 
     <browser:page
+        name="member-fields"
+        for="*"
+        class=".schemaeditor.MemberSchemaContext"
+        permission="plone.app.controlpanel.UsersAndGroups"
+        allowed_interface="OFS.interfaces.IItem" />
+
+  <browser:page
+      name="edit"
+      for=".schemaeditor.IMemberSchemaContext"
+      class=".schemaeditor.SchemaListingPage"
+      permission="zope2.View" />
+
+    <browser:page
       name="member-search"
       for="*"
       class=".membersearch.MemberSearchForm"
@@ -85,4 +98,17 @@
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       factory=".passwordpanel.PasswordPanelAdapter"
       />
+
+    <utility provides="plone.app.users.schema.IUserDataSchemaProvider"
+             factory="plone.app.users.browser.schemaprovider.UserDataSchemaProvider"/>
+
+    <utility provides="plone.app.users.schema.IRegisterSchemaProvider"
+             factory="plone.app.users.browser.schemaprovider.RegisterSchemaProvider"/>
+
+    <subscriber
+        for="plone.app.users.browser.schemaeditor.IMemberSchemaContext
+             plone.schemaeditor.interfaces.ISchemaModifiedEvent"
+        handler="plone.app.users.browser.schemaeditor.updateSchema"
+        />
+
 </configure>

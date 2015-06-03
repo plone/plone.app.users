@@ -1,46 +1,31 @@
 # -*- coding: utf-8 -*-
-from Acquisition import aq_inner
+from zope.component import getUtility, provideAdapter
+from zope.interface import Interface
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import set_own_login_name
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.PlonePAS.tools.membership import default_portrait
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from plone.app.users.schema import IUserDataSchema
-from plone.namedfile.file import NamedBlobImage
+from plone.app.layout.navigation.interfaces import INavigationRoot
+from plone.autoform.interfaces import OMITTED_KEY
 from plone.registry.interfaces import IRegistry
-from zope.component import getUtility
+
+from ..schema import IUserDataSchemaProvider, IUserDataSchema
 
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
     """One does not simply set portrait, email might be used to login with.
     """
-    schema = IUserDataSchema
 
-    def get_portrait(self):
-        """If user has default portrait, return none"""
-        portal = getToolByName(self.context, 'portal_url').getPortalObject()
-        mt = getToolByName(self.context, 'portal_membership')
-        value = mt.getPersonalPortrait(self.context.getId())
-        if aq_inner(value) == aq_inner(getattr(portal,
-                                               default_portrait,
-                                               None)):
-            return None
-        return NamedBlobImage(value.data, contentType=value.content_type,
-                              filename=getattr(value, 'filename', None))
-
-    def set_portrait(self, value):
-        mt = getToolByName(self.context, 'portal_membership')
-        if value is None:
-            mt.deletePersonalPortrait(str(self.context.getId()))
-        else:
-            portrait_file = value.open()
-            portrait_file.filename = value.filename
-            mt.changeMemberPortrait(portrait_file, str(self.context.getId()))
-
-    portrait = property(get_portrait, set_portrait)
+    def __init__(self, *args, **kwargs):
+        super(UserDataPanelAdapter, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
+        # make forms adapters know about ttw fields
+        # we force self.schema as it can be a
+        # generated supermodel with TTw fields
+        provideAdapter(self.__class__, (Interface,), self.schema)
 
     def get_email(self):
         return self._getProperty('email')
@@ -64,8 +49,39 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
 class UserDataPanel(AccountPanelForm):
 
     form_name = _(u'User Data Form')
-    schema = IUserDataSchema
     enableCSRFProtection = True
+
+    def __init__(self, *args, **kwargs):
+        super(UserDataPanel, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
+        # as schema is a generated supermodel, just insert a relevant
+        # adapter for it
+        provideAdapter(UserDataPanelAdapter, (INavigationRoot,), self.schema)
+
+    def updateFields(self):
+        """Fields are dynamic in this form
+        """
+
+        # Filter schema for user profile
+        omitted = []
+        default_fields = IUserDataSchema.names()
+        for name in self.schema:
+            # we always preserve default fields
+            if name in default_fields:
+                omit = False
+            else:
+                forms_selection = getattr(
+                    self.schema[name], 'forms_selection', [])
+                if u'In User Profile' in forms_selection:
+                    omit = False
+                else:
+                    omit = True
+            omitted.append((Interface, name, omit))
+        self.schema.setTaggedValue(OMITTED_KEY, omitted)
+
+        # Finally, let autoform process the schema and any FormExtenders do
+        # their thing
+        super(AccountPanelForm, self).updateFields()
 
     @property
     def description(self):

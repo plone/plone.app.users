@@ -16,7 +16,6 @@ extras_require = {
     ]
 }
 
-
 setup(
     name='plone.app.users',
     version=version,
@@ -58,6 +57,7 @@ setup(
         'plone.formwidget.namedfile >= 1.0.3',
         'plone.namedfile',
         'plone.protect',
+        'plone.schema',
         'plone.uuid',
         'setuptools',
         'z3c.form',
