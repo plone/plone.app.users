@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-from Acquisition import aq_inner
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import getFSVersionTuple
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from z3c.form.interfaces import HIDDEN_MODE
 from zope.interface import Interface
-from zope.schema import Bool
 from zope.schema import Choice
 
 try:
@@ -29,20 +26,6 @@ PLONE5 = getFSVersionTuple()[0] >= 5
 class IPersonalPreferences(Interface):
     """Provide schema for personalize form."""
 
-    visible_ids = Bool(
-        title=_(
-            u'label_edit_short_names',
-            default=u'Allow editing of Short Names'
-        ),
-        description=_(
-            u'help_display_names',
-            default=(u'Determines if Short Names (also known '
-                     u'as IDs) are changable when editing items. If Short '
-                     u'Names are not displayed, they will be generated '
-                     u'automatically.')),
-            required=False
-    )
-
     wysiwyg_editor = Choice(
         title=_(u'label_wysiwyg_editor', default=u'Wysiwyg editor'),
         description=_(
@@ -51,19 +34,6 @@ class IPersonalPreferences(Interface):
         ),
         vocabulary="plone.app.vocabularies.AvailableEditors",
         required=False,
-    )
-
-    ext_editor = Bool(
-        title=_(u'label_ext_editor', default=u'Enable external editing'),
-        description=_(
-            u'help_content_ext_editor',
-            default=u'When checked, an option will be made visible on each '
-            'page which allows you to edit content with your favorite editor '
-            'instead of using browser-based editors. This requires an '
-            'additional application, most often ExternalEditor or '
-            'ZopeEditManager, installed client-side. Ask your administrator '
-            'for more information if needed.'
-        ),
     )
 
     language = Choice(
@@ -118,12 +88,6 @@ class PersonalPreferencesPanel(AccountPanelForm):
             )
 
     def updateWidgets(self):
-        """ Hide the visible_ids field based on portal_properties.
-        """
-        context = aq_inner(self.context)
-        properties = getToolByName(context, 'portal_properties')
-        siteProperties = properties.site_properties
-
         super(PersonalPreferencesPanel, self).updateWidgets()
 
         self.widgets['language'].noValueMessage = _(
@@ -134,8 +98,6 @@ class PersonalPreferencesPanel(AccountPanelForm):
             u"vocabulary-available-editor-novalue",
             u"Use site default"
         )
-        if not siteProperties.visible_ids:
-            self.widgets['visible_ids'].mode = HIDDEN_MODE
 
 
 class PersonalPreferencesConfiglet(PersonalPreferencesPanel):

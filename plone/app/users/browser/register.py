@@ -9,16 +9,9 @@ from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZODB.POSException import ConflictError
-from plone.app.users.browser.interfaces import ILoginNameGenerator
-from plone.app.users.browser.interfaces import IUserIdGenerator
-from plone.app.users.schema import IAddUserSchema
-from plone.app.users.schema import ICombinedRegisterSchema
-from plone.app.users.schema import IRegisterSchema
-from plone.app.users.utils import notifyWidgetActionExecutionError
-from plone.app.users.utils import uuid_userid_generator
+from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.interfaces import OMITTED_KEY
-from plone.autoform.interfaces import ORDER_KEY
 from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
 from z3c.form import button
@@ -27,15 +20,30 @@ from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import DISPLAY_MODE
 from zExceptions import Forbidden
-from zope.component import getAdapter
-from zope.component import getMultiAdapter
-from zope.component import getUtility
-from zope.component import queryUtility
+from zope.component import (
+    getUtility,
+    queryUtility,
+    getAdapter,
+    getMultiAdapter,
+    provideAdapter)
 from zope.interface import Interface
 from zope.schema import getFieldNames
-
 import logging
 
+from ..schema import (
+    IRegisterSchema,
+    IRegisterSchemaProvider,
+    IAddUserSchema,
+    ICombinedRegisterSchema,
+    IUserDataSchema)
+from ..utils import (
+    notifyWidgetActionExecutionError,
+    uuid_userid_generator,
+)
+from plone.app.users.browser.schemaprovider import RegisterSchemaProvider
+from plone.app.users.browser.interfaces import ILoginNameGenerator
+from plone.app.users.browser.interfaces import IUserIdGenerator
+from .account import AccountPanelSchemaAdapter
 
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
@@ -47,11 +55,18 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     description = u""
     formErrorsMessage = _('There were errors.')
     ignoreContext = True
-    schema = ICombinedRegisterSchema
     enableCSRFProtection = True
+    schema = ICombinedRegisterSchema
 
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
+
+    def __init__(self, *args, **kwargs):
+        super(BaseRegistrationForm, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IRegisterSchemaProvider).getSchema()
+        # as schema is a generated supermodel, just insert a relevant
+        # adapter for it
+        provideAdapter(RegisterSchemaProvider, (INavigationRoot,), self.schema)
 
     def _get_security_settings(self):
         """Return security settings from the registry."""
@@ -68,68 +83,37 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         """Fields are dynamic in this form, to be able to handle
         different join styles.
         """
-        portal_props = getToolByName(self.context, 'portal_properties')
-        props = portal_props.site_properties
         settings = self._get_security_settings()
         use_email_as_login = settings.use_email_as_login
 
-        # Ensure all listed fields are in the schema
-        registration_fields = [f for f in props.getProperty(
-            'user_registration_fields', []) if f in self.schema]
-
-        # Check on required join fields
-        if 'username' not in registration_fields and not use_email_as_login:
-            registration_fields.insert(0, 'username')
-
-        if 'username' in registration_fields and use_email_as_login:
-            registration_fields.remove('username')
-
-        if 'email' not in registration_fields:
-            # Perhaps only when use_email_as_login is true, but also
-            # for some other cases; the email field has always been
-            # required.
-            registration_fields.append('email')
-
-        if 'password' not in registration_fields:
-            if 'username' in registration_fields:
-                base = registration_fields.index('username')
+        # Filter schema for registration
+        omitted = []
+        default_fields = IUserDataSchema.names() + IRegisterSchema.names()
+        for name in self.schema:
+            # we always preserve default fields
+            if name in default_fields:
+                omit = False
             else:
-                base = registration_fields.index('email')
-            registration_fields.insert(base + 1, 'password')
-
-        # Add password_ctl after password
-        if 'password_ctl' not in registration_fields:
-            registration_fields.insert(
-                registration_fields.index('password') + 1, 'password_ctl')
-
-        # Add email_me after password_ctl
-        if 'mail_me' not in registration_fields:
-            registration_fields.insert(
-                registration_fields.index('password_ctl') + 1, 'mail_me')
-
-        # Order/filter schema by registration_fields
-        self.schema.setTaggedValue(ORDER_KEY, [
-            (registration_fields[i],
-             'after',
-             registration_fields[i - 1] if i > 0 else '*')
-            for i in range(len(registration_fields))
-        ])
-        self.schema.setTaggedValue(OMITTED_KEY, [
-            (Interface, name, name not in registration_fields)
-            for name in self.schema
-        ])
+                forms_selection = getattr(
+                    self.schema[name], 'forms_selection', [])
+                if u'On Registration' in forms_selection:
+                    omit = False
+                else:
+                    omit = True
+            omitted.append((Interface, name, omit))
+        self.schema.setTaggedValue(OMITTED_KEY, omitted)
 
         # Finally, let autoform process the schema and any FormExtenders do
         # their thing
         super(BaseRegistrationForm, self).updateFields()
 
-        # update email field description according to set login policy
         if use_email_as_login:
             self.fields['email'].field.description = _(
                 u'help_email_creation_for_login', default=u"Enter an email "
                 "address. This will be your login name. We respect your "
                 "privacy, and will not give the address away to any third "
                 "parties or expose it anywhere.")
+            del self.fields['username']
         else:
             self.fields['email'].field.description = _(
                 u'help_email_creation',
@@ -138,11 +122,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                         u"will not give the address away to any third parties "
                         u"or expose it anywhere."
             )
-
-        # Make sure some fields are really required; a previous call
-        # might have changed the default.
-        for name in ('password', 'password_ctl'):
-            self.fields[name].field.required = True
 
         # Change the password description based on PAS Plugin The user needs a
         # list of instructions on what kind of password is required.  We'll
@@ -570,8 +549,17 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if schema in adapters:
                 adapter = adapters[schema]
             else:
+                # as the ttw schema is a generated supermodel,
+                # just insert a relevant adapter for it
+                if INavigationRoot.providedBy(self.context):
+                    provideAdapter(
+                        AccountPanelSchemaAdapter,
+                        (INavigationRoot,),
+                        schema
+                    )
                 adapters[schema] = adapter = getAdapter(portal, schema)
                 adapter.context = member
+                adapter.schema = schema
 
             # finally set value
             setattr(adapter, k, value)
