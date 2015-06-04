@@ -42,8 +42,6 @@ We have these controls in the form:
 
     >>> isEmptyMarker(browser.getControl('Wysiwyg editor').value)
     True
-    >>> browser.getControl('Enable external editing').selected
-    False
     >>> isEmptyMarker(browser.getControl('Language', index=0).value)
     True
 
@@ -57,7 +55,6 @@ Modifying values
 ----------------
 
     >>> browser.getControl('Wysiwyg editor').value = ['TinyMCE']
-    >>> browser.getControl('Enable external editing').selected = True
     >>> browser.getControl('Language', index=0).value = ['en']
     >>> browser.getControl('Save').click()
     >>> 'Changes saved' in browser.contents
@@ -70,8 +67,6 @@ changed:
     >>> marker = object()
     >>> member.getProperty('wysiwyg_editor', marker)
     'TinyMCE'
-    >>> member.getProperty('ext_editor', marker)
-    True
     >>> member.getProperty('language', marker)
     'en'
 
@@ -82,8 +77,6 @@ And that the form still has the according values:
     False
     >>> browser.getControl('Wysiwyg editor').value
     ['TinyMCE']
-    >>> browser.getControl('Enable external editing').selected
-    True
     >>> browser.getControl('Language', index=0).value
     ['en']
 
@@ -94,7 +87,6 @@ Clearing values
 Check that empty or False values do get stored.
 
     >>> browser.getControl('Wysiwyg editor').value = [empty_marker]
-    >>> browser.getControl('Enable external editing').selected = False
     >>> browser.getControl('Language', index=0).value = [empty_marker]
     >>> browser.getControl('Save').click()
     >>> 'Changes saved' in browser.contents
@@ -104,20 +96,16 @@ Verify that the settings have actually been
 changed:
 
     >>> member = membership.getMemberById('test_user_1_')
-    >>> member.getProperty('wysiwyg_editor', marker)
-    ''
-    >>> member.getProperty('ext_editor', marker)
-    False
-    >>> member.getProperty('language', marker)
-    ''
+    >>> not member.getProperty('wysiwyg_editor', marker)
+    True
+    >>> not member.getProperty('language', marker)
+    True
 
 And that the form still has the according values:
 
     >>> browser.open("http://nohost/plone/@@user-preferences?userid=test_user_1_")
     >>> isEmptyMarker(browser.getControl('Wysiwyg editor').value)
     True
-    >>> browser.getControl('Enable external editing').selected
-    False
     >>> isEmptyMarker(browser.getControl('Language', index=0).value)
     True
 
