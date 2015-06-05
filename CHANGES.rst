@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.2.2 (unreleased)
+2.2.2 (2015-06-05)
 ------------------
 
 - Import ConfigurationChangedEvent from Products.CMFPlone instead of from
