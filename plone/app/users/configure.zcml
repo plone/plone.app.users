@@ -50,8 +50,15 @@
 
     <adapter
       provides=".field_extender.IUserFormSelection"
-      for=".browser.schemaeditor.IMemberSchemaContext"
+      for=".browser.schemaeditor.IMemberSchemaContext
+        zope.schema.interfaces.IField"
       factory=".field_extender.get_user_form_selection"
+      />
+
+    <adapter
+      provides=".field_extender.IUserFormSelection"
+      for=".browser.schemaeditor.IMemberSchemaContext"
+      factory=".field_extender.get_user_addform_selection"
       />
 
     <utility name="plone.app.users.schema.ProtectedTextLine"
