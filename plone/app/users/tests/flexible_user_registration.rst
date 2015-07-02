@@ -88,8 +88,9 @@ Add a text string field
     >>> browser.getControl(label='Add').click()
 
     >>> browser.url
-    'http://nohost/plone/member-fields'
+    'http://nohost/plone/member-fields/@@add-field'
 
+    >>> browser.open('http://nohost/plone/@@member-fields')
     >>> 'favorite_cms' in browser.contents
     True
 
