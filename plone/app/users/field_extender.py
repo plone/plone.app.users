@@ -36,26 +36,12 @@ class IUserFormSelection(Interface):
     )
 
 
-@adapter(IMemberSchemaContext, IField)
 def get_user_form_selection(schema_context, field):
     return IUserFormSelection
 
-provideAdapter(
-    get_user_form_selection,
-    provides=IFieldEditorExtender,
-    name='plone.app.users.userformselection'
-)
 
-
-@adapter(IMemberSchemaContext)
 def get_user_addform_selection(schema_context):
     return IUserFormSelection
-
-provideAdapter(
-    get_user_addform_selection,
-    provides=IFieldEditorExtender,
-    name='plone.app.users.useraddformselection'
-)
 
 
 class UserFormSelectionAdapter(object):

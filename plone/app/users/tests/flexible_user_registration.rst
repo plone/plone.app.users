@@ -61,15 +61,13 @@ Check default form fields are not editable::
     >>> 'href="http://nohost/plone/member-fields/email"' in browser.contents
     False
 
-Let's add home_page to the list of registration form fields.
+Let's add favorite_cms to the list of registration form fields.
 (Setting this by hand since add/remove widget doesn't work properly without javascript)
+
+Getting rid of the 'mail_me' user registration field:
+
     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['fullname', 'username', 'email', 'password'])
     >>> transaction.commit()
-    >>> 'http://nohost/plone/member-fields/fullname/@@delete' in browser.contents
-    False
-
-    >>> 'http://nohost/plone/member-fields/email/@@delete' in browser.contents
-    False
 
 We should be able to add a field::
 
@@ -82,6 +80,7 @@ We should be able to add a field::
     True
 
 Add a text string field
+
     >>> browser.getControl(label='Title').value = 'Favorite CMS'
     >>> browser.getControl(label='Short Name').value = 'favorite_cms'
     >>> browser.getControl(label='Help Text').value = 'Think about it'

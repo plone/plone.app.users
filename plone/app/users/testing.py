@@ -11,10 +11,6 @@ import doctest
 class PloneAppUsersLayer(PloneSandboxLayer):
     defaultBases = (PTC_FIXTURE, )
 
-    def setUpZope(self, app, configurationContext):
-        import plone.app.users
-        self.loadZCML(package=plone.app.users)
-
 PLONE_APP_USERS_FIXTURE = PloneAppUsersLayer()
 PLONE_APP_USERS_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_USERS_FIXTURE, ),
