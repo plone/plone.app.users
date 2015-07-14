@@ -1,14 +1,11 @@
 from zope.interface import Interface, implements
 from zope import schema
-from zope.component import provideUtility
 
-from zope.component import provideAdapter, adapter, adapts
+from zope.component import adapts
 from zope.schema.interfaces import IField
-from plone.schemaeditor.interfaces import IFieldEditorExtender
 from plone.supermodel.interfaces import IFieldMetadataHandler
 from plone.supermodel.utils import ns
 
-from .browser.schemaeditor import IMemberSchemaContext
 from .browser.schemaeditor import USERS_NAMESPACE, USERS_PREFIX
 
 from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
