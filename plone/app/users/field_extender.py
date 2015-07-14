@@ -59,8 +59,6 @@ class UserFormSelectionAdapter(object):
 
     forms = property(_get_forms, _set_forms)
 
-provideAdapter(UserFormSelectionAdapter, provides=IUserFormSelection)
-
 
 class UserFormSelectionMetadata(object):
     implements(IFieldMetadataHandler)
@@ -77,8 +75,3 @@ class UserFormSelectionMetadata(object):
         forms = getattr(field, 'forms_selection', [])
         if forms:
             fieldNode.set(ns('forms', self.namespace), "|".join(forms))
-
-provideUtility(
-    component=UserFormSelectionMetadata(),
-    name='plone.app.users.forms'
-)

@@ -48,6 +48,17 @@
         profile="plone.app.users:default" />
 
     <adapter
+      factory=".field_extender.UserFormSelectionAdapter"
+      for="zope.schema.interfaces.IField"
+      provides=".field_extender.IUserFormSelection"
+      />
+
+    <utility
+      factory=".field_extender.UserFormSelectionMetadata"
+      name='plone.app.users.forms'
+      />
+
+    <adapter
       factory=".field_extender.get_user_form_selection"
       for=".browser.schemaeditor.IMemberSchemaContext
         zope.schema.interfaces.IField"
