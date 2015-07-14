@@ -9,7 +9,6 @@ from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZODB.POSException import ConflictError
-from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.interfaces import OMITTED_KEY
 from plone.protect import CheckAuthenticator
@@ -24,8 +23,7 @@ from zope.component import (
     getUtility,
     queryUtility,
     getAdapter,
-    getMultiAdapter,
-    provideAdapter)
+    getMultiAdapter)
 from zope.interface import Interface
 from zope.schema import getFieldNames
 import logging
@@ -40,10 +38,8 @@ from ..utils import (
     notifyWidgetActionExecutionError,
     uuid_userid_generator,
 )
-from plone.app.users.browser.schemaprovider import RegisterSchemaProvider
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.interfaces import IUserIdGenerator
-from .account import AccountPanelSchemaAdapter
 
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
@@ -61,12 +57,10 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
 
-    def __init__(self, *args, **kwargs):
-        super(BaseRegistrationForm, self).__init__(*args, **kwargs)
-        self.schema = getUtility(IRegisterSchemaProvider).getSchema()
-        # as schema is a generated supermodel, just insert a relevant
-        # adapter for it
-        provideAdapter(RegisterSchemaProvider, (INavigationRoot,), self.schema)
+    @property
+    def schema(self):
+        schema = getUtility(IRegisterSchemaProvider).getSchema()
+        return schema
 
     def _get_security_settings(self):
         """Return security settings from the registry."""
@@ -549,14 +543,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if schema in adapters:
                 adapter = adapters[schema]
             else:
-                # as the ttw schema is a generated supermodel,
-                # just insert a relevant adapter for it
-                if INavigationRoot.providedBy(self.context):
-                    provideAdapter(
-                        AccountPanelSchemaAdapter,
-                        (INavigationRoot,),
-                        schema
-                    )
                 adapters[schema] = adapter = getAdapter(portal, schema)
                 adapter.context = member
                 adapter.schema = schema

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from zope.component import getUtility, provideAdapter
+from zope.component import getUtility
 from zope.interface import Interface
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
@@ -8,7 +8,6 @@ from Products.CMFPlone.utils import set_own_login_name
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.autoform.interfaces import OMITTED_KEY
 from plone.registry.interfaces import IRegistry
 
@@ -19,13 +18,10 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
     """One does not simply set portrait, email might be used to login with.
     """
 
-    def __init__(self, *args, **kwargs):
-        super(UserDataPanelAdapter, self).__init__(*args, **kwargs)
-        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
-        # make forms adapters know about ttw fields
-        # we force self.schema as it can be a
-        # generated supermodel with TTw fields
-        provideAdapter(self.__class__, (Interface,), self.schema)
+    @property
+    def schema(self):
+        schema = getUtility(IUserDataSchemaProvider).getSchema()
+        return schema
 
     def get_email(self):
         return self._getProperty('email')
@@ -51,12 +47,10 @@ class UserDataPanel(AccountPanelForm):
     form_name = _(u'User Data Form')
     enableCSRFProtection = True
 
-    def __init__(self, *args, **kwargs):
-        super(UserDataPanel, self).__init__(*args, **kwargs)
-        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
-        # as schema is a generated supermodel, just insert a relevant
-        # adapter for it
-        provideAdapter(UserDataPanelAdapter, (INavigationRoot,), self.schema)
+    @property
+    def schema(self):
+        schema = getUtility(IUserDataSchemaProvider).getSchema()
+        return schema
 
     def updateFields(self):
         """Fields are dynamic in this form

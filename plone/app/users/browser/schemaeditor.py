@@ -2,10 +2,7 @@ import re
 import logging
 import hashlib
 
-from zope.component import (
-    getUtility,
-    provideAdapter,
-)
+from zope.component import getUtility
 from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import Interface, implements
@@ -21,10 +18,8 @@ from plone.supermodel.parser import IFieldMetadataHandler
 from plone.supermodel.serializer import serialize
 from plone.supermodel.utils import ns
 from plone.supermodel import loadString
-from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.z3cform.layout import FormWrapper
 
-from plone.app.users.browser.userdatapanel import UserDataPanelAdapter
 from plone.app.users.schema import (
     IUserDataSchemaProvider,
     SCHEMA_ANNOTATION,
@@ -129,7 +124,6 @@ class MemberSchemaContext(SchemaContext):
             name=SCHEMATA_KEY,
             title=_(u"Member Fields"),
         )
-        provideAdapter(UserDataPanelAdapter, (INavigationRoot,), schema)
 
 
 def updateSchema(object, event):

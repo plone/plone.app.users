@@ -1,7 +1,13 @@
 import copy
 from zope.interface import implements
+from zope.interface import Interface
+from zope.component import provideAdapter
 from plone.memoize import volatile
 from plone.supermodel.model import finalizeSchemas, SchemaClass
+from plone.app.layout.navigation.interfaces import INavigationRoot
+
+from .userdatapanel import UserDataPanelAdapter
+from .account import AccountPanelSchemaAdapter
 
 from .schemaeditor import (
     SCHEMATA_KEY,
@@ -42,7 +48,28 @@ class UserDataSchemaProvider(BaseMemberSchemaProvider):
     implements(IUserDataSchemaProvider)
     baseSchema = IUserDataSchema
 
+    def getSchema(self):
+        schema = super(UserDataSchemaProvider, self).getSchema()
+        # make forms adapters know about ttw fields
+        # we force self.schema as it can be a
+        # generated supermodel with TTw fields
+        provideAdapter(UserDataPanelAdapter, (Interface,), schema)
+        # as schema is a generated supermodel, just insert a relevant
+        # adapter for it
+        # provideAdapter(
+        #    factory=UserDataPanelAdapter,
+        #    adapts=(INavigationRoot,),
+        #    provides=schema
+        # )
+        return schema
+
 
 class RegisterSchemaProvider(BaseMemberSchemaProvider):
     implements(IRegisterSchemaProvider)
     baseSchema = ICombinedRegisterSchema
+
+    def getSchema(self):
+        schema = super(RegisterSchemaProvider, self).getSchema()
+        provideAdapter(RegisterSchemaProvider, (INavigationRoot,), schema)
+        provideAdapter(AccountPanelSchemaAdapter, (INavigationRoot,), schema)
+        return schema
