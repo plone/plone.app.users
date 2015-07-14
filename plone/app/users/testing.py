@@ -16,4 +16,8 @@ PLONE_APP_USERS_ROBOT = FunctionalTesting(
            z2.ZSERVER_FIXTURE),
     name="PloneAppUsersLayer:Robot")
 
-optionflags = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE | doctest.REPORT_ONLY_FIRST_FAILURE)
+optionflags = (
+    doctest.ELLIPSIS |
+    doctest.NORMALIZE_WHITESPACE |
+    doctest.REPORT_ONLY_FIRST_FAILURE
+)
