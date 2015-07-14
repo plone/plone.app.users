@@ -29,7 +29,7 @@ class RegistrationControlPanel(form.Form):
         return {'user_registration_fields': props.getProperty(
             'user_registration_fields', [])}
 
-    @button.buttonAndHandler(_(u'label_save', default=u'Save'), name='save')
+    @button.buttonAndHandler(_(u'label_apply_changes', default=u'Apply Changes'), name='save')
     def action_save(self, action):
         # CSRF protection
         CheckAuthenticator(self.request)
@@ -53,18 +53,23 @@ class RegistrationControlPanel(form.Form):
             msg = _("No changes made.")
         IStatusMessage(self.request).addStatusMessage(msg, type="info")
 
-    @button.buttonAndHandler(
-        _(u'label_cancel', default=u'Cancel'), name='cancel'
-    )
-    def action_cancel(self, action):
-        IStatusMessage(self.request).addStatusMessage(
-            _("Changes canceled."), type="info"
-        )
-        url = getMultiAdapter(
-            (self.context, self.request),
-            name='absolute_url'
-        )()
-        self.request.response.redirect(url + '/plone_control_panel')
+    # @button.buttonAndHandler(
+    #     _(u'label_cancel', default=u'Cancel'), name='cancel'
+    # )
+    # def action_cancel(self, action):
+    #     IStatusMessage(self.request).addStatusMessage(
+    #         _("Changes canceled."), type="info"
+    #     )
+    #     url = getMultiAdapter(
+    #         (self.context, self.request),
+    #         name='absolute_url'
+    #     )()
+    #     self.request.response.redirect(url + '/plone_control_panel')
+
+    def updateActions(self):
+        super(RegistrationControlPanel, self).updateActions()
+        if self.actions and 'save' in self.actions:
+            self.actions['save'].addClass('context')
 
     def props(self):
         pprop = getToolByName(self.context, 'portal_properties')
