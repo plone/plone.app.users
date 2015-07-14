@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 from plone.app.robotframework.testing import AUTOLOGIN_LIBRARY_FIXTURE
 from plone.app.testing.bbb import PTC_FIXTURE
-from plone.app.testing import PloneSandboxLayer
+from plone.app.testing.bbb import PTC_FUNCTIONAL_TESTING
 from plone.app.testing.layers import FunctionalTesting
 from plone.testing import z2
 
 import doctest
 
+PLONE_APP_USERS_FIXTURE = PTC_FIXTURE
+PLONE_APP_USERS_FUNCTIONAL_TESTING = PTC_FUNCTIONAL_TESTING
 
-class PloneAppUsersLayer(PloneSandboxLayer):
-    defaultBases = (PTC_FIXTURE, )
-
-PLONE_APP_USERS_FIXTURE = PloneAppUsersLayer()
-PLONE_APP_USERS_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(PLONE_APP_USERS_FIXTURE, ),
-    name='PloneAppUsersLayer:Functional')
 PLONE_APP_USERS_ROBOT = FunctionalTesting(
     bases=(PLONE_APP_USERS_FIXTURE,
            AUTOLOGIN_LIBRARY_FIXTURE,
