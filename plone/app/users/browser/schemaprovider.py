@@ -71,5 +71,4 @@ class RegisterSchemaProvider(BaseMemberSchemaProvider):
     def getSchema(self):
         schema = super(RegisterSchemaProvider, self).getSchema()
         provideAdapter(RegisterSchemaProvider, (INavigationRoot,), schema)
-        provideAdapter(AccountPanelSchemaAdapter, (INavigationRoot,), schema)
         return schema

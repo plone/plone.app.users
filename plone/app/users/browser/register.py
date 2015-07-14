@@ -9,6 +9,7 @@ from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZODB.POSException import ConflictError
+from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.autoform.form import AutoExtensibleForm
 from plone.autoform.interfaces import OMITTED_KEY
 from plone.protect import CheckAuthenticator
@@ -23,6 +24,7 @@ from zope.component import (
     getUtility,
     queryUtility,
     getAdapter,
+    provideAdapter,
     getMultiAdapter)
 from zope.interface import Interface
 from zope.schema import getFieldNames
@@ -38,6 +40,9 @@ from ..utils import (
     notifyWidgetActionExecutionError,
     uuid_userid_generator,
 )
+
+from .account import AccountPanelSchemaAdapter
+
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.interfaces import IUserIdGenerator
 
@@ -543,6 +548,14 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if schema in adapters:
                 adapter = adapters[schema]
             else:
+                # as the ttw schema is a generated supermodel,
+                # just insert a relevant adapter for it
+                if INavigationRoot.providedBy(self.context):
+                    provideAdapter(
+                        AccountPanelSchemaAdapter,
+                        (INavigationRoot,),
+                        schema
+                    )
                 adapters[schema] = adapter = getAdapter(portal, schema)
                 adapter.context = member
                 adapter.schema = schema
