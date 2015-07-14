@@ -238,11 +238,3 @@ Submit form with the same set of fields:
     >>> browser.open('http://nohost/plone/@@member-registration', data)
     >>> 'No changes made.' in browser.contents
     True
-
-Now let's test Cancel button:
-
-    >>> browser.getControl('Cancel').click()
-    >>> browser.url
-    'http://nohost/plone/plone_control_panel'
-    >>> 'Changes canceled.' in browser.contents
-    True
