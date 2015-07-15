@@ -4,7 +4,8 @@ CHANGES
 2.2.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Made save buttons "blue"
+  [agitator]
 
 
 2.2.2 (2015-06-05)
