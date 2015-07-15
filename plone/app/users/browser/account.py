@@ -177,6 +177,11 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
                 self.noChangesMessage, type='info')
         self.request.response.redirect(self.action())
 
+    def updateActions(self):
+        super(AccountPanelForm, self).updateActions()
+        if self.actions and 'save' in self.actions:
+            self.actions['save'].addClass('context')
+
     @button.buttonAndHandler(_(u'Cancel'))
     def cancel(self, action):
         IStatusMessage(self.request).addStatusMessage(_("Changes canceled."),
