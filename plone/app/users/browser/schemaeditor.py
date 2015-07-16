@@ -3,7 +3,6 @@ import logging
 import hashlib
 
 from zope.component import getUtility
-from zope.component import provideAdapter
 from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import Interface, implements
@@ -27,8 +26,6 @@ from plone.app.users.schema import (
     SCHEMATA_KEY,
 )
 
-from .userdatapanel import UserDataPanelAdapter
-from plone.app.layout.navigation.interfaces import INavigationRoot
 
 CACHE_CONTAINER = {}
 USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
@@ -115,8 +112,7 @@ class MemberSchemaContext(SchemaContext):
     label = _(u"Edit Member Form Fields")
 
     def __init__(self, context, request):
-        self.baseSchema = getUtility(IUserDataSchemaProvider).getSchema()
-        schema = copy_schema(self.baseSchema, filter_serializable=True)
+        schema = getUtility(IUserDataSchemaProvider).getCopyOfSchema()
         self.fieldsWhichCannotBeDeleted = ['fullname', 'email']
         self.showSaveDefaults = False
         self.enableFieldsets = False
@@ -127,7 +123,6 @@ class MemberSchemaContext(SchemaContext):
             name=SCHEMATA_KEY,
             title=_(u"Member Fields"),
         )
-        provideAdapter(UserDataPanelAdapter, (INavigationRoot,), schema)
 
 
 def updateSchema(object, event):

@@ -1,13 +1,13 @@
 import copy
 from zope.interface import implements
-from zope.interface import Interface
 from zope.component import provideAdapter
 from plone.memoize import volatile
 from plone.supermodel.model import finalizeSchemas, SchemaClass
-from plone.app.layout.navigation.interfaces import INavigationRoot
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 
 from .userdatapanel import UserDataPanelAdapter
 from .account import AccountPanelSchemaAdapter
+from .schemaeditor import copy_schema
 
 from .schemaeditor import (
     SCHEMATA_KEY,
@@ -50,18 +50,18 @@ class UserDataSchemaProvider(BaseMemberSchemaProvider):
 
     def getSchema(self):
         schema = super(UserDataSchemaProvider, self).getSchema()
-        # make forms adapters know about ttw fields
-        # we force self.schema as it can be a
-        # generated supermodel with TTw fields
-        provideAdapter(UserDataPanelAdapter, (Interface,), schema)
-        # as schema is a generated supermodel, just insert a relevant
-        # adapter for it
-        # provideAdapter(
-        #    factory=UserDataPanelAdapter,
-        #    adapts=(INavigationRoot,),
-        #    provides=schema
-        # )
+        # as schema is a generated supermodel,
+        # needed adapters can only be registered at run time
+        provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)
         return schema
+
+    def getCopyOfSchema(self):
+        schema = self.getSchema()
+        copy = copy_schema(schema, filter_serializable=True)
+        # as schema is a generated supermodel,
+        # needed adapters can only be registered at run time
+        provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), copy)
+        return copy
 
 
 class RegisterSchemaProvider(BaseMemberSchemaProvider):
@@ -70,5 +70,7 @@ class RegisterSchemaProvider(BaseMemberSchemaProvider):
 
     def getSchema(self):
         schema = super(RegisterSchemaProvider, self).getSchema()
-        provideAdapter(RegisterSchemaProvider, (INavigationRoot,), schema)
+        # as schema is a generated supermodel,
+        # needed adapters can only be registered at run time
+        provideAdapter(AccountPanelSchemaAdapter, (IPloneSiteRoot,), schema)
         return schema
