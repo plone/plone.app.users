@@ -13,7 +13,7 @@ from zope.component import getMultiAdapter
 
 
 class RegistrationControlPanel(form.Form):
-    label = _(u"Registration settings")
+    label = _("Users and Groups")
     description = _(u"Registration settings for this site.")
     form_name = _(u"Registration settings")
     enableCSRFProtection = True
