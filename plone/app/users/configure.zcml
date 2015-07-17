@@ -36,7 +36,6 @@
           title="Import member custom TTW schema"
           description="Import member custom TTW schema"
           handler="plone.app.users.setuphandlers.import_schema">
-        <depends name="plone-content"/>
     </genericsetup:importStep>
 
     <genericsetup:upgradeStep
