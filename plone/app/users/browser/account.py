@@ -203,7 +203,6 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         if action.form.widgets.errors:
             self.status = self.formErrorsMessage
             return
-
         if self.applyChanges(data):
             IStatusMessage(self.request).addStatusMessage(
                 self.successMessage, type='info')

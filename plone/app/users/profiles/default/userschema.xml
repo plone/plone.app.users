@@ -24,7 +24,7 @@
           a company setting, where your office is located.
       </description>
       <required>False</required>
-      <title i18n:translate="label_biography">Location</title>
+      <title i18n:translate="label_location">Location</title>
     </field>
     <field name="portrait"
            type="plone.namedfile.field.NamedBlobImage"
