@@ -11,6 +11,24 @@ CHANGES
 2.2.2 (2015-06-05)
 ------------------
 
+- Implement ttw editable schemas
+  [ebrehault, kiorky]
+
+- Added upgrade step to move past Plone to user editable member schema.
+  [ianderso]
+
+- Split personal information schema into required and ttw editable schemas
+  [ianderso, ljb, stevem]
+
+- Updated tests to reflect current status of the product.
+  [stevem]
+
+- Added ttw editable schema for personal information.
+  [ianderso, ljb, stevem]
+
+- Removed ext_editor and visible_ids preferences.
+  [davisagli]
+
 - Import ConfigurationChangedEvent from Products.CMFPlone instead of from
   plone.app.controlpanel (which will be removed in Plone 5).
   [timo]

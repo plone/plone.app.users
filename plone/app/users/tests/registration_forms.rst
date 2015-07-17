@@ -68,7 +68,9 @@ Testing the flexible user registration
     Ensure that fields are being validated
     >>> browser.getControl('Register').click()
     >>> browser.contents
-    '...There were errors...User Name...Required input is missing...E-mail...Required input is missing...'
+    '...There were errors...User Name...Required input is missing...'
+    >>> browser.contents
+    '...There were errors...E-mail...Required input is missing...'
 
     We have to provide a valid email address
     >>> browser.open('http://nohost/plone/@@register')
@@ -77,8 +79,8 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...There were errors...Invalid email address...'
-
-    Fill out the form.
+    
+    Fill out the form. 
     >>> browser.getControl('User Name').value = 'user1'
     >>> browser.getControl('E-mail').value = 'user1@example.com'
     >>> browser.getControl('Register').click()

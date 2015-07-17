@@ -3,19 +3,24 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.RegistrationTool import EmailAddressInvalid
 from Products.CMFPlone import PloneMessageFactory as _
-from ZTUtils import make_query
-from plone.autoform import directives as form
-from plone.formwidget.namedfile.widget import NamedImageWidget
-from plone.namedfile.field import NamedBlobImage
-from plone.namedfile.interfaces import INamedImageField
 from zope import schema
+from zope.component import getUtility
+from zope.interface import Interface, implements, implementer
+from ZTUtils import make_query
+from plone.formwidget.namedfile.widget import NamedImageWidget
+from plone.namedfile.interfaces import INamedImageField
+from plone.schemaeditor.fields import FieldFactory
+from plone.schemaeditor.interfaces import IFieldFactory
 from z3c.form.interfaces import IFieldWidget
 from z3c.form.interfaces import IFormLayer
 from z3c.form.widget import FieldWidget
 from zope.component import adapter
-from zope.component import getUtility
-from zope.interface import Interface
-from zope.interface import implementer
+
+from plone.schema.email import Email
+
+SCHEMA_ANNOTATION = "plone.app.users.schema"
+# must match the browser view name !
+SCHEMATA_KEY = "member-fields"
 
 
 def checkEmailAddress(value):
@@ -30,55 +35,55 @@ def checkEmailAddress(value):
     return True
 
 
+class ProtectedTextLine(schema.TextLine):
+    """ TextLine field which cannot be edited via shema editor
+    """
+    pass
+
+
+class ProtectedEmail(Email):
+    """ Email field which cannot be edited via shema editor
+    """
+    pass
+
+
+class NotEditableFieldFactory(FieldFactory):
+    implements(IFieldFactory)
+
+    title = _(u'(protected)')
+
+    def protected(self, field):
+        return True
+
+
+FullnameFieldFactory = NotEditableFieldFactory(
+    ProtectedTextLine,
+    _(u'label_full_name', default=u'Full Name'),
+)
+
+EmailFieldFactory = NotEditableFieldFactory(
+    ProtectedTextLine,
+    _(u'label_email', default=u'E-mail'),
+)
+
+
 class IUserDataSchema(Interface):
     """
     """
 
-    fullname = schema.TextLine(
+    fullname = ProtectedTextLine(
         title=_(u'label_full_name', default=u'Full Name'),
         description=_(u'help_full_name_creation',
                       default=u"Enter full name, e.g. John Smith."),
         required=False)
 
-    email = schema.ASCIILine(
+    email = ProtectedEmail(
         title=_(u'label_email', default=u'E-mail'),
-        description=u'',
+        description=u'We will use this address if you need to recover your '
+                    u'password',
         required=True,
-        constraint=checkEmailAddress)
-
-    home_page = schema.TextLine(
-        title=_(u'label_homepage', default=u'Home page'),
-        description=_(u'help_homepage',
-                      default=u"The URL for your external home page, "
-                      "if you have one."),
-        required=False)
-
-    description = schema.Text(
-        title=_(u'label_biography', default=u'Biography'),
-        description=_(u'help_biography',
-                      default=u"A short overview of who you are and what you "
-                      "do. Will be displayed on your author page, linked "
-                      "from the items you create."),
-        required=False)
-
-    location = schema.TextLine(
-        title=_(u'label_location', default=u'Location'),
-        description=_(u'help_location',
-                      default=u"Your location - either city and "
-                      "country - or in a company setting, where "
-                      "your office is located."),
-        required=False)
-
-    portrait = NamedBlobImage(
-        title=_(u'label_portrait', default=u'Portrait'),
-        description=_(
-            u'help_portrait',
-            default=u'To add or change the portrait: click the "Browse" '
-                    u'button; select a picture of yourself. Recommended '
-                    u'image size is 75 pixels wide by 100 pixels tall.'
-        ),
-        required=False)
-    form.widget(portrait='plone.app.users.schema.PortraitFieldWidget')
+        constraint=checkEmailAddress,
+    )
 
 
 class IRegisterSchema(Interface):
@@ -177,3 +182,23 @@ class IRegistrationSettingsSchema(Interface):
         value_type=schema.Choice(
             vocabulary='plone.app.users.user_registration_fields'),
     )
+
+
+class IUserDataSchemaProvider(Interface):
+    """
+    """
+
+    def getSchema():
+        """
+        Return base user schema + TTW Fields
+        """
+
+
+class IRegisterSchemaProvider(Interface):
+    """
+    """
+
+    def getSchema():
+        """
+        Return base register schema + TTW Fields
+        """
