@@ -173,7 +173,7 @@ Submit form with the same set of fields:
     ...     'form.buttons.save=Save',
     ...     '_authenticator=' + getAuth()])
     >>> browser.open('http://nohost/plone/@@member-registration', data)
-    >>> 'No changes made.' in browser.contents
+    >>> 'Changes saved.' in browser.contents
     True
 
 # Check register form with portrait field.
