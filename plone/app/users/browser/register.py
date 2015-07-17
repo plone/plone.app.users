@@ -60,10 +60,9 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
 
-    @property
-    def schema(self):
-        schema = getUtility(IRegisterSchemaProvider).getSchema()
-        return schema
+    def __init__(self, *args, **kwargs):
+        super(BaseRegistrationForm, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IRegisterSchemaProvider).getSchema()
 
     def _get_security_settings(self):
         """Return security settings from the registry."""

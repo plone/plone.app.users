@@ -18,10 +18,9 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
     """One does not simply set portrait, email might be used to login with.
     """
 
-    @property
-    def schema(self):
-        schema = getUtility(IUserDataSchemaProvider).getSchema()
-        return schema
+    def __init__(self, *args, **kwargs):
+        super(UserDataPanelAdapter, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
 
     def get_email(self):
         return self._getProperty('email')
@@ -47,10 +46,9 @@ class UserDataPanel(AccountPanelForm):
     form_name = _(u'User Data Form')
     enableCSRFProtection = True
 
-    @property
-    def schema(self):
-        schema = getUtility(IUserDataSchemaProvider).getSchema()
-        return schema
+    def __init__(self, *args, **kwargs):
+        super(UserDataPanel, self).__init__(*args, **kwargs)
+        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
 
     def updateFields(self):
         """Fields are dynamic in this form
