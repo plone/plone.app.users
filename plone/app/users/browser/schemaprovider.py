@@ -48,8 +48,6 @@ class UserDataSchemaProvider(BaseMemberSchemaProvider):
     implements(IUserDataSchemaProvider)
     baseSchema = IUserDataSchema
 
-    @volatile.cache(lambda *args, **kw: "%s-%s" % (model_key(), args),
-                    lambda *args: CACHE_CONTAINER)
     def getSchema(self):
         schema = super(UserDataSchemaProvider, self).getSchema()
         # as schema is a generated supermodel,
@@ -57,8 +55,6 @@ class UserDataSchemaProvider(BaseMemberSchemaProvider):
         provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)
         return schema
 
-    @volatile.cache(lambda *args, **kw: "%s-%s" % (model_key(), args),
-                    lambda *args: CACHE_CONTAINER)
     def getCopyOfSchema(self):
         schema = self.getSchema()
         copy = copy_schema(schema, filter_serializable=True)
@@ -72,8 +68,6 @@ class RegisterSchemaProvider(BaseMemberSchemaProvider):
     implements(IRegisterSchemaProvider)
     baseSchema = ICombinedRegisterSchema
 
-    @volatile.cache(lambda *args, **kw: "%s-%s" % (model_key(), args),
-                    lambda *args: CACHE_CONTAINER)
     def getSchema(self):
         schema = super(RegisterSchemaProvider, self).getSchema()
         # as schema is a generated supermodel,
