@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.3 (unreleased)
+2.3 (2015-07-18)
 ----------------
 
 - Implement ttw editable schemas
