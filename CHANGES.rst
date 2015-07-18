@@ -1,8 +1,8 @@
 CHANGES
 =======
 
-2.2.3 (unreleased)
-------------------
+2.3 (unreleased)
+----------------
 
 - Implement ttw editable schemas
   [ebrehault, kiorky]
