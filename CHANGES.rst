@@ -4,13 +4,6 @@ CHANGES
 2.2.3 (unreleased)
 ------------------
 
-- Made save buttons "blue"
-  [agitator]
-
-
-2.2.2 (2015-06-05)
-------------------
-
 - Implement ttw editable schemas
   [ebrehault, kiorky]
 
@@ -28,6 +21,13 @@ CHANGES
 
 - Removed ext_editor and visible_ids preferences.
   [davisagli]
+
+- Made save buttons "blue"
+  [agitator]
+
+
+2.2.2 (2015-06-05)
+------------------
 
 - Import ConfigurationChangedEvent from Products.CMFPlone instead of from
   plone.app.controlpanel (which will be removed in Plone 5).
