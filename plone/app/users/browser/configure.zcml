@@ -99,12 +99,6 @@
       factory=".passwordpanel.PasswordPanelAdapter"
       />
 
-    <utility provides="plone.app.users.schema.IUserDataSchemaProvider"
-             factory="plone.app.users.browser.schemaprovider.UserDataSchemaProvider"/>
-
-    <utility provides="plone.app.users.schema.IRegisterSchemaProvider"
-             factory="plone.app.users.browser.schemaprovider.RegisterSchemaProvider"/>
-
     <subscriber
         for="plone.app.users.browser.schemaeditor.IMemberSchemaContext
              plone.schemaeditor.interfaces.ISchemaModifiedEvent"

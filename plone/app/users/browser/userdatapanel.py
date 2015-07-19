@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from zope.component import getUtility
+from zope.component import provideAdapter
 from zope.interface import Interface
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import set_own_login_name
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -11,16 +13,17 @@ from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.autoform.interfaces import OMITTED_KEY
 from plone.registry.interfaces import IRegistry
 
-from ..schema import IUserDataSchemaProvider, IUserDataSchema
+from ..schema import IUserDataSchema
+from .schemaeditor import getFromBaseSchema
 
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
     """One does not simply set portrait, email might be used to login with.
     """
 
-    def __init__(self, *args, **kwargs):
-        super(UserDataPanelAdapter, self).__init__(*args, **kwargs)
-        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
+    @property
+    def schema(self):
+        return getUserDataSchema()
 
     def get_email(self):
         return self._getProperty('email')
@@ -46,9 +49,10 @@ class UserDataPanel(AccountPanelForm):
     form_name = _(u'User Data Form')
     enableCSRFProtection = True
 
-    def __init__(self, *args, **kwargs):
-        super(UserDataPanel, self).__init__(*args, **kwargs)
-        self.schema = getUtility(IUserDataSchemaProvider).getSchema()
+    @property
+    def schema(self):
+        schema = getUserDataSchema()
+        return schema
 
     def updateFields(self):
         """Fields are dynamic in this form
@@ -96,6 +100,14 @@ class UserDataPanel(AccountPanelForm):
     def __call__(self):
         self.request.set('disable_border', 1)
         return super(UserDataPanel, self).__call__()
+
+
+def getUserDataSchema():
+    schema = getFromBaseSchema(IUserDataSchema)
+    # as schema is a generated supermodel,
+    # needed adapters can only be registered at run time
+    provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)
+    return schema
 
 
 class UserDataConfiglet(UserDataPanel):
