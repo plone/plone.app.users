@@ -88,11 +88,7 @@
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       factory=".personalpreferences.PersonalPreferencesPanelAdapter"
       />
-    <adapter
-      provides="..schema.IUserDataSchema"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      factory=".userdatapanel.UserDataPanelAdapter"
-      />
+
     <adapter
       provides=".passwordpanel.IPasswordSchema"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
