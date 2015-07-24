@@ -6,7 +6,6 @@ from Products.CMFPlone.interfaces import IPloneSiteRoot
 
 from .userdatapanel import UserDataPanelAdapter
 from .account import AccountPanelSchemaAdapter
-from .schemaeditor import copy_schema
 
 from .schemaeditor import SCHEMATA_KEY, get_ttw_edited_schema
 from plone.app.users.schema import (
@@ -54,14 +53,6 @@ class UserDataSchemaProvider(BaseMemberSchemaProvider):
         # as schema is a generated supermodel,
         # needed adapters can only be registered at run time
         provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), self._schema)
-
-    def getCopyOfSchema(self):
-        schema = self.getSchema()
-        copy = copy_schema(schema, filter_serializable=True)
-        # as schema is a generated supermodel,
-        # needed adapters can only be registered at run time
-        provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), copy)
-        return copy
 
 
 class RegisterSchemaProvider(BaseMemberSchemaProvider):

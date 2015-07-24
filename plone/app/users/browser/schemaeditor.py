@@ -91,28 +91,13 @@ class SchemaListingPage(FormWrapper):
     index = ViewPageTemplateFile('schema_layout.pt')
 
 
-def copy_schema(schema, filter_serializable=False):
-    fields = {}
-    for item in schema:
-        if (filter_serializable and not is_serialisable_field(schema[item])):
-            continue
-        fields[item] = schema[item]
-    oschema = SchemaClass(SCHEMATA_KEY, attrs=fields)
-    # copy base tagged values
-    for i in schema.getTaggedValueTags():
-        oschema.setTaggedValue(
-            item, schema.queryTaggedValue(i))
-    finalizeSchemas(oschema)
-    return oschema
-
-
 class MemberSchemaContext(SchemaContext):
     implements(IMemberSchemaContext)
 
     label = _(u"Edit Member Form Fields")
 
     def __init__(self, context, request):
-        schema = getUtility(IUserDataSchemaProvider).getCopyOfSchema()
+        schema = getUtility(IUserDataSchemaProvider).getSchema()
         self.fieldsWhichCannotBeDeleted = ['fullname', 'email']
         self.showSaveDefaults = False
         self.enableFieldsets = False
