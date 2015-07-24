@@ -38,6 +38,11 @@ MESSAGE_EMAIL_IN_USE = \
                u"name. Please choose another."))
 
 
+def isDefaultPortrait(value, portal):
+    default_portrait_value = getattr(portal, default_portrait, None)
+    return aq_inner(value) == aq_inner(default_portrait_value)
+
+
 class AccountPanelSchemaAdapter(object):
     """Data manager that gets and sets any property mentioned
        in the schema to the property sheet
@@ -94,22 +99,26 @@ class AccountPanelSchemaAdapter(object):
 
         return self._setProperty(name, value)
 
+    @property
+    def portal(self):
+        return getToolByName(self.context, 'portal_url').getPortalObject()
+
     def get_portrait(self):
         """If user has default portrait, return none"""
-        portal = getToolByName(self.context, 'portal_url').getPortalObject()
         mt = getToolByName(self.context, 'portal_membership')
         value = mt.getPersonalPortrait(self.context.getId())
-        if aq_inner(value) == aq_inner(getattr(portal,
-                                               default_portrait,
-                                               None)):
+        if isDefaultPortrait(value, self.portal):
             return None
         return NamedBlobImage(value.data, contentType=value.content_type,
                               filename=getattr(value, 'filename', None))
 
     def set_portrait(self, value):
         mt = getToolByName(self.context, 'portal_membership')
+        member_id = self.context.getId()
         if value is None:
-            mt.deletePersonalPortrait(str(self.context.getId()))
+            previous = mt.getPersonalPortrait(member_id)
+            if not isDefaultPortrait(previous, self.portal):
+                mt.deletePersonalPortrait(str(member_id))
         else:
             portrait_file = value.open()
             portrait_file.filename = value.filename
