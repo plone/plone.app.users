@@ -22,12 +22,12 @@ from plone.z3cform.layout import FormWrapper
 
 from plone.app.users.schema import (
     IUserDataSchemaProvider,
+    IRegisterSchemaProvider,
     SCHEMA_ANNOTATION,
     SCHEMATA_KEY,
 )
 
 
-CACHE_CONTAINER = {}
 USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
 USERS_PREFIX = 'users'
 SPLITTER = '_//_'
@@ -131,7 +131,6 @@ def updateSchema(object, event):
 
 
 def applySchema(snew_schema):
-    CACHE_CONTAINER.clear()
     site = getSite()
 
     # get the old schema (currently stored in the annotation)
@@ -181,6 +180,10 @@ def applySchema(snew_schema):
             if field_type == '__portrait__':
                 continue
             pm._delProperty(field_id)
+
+    # re-initialize schema providers
+    getUtility(IUserDataSchemaProvider).initialize()
+    getUtility(IRegisterSchemaProvider).initialize()
 
 
 def model_key(*a, **kw):
