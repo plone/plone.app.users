@@ -4,7 +4,9 @@ CHANGES
 2.3.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Remove extra spaces in userschema.xml messages to avoid i18n extraction
+  warnings.
+  [vincentfretin]
 
 
 2.3 (2015-07-18)
