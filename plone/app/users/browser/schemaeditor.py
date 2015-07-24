@@ -332,7 +332,7 @@ def cache_key(fun, *args, **kw):
     return "%s-%s" % (model_key(), args)
 
 
-@volatile.cache(cache_key, cache_storage)
+# @volatile.cache(cache_key, cache_storage)
 def getFromBaseSchema(baseSchema):
     attrs = copySchemaAttrs(baseSchema)
     ttwschema = get_ttw_edited_schema()
