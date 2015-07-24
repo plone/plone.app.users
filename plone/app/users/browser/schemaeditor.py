@@ -3,13 +3,11 @@ import re
 import logging
 import hashlib
 
-from zope.component import provideAdapter
 from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import Interface, implements
 
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
@@ -93,31 +91,6 @@ class SchemaListingPage(FormWrapper):
     index = ViewPageTemplateFile('schema_layout.pt')
 
 
-def copy_schema(schema, filter_serializable=False):
-    fields = {}
-    for item in schema:
-        if (filter_serializable and not is_serialisable_field(schema[item])):
-            continue
-        fields[item] = schema[item]
-    oschema = SchemaClass(SCHEMATA_KEY, attrs=fields)
-    # copy base tagged values
-    for i in schema.getTaggedValueTags():
-        oschema.setTaggedValue(
-            item, schema.queryTaggedValue(i))
-    finalizeSchemas(oschema)
-    return oschema
-
-
-def getCopyOfUserDataSchema():
-    schema = getFromBaseSchema(IUserDataSchema)
-    copy = copy_schema(schema, filter_serializable=True)
-    # as schema is a generated supermodel,
-    # needed adapters can only be registered at run time
-    from .userdatapanel import UserDataPanelAdapter
-    provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), copy)
-    return copy
-
-
 class MemberSchemaContext(SchemaContext):
     implements(IMemberSchemaContext)
 
@@ -129,7 +102,7 @@ class MemberSchemaContext(SchemaContext):
         self.enableFieldsets = False
         self.allowedFields = ALLOWED_FIELDS
 
-        schema = getCopyOfUserDataSchema()
+        schema = getFromBaseSchema(IUserDataSchema)
         super(MemberSchemaContext, self).__init__(
             schema,
             request,
