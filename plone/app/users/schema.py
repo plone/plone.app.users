@@ -184,21 +184,6 @@ class IRegistrationSettingsSchema(Interface):
     )
 
 
-class IUserDataSchemaProvider(Interface):
-    """
-    """
+class IUserSchemaProvider(Interface):
 
-    def getSchema():
-        """
-        Return base user schema + TTW Fields
-        """
-
-
-class IRegisterSchemaProvider(Interface):
-    """
-    """
-
-    def getSchema():
-        """
-        Return base register schema + TTW Fields
-        """
+    pass

@@ -1,8 +1,8 @@
+import copy
 import re
 import logging
 import hashlib
 
-from zope.component import getUtility
 from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import Interface, implements
@@ -11,6 +11,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
+# from plone.memoize import volatile
 from plone.schemaeditor.browser.schema.traversal import SchemaContext
 from plone.schemaeditor.browser.schema.listing import SchemaListing
 from plone.supermodel.model import Model, finalizeSchemas, SchemaClass
@@ -20,12 +21,12 @@ from plone.supermodel.utils import ns
 from plone.supermodel import loadString
 from plone.z3cform.layout import FormWrapper
 
-from plone.app.users.schema import (
-    IUserDataSchemaProvider,
+from ..schema import (
+    IUserDataSchema,
+    IRegisterSchema,
     SCHEMA_ANNOTATION,
     SCHEMATA_KEY,
 )
-
 
 CACHE_CONTAINER = {}
 USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
@@ -91,32 +92,18 @@ class SchemaListingPage(FormWrapper):
     index = ViewPageTemplateFile('schema_layout.pt')
 
 
-def copy_schema(schema, filter_serializable=False):
-    fields = {}
-    for item in schema:
-        if (filter_serializable and not is_serialisable_field(schema[item])):
-            continue
-        fields[item] = schema[item]
-    oschema = SchemaClass(SCHEMATA_KEY, attrs=fields)
-    # copy base tagged values
-    for i in schema.getTaggedValueTags():
-        oschema.setTaggedValue(
-            item, schema.queryTaggedValue(i))
-    finalizeSchemas(oschema)
-    return oschema
-
-
 class MemberSchemaContext(SchemaContext):
     implements(IMemberSchemaContext)
 
     label = _(u"Edit Member Form Fields")
 
     def __init__(self, context, request):
-        schema = getUtility(IUserDataSchemaProvider).getCopyOfSchema()
         self.fieldsWhichCannotBeDeleted = ['fullname', 'email']
         self.showSaveDefaults = False
         self.enableFieldsets = False
         self.allowedFields = ALLOWED_FIELDS
+
+        schema = getFromBaseSchema(IUserDataSchema)
         super(MemberSchemaContext, self).__init__(
             schema,
             request,
@@ -277,8 +264,7 @@ def is_serialisable_field(field):
 def serialize_ttw_schema(schema=None):
     if not schema:
         schema = get_ttw_edited_schema()
-    bschema = getUtility(IUserDataSchemaProvider).baseSchema
-    bfields = [a for a in bschema]
+    bfields = [a for a in IUserDataSchema]
     attrs = {}
     for name in schema:
         f = schema[name]
@@ -310,3 +296,44 @@ def set_schema(string, site=None):
         site = getSite()
     annotations = IAnnotations(site)
     annotations[SCHEMA_ANNOTATION] = string
+
+
+def cache_storage(fun, *args, **kwargs):
+    return CACHE_CONTAINER
+
+
+def cache_key(fun, *args, **kw):
+    return "%s-%s" % (model_key(), args)
+
+
+# @volatile.cache(cache_key, cache_storage)
+def getFromBaseSchema(baseSchema, form_name=None):
+    attrs = copySchemaAttrs(baseSchema, form_name)
+    ttwschema = get_ttw_edited_schema()
+    if ttwschema:
+        attrs.update(copySchemaAttrs(ttwschema, form_name))
+    schema = SchemaClass(SCHEMATA_KEY,
+                         bases=(baseSchema,),
+                         attrs=attrs)
+    finalizeSchemas(schema)
+    return schema
+
+
+def copySchemaAttrs(schema, form_name):
+    return dict([
+        (a, copy.deepcopy(schema[a]))
+        for a in schema
+        if field_in_form(schema[a], form_name)
+    ])
+
+
+default_fields = IUserDataSchema.names() + IRegisterSchema.names()
+
+
+def field_in_form(field, form_name=None):
+    if form_name is None:
+        return True
+    if field.__name__ in default_fields:
+        return True
+    forms_selection = getattr(field, 'forms_selection', [])
+    return form_name in forms_selection

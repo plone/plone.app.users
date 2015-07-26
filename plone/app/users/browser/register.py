@@ -4,6 +4,7 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -23,6 +24,7 @@ from zope.component import (
     getUtility,
     queryUtility,
     getAdapter,
+    provideAdapter,
     getMultiAdapter)
 from zope.interface import Interface
 from zope.schema import getFieldNames
@@ -30,7 +32,6 @@ import logging
 
 from ..schema import (
     IRegisterSchema,
-    IRegisterSchemaProvider,
     IAddUserSchema,
     ICombinedRegisterSchema,
     IUserDataSchema)
@@ -38,14 +39,25 @@ from ..utils import (
     notifyWidgetActionExecutionError,
     uuid_userid_generator,
 )
-
 from .account import AccountPanelSchemaAdapter
+from .schemaeditor import getFromBaseSchema
 
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.interfaces import IUserIdGenerator
 
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
+
+
+def getRegisterSchema():
+    schema = getFromBaseSchema(
+        ICombinedRegisterSchema,
+        form_name=u'On Registration'
+    )
+    # as schema is a generated supermodel,
+    # needed adapters can only be registered at run time
+    provideAdapter(AccountPanelSchemaAdapter, (IPloneSiteRoot,), schema)
+    return schema
 
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
@@ -60,9 +72,9 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
 
-    def __init__(self, *args, **kwargs):
-        super(BaseRegistrationForm, self).__init__(*args, **kwargs)
-        self.schema = getUtility(IRegisterSchemaProvider).getSchema()
+    @property
+    def schema(self):
+        return getRegisterSchema()
 
     def _get_security_settings(self):
         """Return security settings from the registry."""
@@ -81,23 +93,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         """
         settings = self._get_security_settings()
         use_email_as_login = settings.use_email_as_login
-
-        # Filter schema for registration
-        omitted = []
-        default_fields = IUserDataSchema.names() + IRegisterSchema.names()
-        for name in self.schema:
-            # we always preserve default fields
-            if name in default_fields:
-                omit = False
-            else:
-                forms_selection = getattr(
-                    self.schema[name], 'forms_selection', [])
-                if u'On Registration' in forms_selection:
-                    omit = False
-                else:
-                    omit = True
-            omitted.append((Interface, name, omit))
-        self.schema.setTaggedValue(OMITTED_KEY, omitted)
 
         # Finally, let autoform process the schema and any FormExtenders do
         # their thing

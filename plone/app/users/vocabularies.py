@@ -5,14 +5,14 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import normalizeString
 from Products.CMFPlone.utils import safe_unicode
 from zope.interface import implements
-from zope.component import getUtility
 from zope.schema import getFieldNames
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema.vocabulary import SimpleTerm
 from zope.site.hooks import getSite
 
-from .schema import IRegisterSchemaProvider
+from browser.schemaeditor import getFromBaseSchema
+from .schema import ICombinedRegisterSchema
 
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
@@ -49,8 +49,7 @@ class UserRegistrationFieldsVocabulary(object):
 
     def __call__(self, context):
         # default list of Registration Form fields
-        util = getUtility(IRegisterSchemaProvider)
-        schema = util.getSchema()
+        schema = getFromBaseSchema(ICombinedRegisterSchema)
         values = getFieldNames(schema)
 
         # make sure required minimum number of fields is present

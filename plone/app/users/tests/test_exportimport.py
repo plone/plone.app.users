@@ -2,12 +2,11 @@ from Products.CMFCore.utils import getToolByName
 from Products.GenericSetup.tests.common import DummyImportContext
 from Products.GenericSetup.tests.common import DummyExportContext
 from plone.app.testing.bbb import PloneTestCase
-from plone.app.users.schema import IUserDataSchemaProvider
+from plone.app.users.browser.userdatapanel import getUserDataSchema
 from plone.app.users.setuphandlers import import_schema, export_schema
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.namedfile.field import NamedBlobImage
 from zope import schema
-from zope.component import getUtility
 
 
 class TestImport(PloneTestCase):
@@ -103,7 +102,7 @@ class TestImport(PloneTestCase):
         import_schema(context)
 
     def test_import(self):
-        user_schema = getUtility(IUserDataSchemaProvider).getSchema()
+        user_schema = getUserDataSchema()
         pm = getToolByName(self.portal, "portal_memberdata")
         member_properties = pm.propertyIds()
 
@@ -162,7 +161,6 @@ class TestImport(PloneTestCase):
         self.assertTrue(isinstance(user_schema['vegetarian'], schema.Bool))
         self.assertIn("vegetarian", member_properties)
         self.assertEqual(pm.getPropertyType('vegetarian'), 'boolean')
-
 
     def test_export(self):
         context = DummyExportContext(self.portal)
