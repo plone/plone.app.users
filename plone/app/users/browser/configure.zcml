@@ -100,10 +100,10 @@
       />
 
     <utility provides="plone.app.users.schema.IUserDataSchemaProvider"
-             factory="plone.app.users.browser.schemaprovider.UserDataSchemaProvider"/>
+             component="plone.app.users.browser.userDataSchemaProvider"/>
 
     <utility provides="plone.app.users.schema.IRegisterSchemaProvider"
-             factory="plone.app.users.browser.schemaprovider.RegisterSchemaProvider"/>
+             component="plone.app.users.browser.registerSchemaProvider"/>
 
     <subscriber
         for="plone.app.users.browser.schemaeditor.IMemberSchemaContext

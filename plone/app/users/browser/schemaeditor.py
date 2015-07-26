@@ -22,12 +22,12 @@ from plone.z3cform.layout import FormWrapper
 
 from plone.app.users.schema import (
     IUserDataSchemaProvider,
+    IRegisterSchemaProvider,
     SCHEMA_ANNOTATION,
     SCHEMATA_KEY,
 )
 
 
-CACHE_CONTAINER = {}
 USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
 USERS_PREFIX = 'users'
 SPLITTER = '_//_'
@@ -91,28 +91,13 @@ class SchemaListingPage(FormWrapper):
     index = ViewPageTemplateFile('schema_layout.pt')
 
 
-def copy_schema(schema, filter_serializable=False):
-    fields = {}
-    for item in schema:
-        if (filter_serializable and not is_serialisable_field(schema[item])):
-            continue
-        fields[item] = schema[item]
-    oschema = SchemaClass(SCHEMATA_KEY, attrs=fields)
-    # copy base tagged values
-    for i in schema.getTaggedValueTags():
-        oschema.setTaggedValue(
-            item, schema.queryTaggedValue(i))
-    finalizeSchemas(oschema)
-    return oschema
-
-
 class MemberSchemaContext(SchemaContext):
     implements(IMemberSchemaContext)
 
     label = _(u"Edit Member Form Fields")
 
     def __init__(self, context, request):
-        schema = getUtility(IUserDataSchemaProvider).getCopyOfSchema()
+        schema = getUtility(IUserDataSchemaProvider).getSchema()
         self.fieldsWhichCannotBeDeleted = ['fullname', 'email']
         self.showSaveDefaults = False
         self.enableFieldsets = False
@@ -131,7 +116,6 @@ def updateSchema(object, event):
 
 
 def applySchema(snew_schema):
-    CACHE_CONTAINER.clear()
     site = getSite()
 
     # get the old schema (currently stored in the annotation)
@@ -181,6 +165,10 @@ def applySchema(snew_schema):
             if field_type == '__portrait__':
                 continue
             pm._delProperty(field_id)
+
+    # re-initialize schema providers
+    getUtility(IUserDataSchemaProvider).initialize()
+    getUtility(IRegisterSchemaProvider).initialize()
 
 
 def model_key(*a, **kw):

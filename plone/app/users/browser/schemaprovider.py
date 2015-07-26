@@ -1,19 +1,13 @@
 import copy
 from zope.interface import implements
 from zope.component import provideAdapter
-from plone.memoize import volatile
 from plone.supermodel.model import finalizeSchemas, SchemaClass
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 
 from .userdatapanel import UserDataPanelAdapter
 from .account import AccountPanelSchemaAdapter
-from .schemaeditor import copy_schema
 
-from .schemaeditor import (
-    SCHEMATA_KEY,
-    get_ttw_edited_schema,
-    model_key,
-    CACHE_CONTAINER)
+from .schemaeditor import SCHEMATA_KEY, get_ttw_edited_schema
 from plone.app.users.schema import (
     IUserDataSchema,
     ICombinedRegisterSchema,
@@ -25,9 +19,15 @@ class BaseMemberSchemaProvider(object):
     """Base mixin class for members schema providers
     """
 
-    @volatile.cache(lambda *args, **kw: "%s-%s" % (model_key(), args),
-                    lambda *args: CACHE_CONTAINER)
+    def __init__(self):
+        self._schema = None
+
     def getSchema(self):
+        if not self._schema:
+            self.initialize()
+        return self._schema
+
+    def loadSchema(self):
         """
         """
         def copySchemaAttrs(schema):
@@ -48,29 +48,20 @@ class UserDataSchemaProvider(BaseMemberSchemaProvider):
     implements(IUserDataSchemaProvider)
     baseSchema = IUserDataSchema
 
-    def getSchema(self):
-        schema = super(UserDataSchemaProvider, self).getSchema()
+    def initialize(self):
+        self._schema = self.loadSchema()
         # as schema is a generated supermodel,
         # needed adapters can only be registered at run time
-        provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)
-        return schema
-
-    def getCopyOfSchema(self):
-        schema = self.getSchema()
-        copy = copy_schema(schema, filter_serializable=True)
-        # as schema is a generated supermodel,
-        # needed adapters can only be registered at run time
-        provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), copy)
-        return copy
+        provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), self._schema)
 
 
 class RegisterSchemaProvider(BaseMemberSchemaProvider):
     implements(IRegisterSchemaProvider)
     baseSchema = ICombinedRegisterSchema
 
-    def getSchema(self):
-        schema = super(RegisterSchemaProvider, self).getSchema()
+    def initialize(self):
+        self._schema = self.loadSchema()
         # as schema is a generated supermodel,
         # needed adapters can only be registered at run time
-        provideAdapter(AccountPanelSchemaAdapter, (IPloneSiteRoot,), schema)
-        return schema
+        provideAdapter(
+            AccountPanelSchemaAdapter, (IPloneSiteRoot,), self._schema)

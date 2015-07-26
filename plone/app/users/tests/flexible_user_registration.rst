@@ -157,9 +157,6 @@ Log in again
     >>> browser.getControl('Login Name').value = 'admin'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Log in').click()
-
-<<<<<<< HEADrol panel form.
-
     >>> browser.open('http://nohost/plone/@@member-registration')
     >>> 'Registration settings' in browser.contents
     True
@@ -175,6 +172,11 @@ Submit form with the same set of fields:
     >>> browser.open('http://nohost/plone/@@member-registration', data)
     >>> 'Changes saved.' in browser.contents
     True
+
+Tear down
+
+    >>> browser.open('http://nohost/plone/member-fields')
+    >>> browser.getLink(url='http://nohost/plone/member-fields/favorite_cms/@@delete').click()
 
 # Check register form with portrait field.
 #
