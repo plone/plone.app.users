@@ -50,7 +50,10 @@ RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 
 def getRegisterSchema():
-    schema = getFromBaseSchema(ICombinedRegisterSchema)
+    schema = getFromBaseSchema(
+        ICombinedRegisterSchema,
+        form_name=u'On Registration'
+    )
     # as schema is a generated supermodel,
     # needed adapters can only be registered at run time
     provideAdapter(AccountPanelSchemaAdapter, (IPloneSiteRoot,), schema)
@@ -90,23 +93,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         """
         settings = self._get_security_settings()
         use_email_as_login = settings.use_email_as_login
-
-        # Filter schema for registration
-        omitted = []
-        default_fields = IUserDataSchema.names() + IRegisterSchema.names()
-        for name in self.schema:
-            # we always preserve default fields
-            if name in default_fields:
-                omit = False
-            else:
-                forms_selection = getattr(
-                    self.schema[name], 'forms_selection', [])
-                if u'On Registration' in forms_selection:
-                    omit = False
-                else:
-                    omit = True
-            omitted.append((Interface, name, omit))
-        self.schema.setTaggedValue(OMITTED_KEY, omitted)
 
         # Finally, let autoform process the schema and any FormExtenders do
         # their thing

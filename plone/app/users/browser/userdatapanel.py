@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from zope.component import getUtility
 from zope.component import provideAdapter
-from zope.interface import Interface
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
@@ -10,7 +9,6 @@ from Products.CMFPlone.utils import set_own_login_name
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from plone.autoform.interfaces import OMITTED_KEY
 from plone.registry.interfaces import IRegistry
 
 from ..schema import IUserDataSchema
@@ -54,31 +52,6 @@ class UserDataPanel(AccountPanelForm):
         schema = getUserDataSchema()
         return schema
 
-    def updateFields(self):
-        """Fields are dynamic in this form
-        """
-
-        # Filter schema for user profile
-        omitted = []
-        default_fields = IUserDataSchema.names()
-        for name in self.schema:
-            # we always preserve default fields
-            if name in default_fields:
-                omit = False
-            else:
-                forms_selection = getattr(
-                    self.schema[name], 'forms_selection', [])
-                if u'In User Profile' in forms_selection:
-                    omit = False
-                else:
-                    omit = True
-            omitted.append((Interface, name, omit))
-        self.schema.setTaggedValue(OMITTED_KEY, omitted)
-
-        # Finally, let autoform process the schema and any FormExtenders do
-        # their thing
-        super(AccountPanelForm, self).updateFields()
-
     @property
     def description(self):
         userid = self.request.form.get('userid')
@@ -103,7 +76,10 @@ class UserDataPanel(AccountPanelForm):
 
 
 def getUserDataSchema():
-    schema = getFromBaseSchema(IUserDataSchema)
+    schema = getFromBaseSchema(
+        IUserDataSchema,
+        form_name=u'In User Profile'
+    )
     # as schema is a generated supermodel,
     # needed adapters can only be registered at run time
     provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)

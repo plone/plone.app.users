@@ -11,7 +11,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
-from plone.memoize import volatile
+# from plone.memoize import volatile
 from plone.schemaeditor.browser.schema.traversal import SchemaContext
 from plone.schemaeditor.browser.schema.listing import SchemaListing
 from plone.supermodel.model import Model, finalizeSchemas, SchemaClass
@@ -23,6 +23,7 @@ from plone.z3cform.layout import FormWrapper
 
 from ..schema import (
     IUserDataSchema,
+    IRegisterSchema,
     SCHEMA_ANNOTATION,
     SCHEMATA_KEY,
 )
@@ -306,11 +307,11 @@ def cache_key(fun, *args, **kw):
 
 
 # @volatile.cache(cache_key, cache_storage)
-def getFromBaseSchema(baseSchema):
-    attrs = copySchemaAttrs(baseSchema)
+def getFromBaseSchema(baseSchema, form_name=None):
+    attrs = copySchemaAttrs(baseSchema, form_name)
     ttwschema = get_ttw_edited_schema()
     if ttwschema:
-        attrs.update(copySchemaAttrs(ttwschema))
+        attrs.update(copySchemaAttrs(ttwschema, form_name))
     schema = SchemaClass(SCHEMATA_KEY,
                          bases=(baseSchema,),
                          attrs=attrs)
@@ -318,5 +319,21 @@ def getFromBaseSchema(baseSchema):
     return schema
 
 
-def copySchemaAttrs(schema):
-    return dict([(a, copy.deepcopy(schema[a])) for a in schema])
+def copySchemaAttrs(schema, form_name):
+    return dict([
+        (a, copy.deepcopy(schema[a]))
+        for a in schema
+        if field_in_form(schema[a], form_name)
+    ])
+
+
+default_fields = IUserDataSchema.names() + IRegisterSchema.names()
+
+
+def field_in_form(field, form_name=None):
+    if form_name is None:
+        return True
+    if field.__name__ in default_fields:
+        return True
+    forms_selection = getattr(field, 'forms_selection', [])
+    return form_name in forms_selection

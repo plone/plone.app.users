@@ -11,7 +11,8 @@ from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema.vocabulary import SimpleTerm
 from zope.site.hooks import getSite
 
-from browser.register import getRegisterSchema
+from browser.schemaeditor import getFromBaseSchema
+from .schema import ICombinedRegisterSchema
 
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
@@ -48,7 +49,7 @@ class UserRegistrationFieldsVocabulary(object):
 
     def __call__(self, context):
         # default list of Registration Form fields
-        schema = getRegisterSchema()
+        schema = getFromBaseSchema(ICombinedRegisterSchema)
         values = getFieldNames(schema)
 
         # make sure required minimum number of fields is present
