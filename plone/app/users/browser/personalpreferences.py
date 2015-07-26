@@ -9,13 +9,13 @@ from zope.interface import Interface
 from zope.schema import Choice
 
 try:
-    import plone.app.event  # nopep8
+    import plone.app.event  # noqa
     HAS_PAE = True
 except ImportError:
     HAS_PAE = False
 
 try:
-    import plone.app.vocabularies.datetimerelated  # nopep8
+    import plone.app.vocabularies.datetimerelated  # noqa
     HAS_DT_VOCAB = True
 except ImportError:
     HAS_DT_VOCAB = False
@@ -98,6 +98,10 @@ class PersonalPreferencesPanel(AccountPanelForm):
             u"vocabulary-available-editor-novalue",
             u"Use site default"
         )
+
+    def __call__(self):
+        self.request.set('disable_border', 1)
+        return super(PersonalPreferencesPanel, self).__call__()
 
 
 class PersonalPreferencesConfiglet(PersonalPreferencesPanel):

@@ -93,6 +93,10 @@ class UserDataPanel(AccountPanelForm):
                 default='Change your personal information'
             )
 
+    def __call__(self):
+        self.request.set('disable_border', 1)
+        return super(UserDataPanel, self).__call__()
+
 
 class UserDataConfiglet(UserDataPanel):
     """Control panel version of the userdata panel"""
