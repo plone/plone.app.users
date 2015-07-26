@@ -4,6 +4,9 @@ CHANGES
 2.3.1 (unreleased)
 ------------------
 
+- Disable toolbar buttons on personal preferences
+  [vangheem]
+
 - Remove extra spaces in userschema.xml messages to avoid i18n extraction
   warnings.
   [vincentfretin]
