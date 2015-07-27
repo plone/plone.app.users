@@ -179,7 +179,6 @@ def model_key(*a, **kw):
     return (psite, key)
 
 
-# @ram.cache(model_key)
 def get_ttw_edited_schema():
     data = get_schema()
     if data:
@@ -298,15 +297,6 @@ def set_schema(string, site=None):
     annotations[SCHEMA_ANNOTATION] = string
 
 
-def cache_storage(fun, *args, **kwargs):
-    return CACHE_CONTAINER
-
-
-def cache_key(fun, *args, **kw):
-    return "%s-%s" % (model_key(), args)
-
-
-# @volatile.cache(cache_key, cache_storage)
 def getFromBaseSchema(baseSchema, form_name=None):
     attrs = copySchemaAttrs(baseSchema, form_name)
     ttwschema = get_ttw_edited_schema()

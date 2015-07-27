@@ -12,7 +12,7 @@ from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.registry.interfaces import IRegistry
 
 from ..schema import IUserDataSchema
-from .schemaeditor import getFromBaseSchema
+from .schemaeditor import getFromBaseSchema, CACHE_CONTAINER
 
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
@@ -76,14 +76,16 @@ class UserDataPanel(AccountPanelForm):
 
 
 def getUserDataSchema():
-    schema = getFromBaseSchema(
-        IUserDataSchema,
-        form_name=u'In User Profile'
-    )
-    # as schema is a generated supermodel,
-    # needed adapters can only be registered at run time
-    provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)
-    return schema
+    if 'userdata' not in CACHE_CONTAINER:
+        CACHE_CONTAINER['userdata'] = getFromBaseSchema(
+            IUserDataSchema,
+            form_name=u'In User Profile'
+        )
+        # as schema is a generated supermodel,
+        # needed adapters can only be registered at run time
+        provideAdapter(
+            UserDataPanelAdapter, (IPloneSiteRoot,), CACHE_CONTAINER['userdata'])
+    return CACHE_CONTAINER['userdata']
 
 
 class UserDataConfiglet(UserDataPanel):

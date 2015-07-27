@@ -11,6 +11,9 @@ CHANGES
   warnings.
   [vincentfretin]
 
+- Provide a new schema adapter only when the TTW schema is changed
+  [ebrehault]
+
 
 2.3 (2015-07-18)
 ----------------
