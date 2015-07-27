@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from zope.component import getUtility
 from zope.component import provideAdapter
+from zope.component.hooks import getSite
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
@@ -76,13 +77,16 @@ class UserDataPanel(AccountPanelForm):
 
 
 def getUserDataSchema():
-    schema = getFromBaseSchema(
-        IUserDataSchema,
-        form_name=u'In User Profile'
-    )
-    # as schema is a generated supermodel,
-    # needed adapters can only be registered at run time
-    provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)
+    portal = getSite()
+    schema = getattr(portal, '_v_userdata_schema', None)
+    if schema is None:
+        portal._v_userdata_schema = schema = getFromBaseSchema(
+            IUserDataSchema,
+            form_name=u'In User Profile'
+        )
+        # as schema is a generated supermodel,
+        # needed adapters can only be registered at run time
+        provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)
     return schema
 
 

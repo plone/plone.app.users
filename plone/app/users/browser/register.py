@@ -26,15 +26,15 @@ from zope.component import (
     getAdapter,
     provideAdapter,
     getMultiAdapter)
-from zope.interface import Interface
+from zope.component.hooks import getSite
 from zope.schema import getFieldNames
 import logging
 
 from ..schema import (
     IRegisterSchema,
     IAddUserSchema,
-    ICombinedRegisterSchema,
-    IUserDataSchema)
+    ICombinedRegisterSchema
+)
 from ..utils import (
     notifyWidgetActionExecutionError,
     uuid_userid_generator,
@@ -50,13 +50,16 @@ RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 
 def getRegisterSchema():
-    schema = getFromBaseSchema(
-        ICombinedRegisterSchema,
-        form_name=u'On Registration'
-    )
-    # as schema is a generated supermodel,
-    # needed adapters can only be registered at run time
-    provideAdapter(AccountPanelSchemaAdapter, (IPloneSiteRoot,), schema)
+    portal = getSite()
+    schema = getattr(portal, '_v_register_schema', None)
+    if schema is None:
+        portal._v_register_schema = schema = getFromBaseSchema(
+            ICombinedRegisterSchema,
+            form_name=u'On Registration'
+        )
+        # as schema is a generated supermodel,
+        # needed adapters can only be registered at run time
+        provideAdapter(AccountPanelSchemaAdapter, (IPloneSiteRoot,), schema)
     return schema
 
 
