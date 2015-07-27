@@ -64,10 +64,6 @@ Check default form fields are not editable::
 Let's add favorite_cms to the list of registration form fields.
 (Setting this by hand since add/remove widget doesn't work properly without javascript)
 
-Getting rid of the 'mail_me' user registration field:
-
-    >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['fullname', 'username', 'email', 'password'])
-    >>> transaction.commit()
 
 We should be able to add a field::
 
@@ -158,64 +154,51 @@ Log in again
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Log in').click()
 
-<<<<<<< HEADrol panel form.
+Add portrait to registration form
 
-    >>> browser.open('http://nohost/plone/@@member-registration')
-    >>> 'Registration settings' in browser.contents
+    >>> browser.open('http://nohost/plone/@@member-fields')
+    >>> browser.getLink(url='http://nohost/plone/member-fields/portrait').click()
+    >>> chkboxes = browser.getControl(name='form.widgets.IUserFormSelection.forms:list')
+    >>> chkboxes.controls[0].selected = True
+    >>> chkboxes.controls[1].selected = True
+    >>> browser.getControl(label='Save').click()
+
+Check register form with portrait field.
+
+    >>> browser.open('http://nohost/plone/logout')
+    >>> browser.open('http://nohost/plone/@@register')
+    >>> 'Registration form' in browser.contents
     True
-
-Submit form with the same set of fields:
-
-    >>> data = '&'.join([
-    ...     'form.widgets.user_registration_fields:list=username',
-    ...     'form.widgets.user_registration_fields:list=email',
-    ...     'form.actions.save=Save',
-    ...     'form.buttons.save=Save',
-    ...     '_authenticator=' + getAuth()])
-    >>> browser.open('http://nohost/plone/@@member-registration', data)
-    >>> 'Changes saved.' in browser.contents
+    >>> 'Portrait' in browser.contents
     True
+    >>> from pkg_resources import resource_stream
+    >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
+    >>> browser.getControl(name='form.widgets.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
+    >>> browser.getControl('User Name').value = 'testuser'
+    >>> browser.getControl('E-mail').value = 'test@example.com'
+    >>> browser.getControl('Password').value = 'testpassword'
+    >>> browser.getControl('Confirm password').value = 'testpassword'
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...Welcome!...You have been registered...'
 
-# Check register form with portrait field.
-#
-#     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', ['portrait'# ])
-#     >>> browser.open('http://nohost/plone/@@register')
-#     >>> 'Registration form' in browser.contents
-#     True
-#     >>> 'Portrait' in browser.contents
-#     True
-#     >>> from pkg_resources import resource_stream
-#     >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
-#     >>> browser.getControl(name='form.widgets.portrait').add_file(portrait_file, "image/jpg", "onepixel.# jpg")
-#     >>> browser.getControl('User Name').value = 'testuser'
-#     >>> browser.getControl('E-mail').value = 'test@example.com'
-#     >>> browser.getControl('Password').value = 'testpassword'
-#     >>> browser.getControl('Confirm password').value = 'testpassword'
-#     >>> browser.getControl('Register').click()
-#     >>> browser.contents
-#     '...Welcome!...You have been registered...'
-#
-# Check more validation errors. Test Confirmation Password and invalid
-# email, and reserved user name validations:
-#
-#     >>> portal.portal_properties.site_properties._updateProperty('user_registration_fields', [# 'username', 'email', 'password', 'mail_me'])
-#     >>> browser.open('http://nohost/plone/@@register')
-#     >>> 'Registration form' in browser.contents
-#     True
-#     >>> browser.getControl('User Name').value = 'plone'
-#     >>> browser.getControl('E-mail').value = 'invalid email'
-#     >>> browser.getControl('Password').value = 'testpassword'
-#     >>> browser.getControl('Confirm password').value = 'testpassword2'
-#     >>> browser.getControl('Register').click()
-#     >>> browser.contents
-#     '...There were errors...'
-#     >>> browser.contents
-#     '...This username is reserved...Invalid email address...Passwords do not match...'
-#
-# Now also check username which is already in use:
-#
-#     >>> browser.getControl('User Name').value = 'admin'
-#     >>> browser.getControl('Register').click()
-#     >>> browser.contents
-#     '...The login name you selected is already in use...'
-#
+Check more validation errors. Test Confirmation Password and invalid
+email, and reserved user name validations:
+    >>> browser.open('http://nohost/plone/@@register')
+    >>> 'Registration form' in browser.contents
+    True
+    >>> browser.getControl('User Name').value = 'plone'
+    >>> browser.getControl('E-mail').value = 'invalid email'
+    >>> browser.getControl('Password').value = 'testpassword'
+    >>> browser.getControl('Confirm password').value = 'testpassword2'
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...There were errors...'
+    >>> browser.contents
+    '...Invalid email address...This username is reserved...Passwords do not match...'
+
+Now also check username which is already in use:
+    >>> browser.getControl('User Name').value = 'admin'
+    >>> browser.getControl('Register').click()
+    >>> browser.contents
+    '...The login name you selected is already in use...'
