@@ -11,7 +11,6 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from ZODB.POSException import ConflictError
 from plone.autoform.form import AutoExtensibleForm
-from plone.autoform.interfaces import OMITTED_KEY
 from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
 from z3c.form import button
@@ -26,21 +25,19 @@ from zope.component import (
     getAdapter,
     provideAdapter,
     getMultiAdapter)
-from zope.interface import Interface
 from zope.schema import getFieldNames
 import logging
 
 from ..schema import (
     IRegisterSchema,
     IAddUserSchema,
-    ICombinedRegisterSchema,
-    IUserDataSchema)
+    ICombinedRegisterSchema)
 from ..utils import (
     notifyWidgetActionExecutionError,
     uuid_userid_generator,
 )
 from .account import AccountPanelSchemaAdapter
-from .schemaeditor import getFromBaseSchema
+from .schemaeditor import getFromBaseSchema, CACHE_CONTAINER
 
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.interfaces import IUserIdGenerator
@@ -50,14 +47,18 @@ RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 
 def getRegisterSchema():
-    schema = getFromBaseSchema(
-        ICombinedRegisterSchema,
-        form_name=u'On Registration'
-    )
-    # as schema is a generated supermodel,
-    # needed adapters can only be registered at run time
-    provideAdapter(AccountPanelSchemaAdapter, (IPloneSiteRoot,), schema)
-    return schema
+    if 'register' not in CACHE_CONTAINER:
+        CACHE_CONTAINER['register'] = getFromBaseSchema(
+            ICombinedRegisterSchema,
+            form_name=u'On Registration'
+        )
+        # as schema is a generated supermodel,
+        # needed adapters can only be registered at run time
+        provideAdapter(
+            AccountPanelSchemaAdapter,
+            (IPloneSiteRoot,),
+            CACHE_CONTAINER['register'])
+    return CACHE_CONTAINER['register']
 
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
