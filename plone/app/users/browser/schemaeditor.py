@@ -1,13 +1,14 @@
 import copy
 import re
 import logging
-import hashlib
 
+from zope.component import getGlobalSiteManager
 from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
 from zope.interface import Interface, implements
 
 from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 
@@ -28,7 +29,6 @@ from ..schema import (
     SCHEMATA_KEY,
 )
 
-CACHE_CONTAINER = {}
 USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
 USERS_PREFIX = 'users'
 SPLITTER = '_//_'
@@ -118,7 +118,6 @@ def updateSchema(object, event):
 
 
 def applySchema(snew_schema):
-    CACHE_CONTAINER.clear()
     site = getSite()
 
     # get the old schema (currently stored in the annotation)
@@ -169,17 +168,9 @@ def applySchema(snew_schema):
                 continue
             pm._delProperty(field_id)
 
-
-def model_key(*a, **kw):
-    site = getSite()
-    psite = '/'.join(site.getPhysicalPath())
-    annotations = IAnnotations(site)
-    schema = annotations.get(SCHEMA_ANNOTATION, '')
-    key = hashlib.sha224(schema).hexdigest()
-    return (psite, key)
+    invalidateSchemasInCache(site)
 
 
-# @ram.cache(model_key)
 def get_ttw_edited_schema():
     data = get_schema()
     if data:
@@ -298,15 +289,34 @@ def set_schema(string, site=None):
     annotations[SCHEMA_ANNOTATION] = string
 
 
-def cache_storage(fun, *args, **kwargs):
-    return CACHE_CONTAINER
+def invalidateSchemasInCache(portal):
+
+    gsm = getGlobalSiteManager()
+
+    schema = getattr(portal, '_v_register_schema', None)
+    if schema is not None:
+        from .account import AccountPanelSchemaAdapter
+        gsm.unregisterAdapter(
+            AccountPanelSchemaAdapter,
+            (IPloneSiteRoot,),
+            schema
+        )
+    portal._v_register_schema = None
+
+    schema = getattr(portal, '_v_userdata_schema', None)
+    if schema is not None:
+        from .userdatapanel import UserDataPanelAdapter
+        gsm.unregisterAdapter(
+            UserDataPanelAdapter,
+            (IPloneSiteRoot,),
+            schema
+        )
+    portal._v_userdata_schema = None
+
+    # kill volatile attributes in all threads
+    portal._p_changed = 1
 
 
-def cache_key(fun, *args, **kw):
-    return "%s-%s" % (model_key(), args)
-
-
-# @volatile.cache(cache_key, cache_storage)
 def getFromBaseSchema(baseSchema, form_name=None):
     attrs = copySchemaAttrs(baseSchema, form_name)
     ttwschema = get_ttw_edited_schema()
