@@ -42,7 +42,7 @@
         title="Upgrade to TTW Schema editing for user information form"
         description=""
         source="*"
-        destination="*"
+        destination="1"
         handler=".upgrades.upgrade_to_ttw"
         profile="plone.app.users:default" />
 
