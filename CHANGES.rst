@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.3.1 (unreleased)
+2.3.1 (2015-08-22)
 ------------------
 
 - Gave upgrade step destination 1. With the previous destination '*'
