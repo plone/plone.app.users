@@ -4,6 +4,16 @@ CHANGES
 2.3.1 (unreleased)
 ------------------
 
+- Gave upgrade step destination 1. With the previous destination '*'
+  the upgrade step was always offered.
+  [vanrees]
+
+- Cache schemas in volatile attributes on portal.
+  [gotcha]
+
+- Package cleanup.
+  [gotcha]
+
 - Disable toolbar buttons on personal preferences
   [vangheem]
 
