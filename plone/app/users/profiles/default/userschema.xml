@@ -8,7 +8,7 @@
           The URL for your external home page, if you have one.
       </description>
       <required>False</required>
-      <title i18n:translate="label_homepage">Home Page</title>
+      <title i18n:translate="label_homepage">Home page</title>
     </field>
     <field name="description" type="zope.schema.Text">
       <description i18n:translate="help_biography">
