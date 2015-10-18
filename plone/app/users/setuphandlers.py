@@ -12,16 +12,7 @@ def import_schema(context):
     data = context.readDataFile(FILE)
     if data is None:
         return
-    model = ttw.load_ttw_schema(data)
-    smodel = ttw.serialize_ttw_schema(model)
-
-    # put imported field in user profile form by default
-    ttw.set_schema(smodel)
-    schema = ttw.get_ttw_edited_schema()
-    for field_id in schema:
-        schema[field_id].forms_selection = [u'In User Profile', ]
-    new_model = ttw.serialize_ttw_schema(schema)
-    ttw.applySchema(new_model)
+    ttw.applySchema(data)
 
     logger.info('Imported schema')
 
