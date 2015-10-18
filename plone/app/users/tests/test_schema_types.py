@@ -47,22 +47,22 @@ class TestSchema(PloneTestCase):
       <required>False</required>
       <title i18n:translate="label_portrait">Portrait</title>
     </field>
-    <field name="birthdate" type="zope.schema.Date">
+    <field name="birthdate" type="zope.schema.Date" users:forms="In User Profile">
       <description/>
       <required>False</required>
       <title>Birthdate</title>
     </field>
-    <field name="another_date" type="zope.schema.Datetime">
+    <field name="another_date" type="zope.schema.Datetime" users:forms="In User Profile">
       <description/>
       <required>False</required>
       <title>Another date</title>
     </field>
-    <field name="age" type="zope.schema.Int">
+    <field name="age" type="zope.schema.Int" users:forms="In User Profile">
       <description/>
       <required>False</required>
       <title>Age</title>
     </field>
-    <field name="department" type="zope.schema.Choice">
+    <field name="department" type="zope.schema.Choice" users:forms="In User Profile">
       <description/>
       <required>False</required>
       <title>Department</title>
@@ -72,7 +72,7 @@ class TestSchema(PloneTestCase):
         <element>HR</element>
       </values>
     </field>
-    <field name="skills" type="zope.schema.Set">
+    <field name="skills" type="zope.schema.Set" users:forms="In User Profile">
       <description/>
       <required>False</required>
       <title>Skills</title>
@@ -83,12 +83,12 @@ class TestSchema(PloneTestCase):
         </values>
       </value_type>
     </field>
-    <field name="pi" type="zope.schema.Float">
+    <field name="pi" type="zope.schema.Float" users:forms="In User Profile">
       <description/>
       <required>False</required>
       <title>Pi</title>
     </field>
-    <field name="vegetarian" type="zope.schema.Bool">
+    <field name="vegetarian" type="zope.schema.Bool" users:forms="In User Profile">
       <description/>
       <required>False</required>
       <title>Vegetarian</title>

@@ -4,7 +4,8 @@ CHANGES
 2.3.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Do not force "In User Profile" when importing a schema from a GS profile
+  [ebrehault]
 
 
 2.3.1 (2015-08-22)
