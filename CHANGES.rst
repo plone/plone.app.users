@@ -4,11 +4,15 @@ Changelog
 1.2.2 (unreleased)
 ------------------
 
+Fixes:
+
 - Fixed "Add new user" form when there are too many groups.
   Fixes https://github.com/plone/plone.app.users/issues/33
   [avoinea]
+
 - Fixed @@change-password to accept current password containing non-ascii chars
   [sgeulette]
+
 - Fixed @@change-password to accept new password containing non-ascii chars
   [sgeulette]
 
