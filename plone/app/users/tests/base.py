@@ -11,7 +11,6 @@ from Acquisition import aq_base
 from zope.component import getSiteManager
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
-from Products.CMFCore.utils import getToolByName
 
 # BBB Zope 2.12
 try:
@@ -21,11 +20,11 @@ except ImportError:
 
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from OFS.Cache import Cacheable
-from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin, IPropertiesPlugin
+from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
 from Products.CMFCore.interfaces import ISiteRoot
-from zope.component import getUtility, getAdapter
+from zope.component import getUtility
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
 
 
@@ -82,7 +81,6 @@ class TestCase(FunctionalTestCase):
         if plugin is not None:
             plugins = pas_instance._getOb('plugins')
             plugins.deactivatePlugin(IValidationPlugin, 'test')
-            #plugins.deactivatePlugin(IPropertiesPlugin, 'test')
             pas_instance.manage_delObjects('test')
 
 
