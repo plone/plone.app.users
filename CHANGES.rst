@@ -1,7 +1,20 @@
 Changelog
 =========
 
-1.2.2 (unreleased)
+1.2.3 (unreleased)
+------------------
+
+Fixes:
+
+- Fixed changelog.  1.2.2 was already released in June, but the commit
+  did not make it to github.
+  [maurits]
+
+- Added more tests in password.txt.
+  [maurits]
+
+
+1.2.2 (2015-06-03)
 ------------------
 
 Fixes:
