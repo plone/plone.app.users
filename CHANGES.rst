@@ -4,7 +4,9 @@ CHANGES
 2.3.2 (unreleased)
 ------------------
 
-- Do not force "In User Profile" when importing a schema from a GS profile
+Fixes:
+
+- Do not force "In User Profile" when importing a schema from a GS profile.
   [ebrehault]
 
 
