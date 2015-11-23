@@ -37,7 +37,7 @@ depend on a mail server properly set-up:
     True
 
 Check that the site admin has a link to the configlet in the control panel.
-    >>> browser.open('http://nohost/plone/plone_control_panel')
+    >>> browser.open('http://nohost/plone/@@overview-controlpanel')
     >>> browser.getLink('Users and Groups').click()
     >>> 'Member fields' in browser.contents
     True
