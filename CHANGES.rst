@@ -10,7 +10,8 @@ New:
 
 Fixes:
 
-- *add item here*
+- Update Site Setup link in all control panels (fixes https://github.com/plone/Products.CMFPlone/issues/1255)
+  [davilima6]
 
 
 2.3.2 (2015-10-28)

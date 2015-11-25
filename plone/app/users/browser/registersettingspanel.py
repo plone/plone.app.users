@@ -9,7 +9,6 @@ from z3c.form import button
 from z3c.form import field
 from z3c.form import form
 from z3c.form.browser.orderedselect import OrderedSelectFieldWidget
-from zope.component import getMultiAdapter
 
 
 class RegistrationControlPanel(form.Form):
@@ -64,7 +63,7 @@ class RegistrationControlPanel(form.Form):
     #         (self.context, self.request),
     #         name='absolute_url'
     #     )()
-    #     self.request.response.redirect(url + '/plone_control_panel')
+    #     self.request.response.redirect(url + '/@@overview-controlpanel')
 
     def updateActions(self):
         super(RegistrationControlPanel, self).updateActions()
