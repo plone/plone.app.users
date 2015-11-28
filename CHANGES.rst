@@ -4,13 +4,10 @@ CHANGES
 2.3.4 (unreleased)
 ------------------
 
-New:
-
-- *add item here*
-
 Fixes:
 
-- *add item here*
+- Rerelease to fix problem on one of our testing servers.
+  [maurits]
 
 
 2.3.3 (2015-11-28)
