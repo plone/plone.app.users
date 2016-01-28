@@ -10,7 +10,9 @@ New:
 
 Fixes:
 
-- *add item here*
+- Fix bug when registering a user by adding a schema-setter to
+  UserDataPanelAdapter.
+  [pbauer]
 
 
 2.3.4 (2015-11-28)
