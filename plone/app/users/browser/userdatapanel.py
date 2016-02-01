@@ -22,7 +22,17 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
 
     @property
     def schema(self):
-        return getUserDataSchema()
+        # prevent infinite recursion when accessing the schema via bypassing
+        # __getattr__ of self
+        try:
+            return object.__getattribute__(self, '_schema')
+        except AttributeError:
+            object.__setattr__(self, '_schema', getUserDataSchema())
+        return object.__getattribute__(self, '_schema')
+
+    @schema.setter
+    def schema(self, value):
+        self._schema = value
 
     def get_email(self):
         return self._getProperty('email')
