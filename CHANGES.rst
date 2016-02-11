@@ -4,10 +4,6 @@ CHANGES
 2.3.5 (unreleased)
 ------------------
 
-New:
-
-- *add item here*
-
 Fixes:
 
 - Fix bug when registering a user by adding a schema-setter to
