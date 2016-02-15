@@ -1,7 +1,7 @@
-Admin modifies user information thru 'Users and groups' 
----------------------------------------------------------------------
+Admin modifies user information through 'Users and groups'
+----------------------------------------------------------
 
-An admin can modify user information thru the @@user-information form in Users and Groups
+An admin can modify user information through the @@user-information form in Users and Groups
 config page.
 
 So let's login as Plone admin:
@@ -53,8 +53,7 @@ Modifying user data
     >>> location = 'Somewhere'
     >>> self.browser.getControl(name='form.location').value = location
 
-    >>> from pkg_resources import resource_stream
-    >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
+    >>> portrait_file = self.get_test_file('onepixel.jpg')
     >>> self.browser.getControl(name='form.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
 
     >>> self.browser.getControl(name="form.actions.save").click()

@@ -10,7 +10,8 @@ New:
 
 Fixes:
 
-- *add item here*
+- Fixed possible test failure by opening a file in a standard way
+  instead of via pkg_resources.  [maurits]
 
 
 1.2.3 (2015-10-28)

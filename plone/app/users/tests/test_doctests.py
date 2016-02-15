@@ -1,10 +1,11 @@
-import doctest
+from plone.app.users.tests import TestCase
+from Products.PloneTestCase.PloneTestCase import setupPloneSite
+from Testing.ZopeTestCase import FunctionalDocFileSuite
 from unittest import TestSuite
 
-from Testing.ZopeTestCase import FunctionalDocFileSuite
-from Products.PloneTestCase.PloneTestCase import setupPloneSite
+import doctest
+import os
 
-from plone.app.users.tests import TestCase
 
 setupPloneSite()
 
@@ -12,8 +13,11 @@ OPTIONFLAGS = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
 
 
 class DocTestCase(TestCase):
-    # just here to work around a weird error message
-    pass
+    # Just here to work around a weird error message.
+    # And now an extra helper method.
+
+    def get_test_file(self, filename):
+        return open(os.path.join(os.path.dirname(__file__), filename))
 
 
 def test_suite():
