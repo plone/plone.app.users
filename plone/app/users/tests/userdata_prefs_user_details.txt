@@ -56,7 +56,14 @@ Modifying user data
     >>> portrait_file = self.get_test_file('onepixel.jpg')
     >>> self.browser.getControl(name='form.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
 
-    >>> self.browser.getControl(name="form.actions.save").click()
+    >>> from urllib2 import HTTPError
+    >>> try:
+    ...     self.browser.getControl(name="form.actions.save").click()
+    ... except HTTPError as e:
+    ...     # get the error just thrown
+    ...     err = self.portal.error_log.getLogEntries()[0]
+    ...     msg = "%s:\n %s" % (e, err['tb_text'])
+    ...     self.fail(msg)
     >>> 'Required input is missing.' in self.browser.contents
     False
     >>> 'No changes made.' in self.browser.contents
