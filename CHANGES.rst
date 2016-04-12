@@ -4,13 +4,11 @@ CHANGES
 2.3.6 (unreleased)
 ------------------
 
-New:
-
-- *add item here*
-
 Fixes:
 
-- *add item here*
+- Ensured partial searching utility for users in 'Search for users' page
+  Fixes https://github.com/plone/Products.CMFPlone/issues/1499
+  [kkhan]
 
 
 2.3.5 (2016-02-11)

@@ -23,22 +23,21 @@ class IMemberSearchSchema(model.Schema):
         title=_(u'label_name', default=u'Name'),
         description=_(
             u'help_search_name',
-            default=u'Find users whose login names contain.'),
+            default=u'Find users whose login name contain'),
         required=False,
     )
     email = schema.TextLine(
         title=_(u'label_email', default=u'E-mail'),
         description=_(
             u'help_search_email',
-            default=u'Find users whose email addresses contain.'),
-        constraint=checkEmailAddress,
+            default=u'Find users whose email address contain'),
         required=False,
     )
     fullname = schema.TextLine(
         title=_(u'label_fullname', default=u'Full Name'),
         description=_(
             u'help_search_fullname',
-            default=u'Return users with full names containing this value.'),
+            default=u'Find users whose full names contain'),
         required=False,
     )
     # disabled: https://dev.plone.org/ticket/13862
