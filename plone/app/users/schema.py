@@ -62,7 +62,7 @@ FullnameFieldFactory = NotEditableFieldFactory(
 )
 
 EmailFieldFactory = NotEditableFieldFactory(
-    ProtectedTextLine,
+    ProtectedEmail,
     _(u'label_email', default=u'E-mail'),
 )
 
