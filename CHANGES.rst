@@ -6,6 +6,12 @@ CHANGES
 
 Fixes:
 
+- Fixed KeyError email on personal preferences form.  This could
+  happen when email is used as login name.  Fixes
+  https://github.com/plone/plone.app.users/issues/56 and
+  https://github.com/plone/Products.CMFPlone/issues/1146
+  [maurits]
+
 - Ensured partial searching utility for users in 'Search for users' page
   Fixes https://github.com/plone/Products.CMFPlone/issues/1499
   [kkhan]

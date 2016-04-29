@@ -206,8 +206,10 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         CheckAuthenticator(self.request)
         data, errors = self.extractData()
 
-        # extra validation for email
-        self.validate_email(action, data)
+        # Extra validation for email, when it is there.  email is not in the
+        # data when you are at the personal-preferences page.
+        if 'email' in data:
+            self.validate_email(action, data)
 
         if action.form.widgets.errors:
             self.status = self.formErrorsMessage
