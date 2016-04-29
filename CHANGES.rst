@@ -10,6 +10,9 @@ Fixes:
   Fixes https://github.com/plone/Products.CMFPlone/issues/1499
   [kkhan]
 
+- Use ProtectedEmail for Email field factory
+  [ebrehault]
+
 
 2.3.5 (2016-02-11)
 ------------------
