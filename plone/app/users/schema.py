@@ -5,7 +5,7 @@ from Products.CMFPlone.RegistrationTool import EmailAddressInvalid
 from Products.CMFPlone import PloneMessageFactory as _
 from zope import schema
 from zope.component import getUtility
-from zope.interface import Interface, implements, implementer
+from zope.interface import Interface, implementer, implementer
 from ZTUtils import make_query
 from plone.formwidget.namedfile.widget import NamedImageWidget
 from plone.namedfile.interfaces import INamedImageField
@@ -47,8 +47,8 @@ class ProtectedEmail(Email):
     pass
 
 
+@implementer(IFieldFactory)
 class NotEditableFieldFactory(FieldFactory):
-    implements(IFieldFactory)
 
     title = _(u'(protected)')
 

@@ -5,7 +5,7 @@ import logging
 from zope.component import getGlobalSiteManager
 from zope.component.hooks import getSite
 from zope.annotation.interfaces import IAnnotations
-from zope.interface import Interface, implements
+from zope.interface import Interface, implementer
 
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
@@ -92,8 +92,8 @@ class SchemaListingPage(FormWrapper):
     index = ViewPageTemplateFile('schema_layout.pt')
 
 
+@implementer(IMemberSchemaContext)
 class MemberSchemaContext(SchemaContext):
-    implements(IMemberSchemaContext)
 
     label = _(u"Edit Member Form Fields")
 
@@ -181,10 +181,10 @@ def get_ttw_edited_schema():
     return ''
 
 
+@implementer(IFieldMetadataHandler)
 class UsersMetadataSchemaExporter(object):
     """Support the security: namespace in model definitions.
     """
-    implements(IFieldMetadataHandler)
     namespace = ns = USERS_NAMESPACE
     prefix = USERS_PREFIX
     if_attrs = (
