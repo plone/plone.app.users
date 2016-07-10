@@ -1,4 +1,4 @@
-from zope.interface import Interface, implements
+from zope.interface import Interface, implementer
 from zope import schema
 
 from zope.component import adapts
@@ -57,8 +57,8 @@ class UserFormSelectionAdapter(object):
     forms = property(_get_forms, _set_forms)
 
 
+@implementer(IFieldMetadataHandler)
 class UserFormSelectionMetadata(object):
-    implements(IFieldMetadataHandler)
 
     namespace = USERS_NAMESPACE
     prefix = USERS_PREFIX

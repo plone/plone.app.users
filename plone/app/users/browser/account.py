@@ -23,7 +23,7 @@ from zope.cachedescriptors.property import Lazy as lazy_property
 from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.event import notify
-from zope.interface import implements
+from zope.interface import implementer
 
 
 MESSAGE_EMAIL_CANNOT_CHANGE = \
@@ -127,10 +127,9 @@ class AccountPanelSchemaAdapter(object):
     portrait = property(get_portrait, set_portrait)
 
 
+@implementer(IAccountPanelForm)
 class AccountPanelForm(AutoExtensibleForm, form.Form):
     """A simple form to be used as a basis for account panel screens."""
-
-    implements(IAccountPanelForm)
     schema = IAccountPanelForm
     template = ViewPageTemplateFile('account-panel.pt')
     enableCSRFProtection = True

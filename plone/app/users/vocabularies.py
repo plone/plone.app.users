@@ -4,7 +4,7 @@ from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import normalizeString
 from Products.CMFPlone.utils import safe_unicode
-from zope.interface import implements
+from zope.interface import implementer
 from zope.schema import getFieldNames
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleVocabulary
@@ -19,6 +19,7 @@ from .schema import ICombinedRegisterSchema
 JOIN_CONST = ['username', 'password', 'email', 'mail_me']
 
 
+@implementer(IVocabularyFactory)
 class UserRegistrationFieldsVocabulary(object):
     """Returns list of fields available for registration form.
 
@@ -45,7 +46,6 @@ class UserRegistrationFieldsVocabulary(object):
       ('email', 'email', 'email')
 
     """
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         # default list of Registration Form fields
@@ -62,6 +62,7 @@ class UserRegistrationFieldsVocabulary(object):
 UserRegistrationFieldsVocabularyFactory = UserRegistrationFieldsVocabulary()
 
 
+@implementer(IVocabularyFactory)
 class GroupIdVocabulary(object):
     """
     Return vocab of groups to add new user to.
@@ -92,7 +93,6 @@ class GroupIdVocabulary(object):
       [u'Group Title (fancygroup)', u'Reviewers', u'Site Administrators']
 
     """
-    implements(IVocabularyFactory)
 
     def __call__(self, context):
         site = getSite()
