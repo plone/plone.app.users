@@ -25,6 +25,7 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import set_own_login_name, safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
+from zExceptions import NotFound
 
 import cgi
 
@@ -321,6 +322,14 @@ class UserDataPanel(AccountPanelForm):
     def getPortrait(self):
         context = aq_inner(self.context)
         return context.portal_membership.getPersonalPortrait()
+
+    def __call__(self):
+        if self.userid:
+            context = aq_inner(self.context)
+            mt = getToolByName(context, 'portal_membership')
+            if mt.getMemberById(self.userid) is None:
+                raise NotFound('User does not exist.')
+        return super(UserDataPanel, self).__call__()
 
 
 class UserDataConfiglet(UserDataPanel):
