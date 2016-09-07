@@ -15,6 +15,9 @@ from plone.registry.interfaces import IRegistry
 from ..schema import IUserDataSchema
 from .schemaeditor import getFromBaseSchema
 
+import cgi
+
+
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
     """One does not simply set portrait, email might be used to login with.
@@ -72,7 +75,7 @@ class UserDataPanel(AccountPanelForm):
             return _(
                 u'description_personal_information_form_otheruser',
                 default='Change personal information for $name',
-                mapping={'name': userid}
+                mapping={'name': cgi.escape(userid)}
             )
         else:
             # editing my own profile

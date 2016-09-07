@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Don't show unescaped user id in user-information form.
+  This applies PloneHotfix20160830.  [maurits]
 
 
 2.3.7 (2016-08-18)
