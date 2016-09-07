@@ -1,3 +1,4 @@
+from zExceptions import NotFound
 from plone.app.users.browser.userdatapanel import UserDataPanel
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from zope.i18n import translate
@@ -18,6 +19,8 @@ class TestUserDataPanel(unittest.TestCase):
         form = UserDataPanel(portal, request)
         description = translate(form.description, context=request)
         self.assertTrue('admin' in description)
+        # form can be called without raising exception.
+        self.assertTrue(form())
 
     def test_escape_html(self):
         portal = self.layer['portal']
@@ -28,3 +31,4 @@ class TestUserDataPanel(unittest.TestCase):
         form = UserDataPanel(portal, request)
         description = translate(form.description, context=request)
         self.assertTrue('<script>' not in description)
+        self.assertRaises(NotFound, form)

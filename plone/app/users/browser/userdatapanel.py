@@ -11,6 +11,7 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.registry.interfaces import IRegistry
+from zExceptions import NotFound
 
 from ..schema import IUserDataSchema
 from .schemaeditor import getFromBaseSchema
@@ -85,6 +86,11 @@ class UserDataPanel(AccountPanelForm):
             )
 
     def __call__(self):
+        userid = self.request.form.get('userid')
+        if userid:
+            mt = getToolByName(self.context, 'portal_membership')
+            if mt.getMemberById(userid) is None:
+                raise NotFound('User does not exist.')
         self.request.set('disable_border', 1)
         return super(UserDataPanel, self).__call__()
 
