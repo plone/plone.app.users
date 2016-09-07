@@ -26,6 +26,8 @@ from Products.CMFPlone.utils import set_own_login_name, safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 
+import cgi
+
 
 class IPersonalPreferences(Interface):
 
@@ -298,7 +300,7 @@ class UserDataPanel(AccountPanelForm):
             #editing someone else's profile
             return _(u'description_personal_information_form_otheruser',
                      default='Change personal information for $name',
-                     mapping={'name': self.userid})
+                     mapping={'name': cgi.escape(self.userid)})
         else:
             #editing my own profile
             return _(u'description_personal_information_form',
