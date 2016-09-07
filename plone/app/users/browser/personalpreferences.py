@@ -25,6 +25,9 @@ from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import set_own_login_name, safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
+from zExceptions import NotFound
+
+import cgi
 
 
 class IPersonalPreferences(Interface):
@@ -298,7 +301,7 @@ class UserDataPanel(AccountPanelForm):
             #editing someone else's profile
             return _(u'description_personal_information_form_otheruser',
                      default='Change personal information for $name',
-                     mapping={'name': self.userid})
+                     mapping={'name': cgi.escape(self.userid)})
         else:
             #editing my own profile
             return _(u'description_personal_information_form',
@@ -319,6 +322,14 @@ class UserDataPanel(AccountPanelForm):
     def getPortrait(self):
         context = aq_inner(self.context)
         return context.portal_membership.getPersonalPortrait()
+
+    def __call__(self):
+        if self.userid:
+            context = aq_inner(self.context)
+            mt = getToolByName(context, 'portal_membership')
+            if mt.getMemberById(self.userid) is None:
+                raise NotFound('User does not exist.')
+        return super(UserDataPanel, self).__call__()
 
 
 class UserDataConfiglet(UserDataPanel):
