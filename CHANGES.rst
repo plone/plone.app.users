@@ -4,10 +4,6 @@ Changelog
 1.2.5 (unreleased)
 ------------------
 
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Give a 404 when the user-information form is called with a not
