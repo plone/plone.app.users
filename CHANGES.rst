@@ -14,7 +14,11 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Give a 404 when the user-information form is called with a not
+  existing userid.  [maurits]
+
+- Don't show unescaped user id in user-information form.
+  This applies PloneHotfix20160830.  [maurits]
 
 
 2.3.7 (2016-08-18)
