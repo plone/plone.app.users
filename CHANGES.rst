@@ -4,14 +4,6 @@ CHANGES
 2.3.8 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Give a 404 when the user-information form is called with a not
