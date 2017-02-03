@@ -370,7 +370,7 @@ Testing the flexible user registration
 
     Check that we are given instructions on what is a valid password
 
-    >>> print browser.getControl("Password").mech_control.get_labels()[0]._text
+    >>> print browser.getControl("Password").labels[0]
     Password...Enter your new password. Must not be dead. Minimum 5 characters...
 
     We'll enter an invalid password
