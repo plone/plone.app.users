@@ -14,7 +14,7 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fix tests to avoid using testbrowser internals. [davisagli]
 
 
 2.3.8 (2016-09-23)

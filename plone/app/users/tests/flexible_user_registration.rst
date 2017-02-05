@@ -50,9 +50,9 @@ Check that the site admin has a link to the configlet in the control panel.
 
 Check default form fields
     >>> form = browser.getForm(action='http://nohost/plone/@@member-fields')
-    >>> form_control_ids = [c.id for c in form.mech_form.controls if c.id and c.id.startswith('form-widgets')]
+    >>> form_control_ids = [c.name for c in form.controls if c.name.startswith('form.widgets')]
     >>> form_control_ids
-    ['form-widgets-fullname', 'form-widgets-email', 'form-widgets-home_page', 'form-widgets-description', 'form-widgets-location', 'form-widgets-portrait-input']
+    ['form.widgets.fullname', 'form.widgets.email', 'form.widgets.home_page', 'form.widgets.description', 'form.widgets.location', 'form.widgets.portrait']
 
 Check default form fields are not editable::
     >>> 'href="http://nohost/plone/member-fields/fullname"' in browser.contents
