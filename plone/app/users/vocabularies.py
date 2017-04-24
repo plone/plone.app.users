@@ -11,7 +11,7 @@ from zope.schema import getFieldNames
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
-from zope.site.hooks import getSite
+from zope.component.hooks import getSite
 
 
 # Define constants from the Join schema that should be added to the
@@ -70,7 +70,7 @@ class GroupIdVocabulary(object):
 
       >>> from zope.component import queryUtility
       >>> from zope.schema.interfaces import IVocabularyFactory
-      >>> from zope.site.hooks import getSite
+      >>> from zope.component.hooks import getSite
       >>> from Products.CMFCore.utils import getToolByName
 
       >>> groups_tool = getToolByName(getSite(), 'portal_groups')

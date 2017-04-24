@@ -67,7 +67,6 @@ setup(
         'zope.event',
         'zope.interface',
         'zope.schema',
-        'zope.site',
     ],
     entry_points="""
     [z3c.autoinclude.plugin]

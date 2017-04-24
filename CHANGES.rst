@@ -14,6 +14,9 @@ New features:
 
 Bug fixes:
 
+- Remove dependency on ``zope.site``.
+  [thet]
+
 - Code cleanup.
   [thet]
 
