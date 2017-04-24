@@ -1,23 +1,21 @@
 # -*- coding: utf-8 -*-
-from zope.component import getUtility
-from zope.component import provideAdapter
-from zope.component.hooks import getSite
+from plone.app.users.browser.account import AccountPanelForm
+from plone.app.users.browser.account import AccountPanelSchemaAdapter
+from plone.app.users.browser.schemaeditor import getFromBaseSchema
+from plone.app.users.schema import IUserDataSchema
+from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import set_own_login_name
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.app.users.browser.account import AccountPanelForm
-from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from plone.registry.interfaces import IRegistry
 from zExceptions import NotFound
-
-from ..schema import IUserDataSchema
-from .schemaeditor import getFromBaseSchema
+from zope.component import getUtility
+from zope.component import provideAdapter
+from zope.component.hooks import getSite
 
 import cgi
-
 
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):

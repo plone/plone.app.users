@@ -3,79 +3,98 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="plone.app.users">
 
-    <include package="plone.supermodel" />
-    <include package="plone.autoform" />
-    <include package="plone.namedfile" />
-    <include package="plone.schema" />
-    <include package="plone.formwidget.namedfile" />
-    <include package="Products.CMFCore" file="permissions.zcml" />
-    <include package=".browser" />
+  <include package="plone.supermodel" />
+  <include package="plone.autoform" />
+  <include package="plone.namedfile" />
+  <include package="plone.schema" />
+  <include package="plone.formwidget.namedfile" />
+  <include package="Products.CMFCore" file="permissions.zcml" />
+  <include package=".browser" />
 
-    <utility component=".vocabularies.UserRegistrationFieldsVocabularyFactory"
-             name="plone.app.users.user_registration_fields" />
-    <utility provides="zope.schema.interfaces.IVocabularyFactory"
-             component=".vocabularies.GroupIdVocabularyFactory"
-             name="plone.app.users.group_ids"/>
 
-    <genericsetup:registerProfile
-          name='default'
-          title='Import User Data'
-          directory='profiles/default'
-          description='Import default schema'
-          provides='Products.GenericSetup.interfaces.EXTENSION'
-        />
+  <!-- utilities -->
+  <utility
+      name='plone.app.users.forms'
+      factory=".field_extender.UserFormSelectionMetadata"
+      />
 
-    <genericsetup:exportStep
-          name="usersschema"
-          title="Export member custom TTW schema"
-          description="Export member custom TTW schema"
-          handler="plone.app.users.setuphandlers.export_schema">
-    </genericsetup:exportStep>
-    <genericsetup:importStep
-          name="usersschema"
-          title="Import member custom TTW schema"
-          description="Import member custom TTW schema"
-          handler="plone.app.users.setuphandlers.import_schema">
-    </genericsetup:importStep>
+  <utility
+      name="plone.app.users.user_registration_fields"
+      component=".vocabularies.UserRegistrationFieldsVocabularyFactory"
+      />
 
-    <genericsetup:upgradeStep
-        title="Upgrade to TTW Schema editing for user information form"
-        description=""
-        source="*"
-        destination="1"
-        handler=".upgrades.upgrade_to_ttw"
-        profile="plone.app.users:default" />
+  <utility
+      name="plone.app.users.group_ids"
+      provides="zope.schema.interfaces.IVocabularyFactory"
+      component=".vocabularies.GroupIdVocabularyFactory"
+      />
 
-    <adapter
-      factory=".field_extender.UserFormSelectionAdapter"
+  <utility
+      name="plone.app.users.schema.ProtectedTextLine"
+      provides="plone.schemaeditor.interfaces.IFieldFactory"
+      component=".schema.FullnameFieldFactory"
+      />
+
+  <utility
+      name="plone.app.users.schema.ProtectedEmail"
+      provides="plone.schemaeditor.interfaces.IFieldFactory"
+      component=".schema.EmailFieldFactory"
+      />
+
+
+  <!-- adapters -->
+  <adapter
       for="zope.schema.interfaces.IField"
       provides=".field_extender.IUserFormSelection"
+      factory=".field_extender.UserFormSelectionAdapter"
       />
 
-    <utility
-      factory=".field_extender.UserFormSelectionMetadata"
-      name='plone.app.users.forms'
-      />
-
-    <adapter
-      factory=".field_extender.get_user_form_selection"
-      for=".browser.schemaeditor.IMemberSchemaContext
-        zope.schema.interfaces.IField"
-      provides="plone.schemaeditor.interfaces.IFieldEditorExtender"
+  <adapter
       name='plone.app.users.userformselection'
+      for=".browser.schemaeditor.IMemberSchemaContext
+           zope.schema.interfaces.IField"
+      provides="plone.schemaeditor.interfaces.IFieldEditorExtender"
+      factory=".field_extender.get_user_form_selection"
       />
 
-    <adapter
-      factory=".field_extender.get_user_addform_selection"
+  <adapter
+      name='plone.app.users.useraddformselection'
       for=".browser.schemaeditor.IMemberSchemaContext"
       provides="plone.schemaeditor.interfaces.IFieldEditorExtender"
-      name='plone.app.users.useraddformselection'
+      factory=".field_extender.get_user_addform_selection"
       />
 
-    <utility name="plone.app.users.schema.ProtectedTextLine"
-             provides="plone.schemaeditor.interfaces.IFieldFactory"
-             component=".schema.FullnameFieldFactory" />
-    <utility name="plone.app.users.schema.ProtectedEmail"
-             provides="plone.schemaeditor.interfaces.IFieldFactory"
-             component=".schema.EmailFieldFactory" />
+
+  <!-- generic setup -->
+  <genericsetup:registerProfile
+      name='default'
+      title='Import User Data'
+      directory='profiles/default'
+      description='Import default schema'
+      provides='Products.GenericSetup.interfaces.EXTENSION'
+      />
+
+  <genericsetup:exportStep
+      name="usersschema"
+      title="Export member custom TTW schema"
+      description="Export member custom TTW schema"
+      handler="plone.app.users.setuphandlers.export_schema">
+  </genericsetup:exportStep>
+
+  <genericsetup:importStep
+      name="usersschema"
+      title="Import member custom TTW schema"
+      description="Import member custom TTW schema"
+      handler="plone.app.users.setuphandlers.import_schema">
+  </genericsetup:importStep>
+
+  <genericsetup:upgradeStep
+      title="Upgrade to TTW Schema editing for user information form"
+      description=""
+      source="*"
+      destination="1"
+      handler=".upgrades.upgrade_to_ttw"
+      profile="plone.app.users:default"
+      />
+
 </configure>

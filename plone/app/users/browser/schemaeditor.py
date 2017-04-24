@@ -1,33 +1,32 @@
-import copy
-import re
-import logging
-
-from zope.component import getGlobalSiteManager
-from zope.component.hooks import getSite
-from zope.annotation.interfaces import IAnnotations
-from zope.interface import Interface, implementer
-
-from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from Products.CMFCore.utils import getToolByName
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-
-# from plone.memoize import volatile
-from plone.schemaeditor.browser.schema.traversal import SchemaContext
+# -*- coding: utf-8 -*-
+from plone.app.users.schema import IRegisterSchema
+from plone.app.users.schema import IUserDataSchema
+from plone.app.users.schema import SCHEMA_ANNOTATION
+from plone.app.users.schema import SCHEMATA_KEY
 from plone.schemaeditor.browser.schema.listing import SchemaListing
-from plone.supermodel.model import Model, finalizeSchemas, SchemaClass
+from plone.schemaeditor.browser.schema.traversal import SchemaContext
+from plone.supermodel import loadString
+from plone.supermodel.model import finalizeSchemas
+from plone.supermodel.model import Model
+from plone.supermodel.model import SchemaClass
 from plone.supermodel.parser import IFieldMetadataHandler
 from plone.supermodel.serializer import serialize
 from plone.supermodel.utils import ns
-from plone.supermodel import loadString
 from plone.z3cform.layout import FormWrapper
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from zope.annotation.interfaces import IAnnotations
+from zope.component import getGlobalSiteManager
+from zope.component.hooks import getSite
+from zope.interface import implementer
+from zope.interface import Interface
 
-from ..schema import (
-    IUserDataSchema,
-    IRegisterSchema,
-    SCHEMA_ANNOTATION,
-    SCHEMATA_KEY,
-)
+import copy
+import logging
+import re
+
 
 USERS_NAMESPACE = 'http://namespaces.plone.org/supermodel/users'
 USERS_PREFIX = 'users'
@@ -73,7 +72,8 @@ re_flags = re.S | re.U | re.X
 
 
 def log(message,
-        level='info', id='plone.app.users.browser.schemaeditor'):
+        level='info',
+        id='plone.app.users.browser.schemaeditor'):
     logger = logging.getLogger(id)
     getattr(logger, level)(message)
 

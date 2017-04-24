@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-from Products.CMFPlone import PloneMessageFactory as _
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.app.users.schema import checkEmailAddress
 from plone.autoform.form import AutoExtensibleForm
 from plone.supermodel import model
+from Products.CMFPlone import PloneMessageFactory as _
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form import button
 from z3c.form import form
 from zope import schema

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from AccessControl import getSecurityManager
+from browser.schemaeditor import getFromBaseSchema
+from plone.app.users.schema import ICombinedRegisterSchema
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import normalizeString
@@ -7,12 +9,10 @@ from Products.CMFPlone.utils import safe_unicode
 from zope.interface import implementer
 from zope.schema import getFieldNames
 from zope.schema.interfaces import IVocabularyFactory
-from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
 from zope.site.hooks import getSite
 
-from browser.schemaeditor import getFromBaseSchema
-from .schema import ICombinedRegisterSchema
 
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
@@ -58,6 +58,7 @@ class UserRegistrationFieldsVocabulary(object):
                 values.append(val)
 
         return SimpleVocabulary([SimpleTerm(v, v, v) for v in values])
+
 
 UserRegistrationFieldsVocabularyFactory = UserRegistrationFieldsVocabulary()
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.app.users.testing import optionflags
+from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.testing import layered
 
 import doctest

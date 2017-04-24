@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 import logging
-
 import plone.app.users.browser.schemaeditor as ttw
+
 
 logger = logging.getLogger('plone.app.users.setuphandlers')
 

@@ -1,19 +1,19 @@
-from zope.interface import Interface, implementer
-from zope import schema
-
-from zope.component import adapts
-from zope.schema.interfaces import IField
+# -*- coding: utf-8 -*-
+from plone.app.users.browser.schemaeditor import USERS_NAMESPACE
+from plone.app.users.browser.schemaeditor import USERS_PREFIX
+from plone.autoform import directives as form
 from plone.supermodel.interfaces import IFieldMetadataHandler
 from plone.supermodel.utils import ns
-
-from .browser.schemaeditor import USERS_NAMESPACE, USERS_PREFIX
-
-from zope.schema.vocabulary import SimpleVocabulary, SimpleTerm
-
-from plone.autoform import directives as form
-
-
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
+from zope.component import adapts
+from zope.interface import implementer
+from zope.interface import Interface
+from zope.schema.interfaces import IField
+from zope.schema.vocabulary import SimpleTerm
+from zope.schema.vocabulary import SimpleVocabulary
+
+import zope.schema
+
 
 form_vocab = SimpleVocabulary([
     SimpleTerm(value=u'On Registration',
@@ -25,11 +25,11 @@ form_vocab = SimpleVocabulary([
 
 class IUserFormSelection(Interface):
     form.widget(forms=CheckBoxFieldWidget)
-    forms = schema.List(
+    forms = zope.schema.List(
         title=u"Where should this field be shown",
         description=u"Does not apply to username or to email fields",
         required=True,
-        value_type=schema.Choice(vocabulary=form_vocab),
+        value_type=zope.schema.Choice(vocabulary=form_vocab),
     )
 
 

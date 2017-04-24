@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from plone.app.users.tests.base import BaseTestCase
-from Products.CMFCore.utils import getToolByName
 from plone.app.users.utils import uuid_userid_generator
+from Products.CMFCore.utils import getToolByName
 
 import transaction
 
@@ -42,7 +42,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
         self.portal.acl_users._doAddUser(
             'siteadmin', 'secret', ['Site Administrator'], []
         )
-        transaction.commit() 
+        transaction.commit()
         self.browser.addHeader('Authorization', 'Basic siteadmin:secret')
 
     def test_uuid_disabled_email_as_login_disabled(self):

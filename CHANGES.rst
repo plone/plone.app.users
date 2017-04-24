@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Code cleanup.
+  [thet]
 
 
 2.3.8 (2016-09-23)

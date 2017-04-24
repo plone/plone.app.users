@@ -1,6 +1,7 @@
-from zExceptions import NotFound
+# -*- coding: utf-8 -*-
 from plone.app.users.browser.userdatapanel import UserDataPanel
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
+from zExceptions import NotFound
 from zope.i18n import translate
 
 import unittest
