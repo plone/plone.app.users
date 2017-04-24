@@ -16,10 +16,10 @@ from plone.z3cform.layout import FormWrapper
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
+from Products.CMFPlone.utils import get_portal
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getGlobalSiteManager
-from zope.component.hooks import getSite
 from zope.interface import implementer
 from zope.interface import Interface
 
@@ -118,7 +118,7 @@ def updateSchema(object, event):
 
 
 def applySchema(snew_schema):
-    site = getSite()
+    site = get_portal()
 
     # get the old schema (currently stored in the annotation)
     old_schema = get_ttw_edited_schema()
@@ -277,14 +277,14 @@ def load_ttw_schema(string=None):
 
 def get_schema(site=None):
     if site is None:
-        site = getSite()
+        site = get_portal()
     annotations = IAnnotations(site)
     return annotations.get(SCHEMA_ANNOTATION, '')
 
 
 def set_schema(string, site=None):
     if site is None:
-        site = getSite()
+        site = get_portal()
     annotations = IAnnotations(site)
     annotations[SCHEMA_ANNOTATION] = string
 

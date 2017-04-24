@@ -8,12 +8,12 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.interfaces import ISecuritySchema
+from Products.CMFPlone.utils import get_portal
 from Products.CMFPlone.utils import set_own_login_name
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zExceptions import NotFound
 from zope.component import getUtility
 from zope.component import provideAdapter
-from zope.component.hooks import getSite
 
 import cgi
 
@@ -94,7 +94,7 @@ class UserDataPanel(AccountPanelForm):
 
 
 def getUserDataSchema():
-    portal = getSite()
+    portal = get_portal()
     schema = getattr(portal, '_v_userdata_schema', None)
     if schema is None:
         portal._v_userdata_schema = schema = getFromBaseSchema(

@@ -18,6 +18,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.interfaces import ISecuritySchema
+from Products.CMFPlone.utils import get_portal
 from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
@@ -33,7 +34,6 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import provideAdapter
 from zope.component import queryUtility
-from zope.component.hooks import getSite
 from zope.schema import getFieldNames
 
 import logging
@@ -44,7 +44,7 @@ RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 
 def getRegisterSchema():
-    portal = getSite()
+    portal = get_portal()
     schema = getattr(portal, '_v_register_schema', None)
     if schema is None:
         portal._v_register_schema = schema = getFromBaseSchema(
