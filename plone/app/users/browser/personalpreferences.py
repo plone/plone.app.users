@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
+from plone.app.users.browser.account import AccountPanelForm
+from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.utils import getFSVersionTuple
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from plone.app.users.browser.account import AccountPanelForm
-from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from zope.interface import Interface
 from zope.schema import Choice
+
 
 try:
     import plone.app.event  # noqa

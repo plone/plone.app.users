@@ -1,56 +1,50 @@
 # -*- coding: utf-8 -*-
 from AccessControl import getSecurityManager
+from plone.app.users.browser.account import AccountPanelSchemaAdapter
+from plone.app.users.browser.interfaces import ILoginNameGenerator
+from plone.app.users.browser.interfaces import IUserIdGenerator
+from plone.app.users.browser.schemaeditor import getFromBaseSchema
+from plone.app.users.schema import IAddUserSchema
+from plone.app.users.schema import ICombinedRegisterSchema
+from plone.app.users.schema import IRegisterSchema
+from plone.app.users.utils import notifyWidgetActionExecutionError
+from plone.app.users.utils import uuid_userid_generator
+from plone.autoform.form import AutoExtensibleForm
+from plone.protect import CheckAuthenticator
+from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.interfaces import ISecuritySchema
+from Products.CMFPlone.utils import get_portal
 from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
-from ZODB.POSException import ConflictError
-from plone.autoform.form import AutoExtensibleForm
-from plone.autoform.interfaces import OMITTED_KEY
-from plone.protect import CheckAuthenticator
-from plone.registry.interfaces import IRegistry
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
 from z3c.form.interfaces import DISPLAY_MODE
 from zExceptions import Forbidden
-from zope.component import (
-    getUtility,
-    queryUtility,
-    getAdapter,
-    provideAdapter,
-    getMultiAdapter)
-from zope.component.hooks import getSite
+from ZODB.POSException import ConflictError
+from zope.component import getAdapter
+from zope.component import getMultiAdapter
+from zope.component import getUtility
+from zope.component import provideAdapter
+from zope.component import queryUtility
 from zope.schema import getFieldNames
+
 import logging
 
-from ..schema import (
-    IRegisterSchema,
-    IAddUserSchema,
-    ICombinedRegisterSchema
-)
-from ..utils import (
-    notifyWidgetActionExecutionError,
-    uuid_userid_generator,
-)
-from .account import AccountPanelSchemaAdapter
-from .schemaeditor import getFromBaseSchema
-
-from plone.app.users.browser.interfaces import ILoginNameGenerator
-from plone.app.users.browser.interfaces import IUserIdGenerator
 
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 
 def getRegisterSchema():
-    portal = getSite()
+    portal = get_portal()
     schema = getattr(portal, '_v_register_schema', None)
     if schema is None:
         portal._v_register_schema = schema = getFromBaseSchema(
@@ -70,7 +64,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     formErrorsMessage = _('There were errors.')
     ignoreContext = True
     enableCSRFProtection = True
-    schema = ICombinedRegisterSchema
 
     # this attribute indicates if user was successfully registered
     _finishedRegister = False
@@ -302,7 +295,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         # passwords should match
         if 'password' in form_field_names:
-            assert('password_ctl' in form_field_names)
+            assert 'password_ctl' in form_field_names
             # Skip this check if password fields already have an error
             if not ('password' in error_keys or 'password_ctl' in error_keys):
                 password = data.get('password')
@@ -644,10 +637,8 @@ class AddUserForm(BaseRegistrationForm):
             defaultFields['password'].field.required = False
             defaultFields['password_ctl'].field.required = False
             settings = self._get_security_settings()
-            if not settings.enable_user_pwd_choice:
-                defaultFields['mail_me'].field.default = True
-            else:
-                defaultFields['mail_me'].field.default = False
+            defaultFields['mail_me'].field.default =\
+                not settings.enable_user_pwd_choice
 
         # Append the manager-focused fields
         portal_props = getToolByName(self.context, 'portal_properties')

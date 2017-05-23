@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.interfaces import ISiteRoot
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.RegistrationTool import EmailAddressInvalid
-from Products.CMFPlone import PloneMessageFactory as _
-from zope import schema
-from zope.component import getUtility
-from zope.interface import Interface, implementer, implementer
-from ZTUtils import make_query
 from plone.formwidget.namedfile.widget import NamedImageWidget
 from plone.namedfile.interfaces import INamedImageField
+from plone.schema.email import Email
 from plone.schemaeditor.fields import FieldFactory
 from plone.schemaeditor.interfaces import IFieldFactory
+from Products.CMFCore.interfaces import ISiteRoot
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.RegistrationTool import EmailAddressInvalid
 from z3c.form.interfaces import IFieldWidget
 from z3c.form.interfaces import IFormLayer
 from z3c.form.widget import FieldWidget
+from zope import schema
 from zope.component import adapter
+from zope.component import getUtility
+from zope.interface import implementer
+from zope.interface import Interface
+from ZTUtils import make_query
 
-from plone.schema.email import Email
 
 SCHEMA_ANNOTATION = "plone.app.users.schema"
 # must match the browser view name !

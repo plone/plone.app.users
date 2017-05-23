@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 from AccessControl import getSecurityManager
+from browser.schemaeditor import getFromBaseSchema
+from plone.app.users.schema import ICombinedRegisterSchema
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import get_portal
 from Products.CMFPlone.utils import normalizeString
 from Products.CMFPlone.utils import safe_unicode
 from zope.interface import implementer
 from zope.schema import getFieldNames
 from zope.schema.interfaces import IVocabularyFactory
-from zope.schema.vocabulary import SimpleVocabulary
 from zope.schema.vocabulary import SimpleTerm
-from zope.site.hooks import getSite
+from zope.schema.vocabulary import SimpleVocabulary
 
-from browser.schemaeditor import getFromBaseSchema
-from .schema import ICombinedRegisterSchema
 
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
@@ -59,6 +59,7 @@ class UserRegistrationFieldsVocabulary(object):
 
         return SimpleVocabulary([SimpleTerm(v, v, v) for v in values])
 
+
 UserRegistrationFieldsVocabularyFactory = UserRegistrationFieldsVocabulary()
 
 
@@ -69,10 +70,10 @@ class GroupIdVocabulary(object):
 
       >>> from zope.component import queryUtility
       >>> from zope.schema.interfaces import IVocabularyFactory
-      >>> from zope.site.hooks import getSite
+      >>> from Products.CMFPlone.utils import get_portal
       >>> from Products.CMFCore.utils import getToolByName
 
-      >>> groups_tool = getToolByName(getSite(), 'portal_groups')
+      >>> groups_tool = getToolByName(get_portal(), 'portal_groups')
       >>> groups_tool.addGroup(
       ...     'fancygroup', [], [],
       ...     title='Group Title',
@@ -83,7 +84,7 @@ class GroupIdVocabulary(object):
       >>> name = 'plone.app.users.group_ids'
       >>> util = queryUtility(IVocabularyFactory, name)
 
-      >>> fields = util(getSite())
+      >>> fields = util(get_portal())
       >>> fields
       <zope.schema.vocabulary.SimpleVocabulary object at ...>
 
@@ -95,7 +96,7 @@ class GroupIdVocabulary(object):
     """
 
     def __call__(self, context):
-        site = getSite()
+        site = get_portal()
         groups_tool = getToolByName(site, 'portal_groups')
         is_zope_manager = getSecurityManager().checkPermission(
             ManagePortal, context)

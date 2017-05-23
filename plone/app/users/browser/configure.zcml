@@ -4,71 +4,71 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="plone">
 
-    <include package="plone.autoform" />
-    <include package="plone.app.controlpanel" />
+  <include package="plone.autoform" />
+  <include package="plone.app.controlpanel" />
 
-    <browser:page
+  <browser:page
       name="member-registration"
       for="Products.CMFPlone.interfaces.IPloneSiteRoot"
       class=".registersettingspanel.RegistrationControlPanel"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
-    <browser:page
+  <browser:page
       name="register"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".register.RegistrationForm"
       permission="cmf.AddPortalMember"
       />
 
-    <browser:page
+  <browser:page
       name="new-user"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".register.AddUserForm"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
-    <browser:page
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+  <browser:page
       name="change-password"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".passwordpanel.PasswordPanel"
       permission="cmf.SetOwnPassword"
       />
 
-    <browser:page
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+  <browser:page
       name="personal-preferences"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".personalpreferences.PersonalPreferencesPanel"
       permission="cmf.SetOwnProperties"
       />
 
-    <browser:page
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+  <browser:page
       name="user-preferences"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".personalpreferences.PersonalPreferencesConfiglet"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
-    <browser:page
-        for="plone.app.layout.navigation.interfaces.INavigationRoot"
+  <browser:page
       name="personal-information"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".userdatapanel.UserDataPanel"
       permission="cmf.SetOwnProperties"
       />
 
-    <browser:page
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+  <browser:page
       name="user-information"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".userdatapanel.UserDataConfiglet"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
-    <browser:page
-        name="member-fields"
-        for="*"
-        class=".schemaeditor.MemberSchemaContext"
-        permission="plone.app.controlpanel.UsersAndGroups"
-        allowed_interface="OFS.interfaces.IItem" />
+  <browser:page
+      name="member-fields"
+      for="*"
+      class=".schemaeditor.MemberSchemaContext"
+      permission="plone.app.controlpanel.UsersAndGroups"
+      allowed_interface="OFS.interfaces.IItem" />
 
   <browser:page
       name="edit"
@@ -76,29 +76,29 @@
       class=".schemaeditor.SchemaListingPage"
       permission="zope2.View" />
 
-    <browser:page
+  <browser:page
       name="member-search"
       for="*"
       class=".membersearch.MemberSearchForm"
       permission="zope2.View"
       />
 
-    <adapter
+  <adapter
       provides=".personalpreferences.IPersonalPreferences"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       factory=".personalpreferences.PersonalPreferencesPanelAdapter"
       />
 
-    <adapter
+  <adapter
       provides=".passwordpanel.IPasswordSchema"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       factory=".passwordpanel.PasswordPanelAdapter"
       />
 
-    <subscriber
-        for="plone.app.users.browser.schemaeditor.IMemberSchemaContext
-             plone.schemaeditor.interfaces.ISchemaModifiedEvent"
-        handler="plone.app.users.browser.schemaeditor.updateSchema"
-        />
+  <subscriber
+      for="plone.app.users.browser.schemaeditor.IMemberSchemaContext
+           plone.schemaeditor.interfaces.ISchemaModifiedEvent"
+      handler="plone.app.users.browser.schemaeditor.updateSchema"
+      />
 
 </configure>

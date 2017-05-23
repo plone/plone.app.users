@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+from plone.app.users.schema import IRegistrationSettingsSchema
+from plone.protect import CheckAuthenticator
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
-from plone.app.users.schema import IRegistrationSettingsSchema
-from plone.protect import CheckAuthenticator
 from z3c.form import button
 from z3c.form import field
 from z3c.form import form
@@ -28,7 +28,10 @@ class RegistrationControlPanel(form.Form):
         return {'user_registration_fields': props.getProperty(
             'user_registration_fields', [])}
 
-    @button.buttonAndHandler(_(u'label_apply_changes', default=u'Apply Changes'), name='save')
+    @button.buttonAndHandler(
+        _(u'label_apply_changes', default=u'Apply Changes'),
+        name='save'
+    )
     def action_save(self, action):
         # CSRF protection
         CheckAuthenticator(self.request)

@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from Acquisition import aq_inner
+from plone.app.users.browser.account import AccountPanelForm
+from plone.app.users.utils import notifyWidgetActionExecutionError
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
-from plone.app.users.browser.account import AccountPanelForm
-from plone.app.users.utils import notifyWidgetActionExecutionError
 from z3c.form import button
 from zope import schema
 from zope.interface import Interface
@@ -43,7 +43,7 @@ class PasswordPanelAdapter(object):
         self.context = getToolByName(context, 'portal_membership')
 
     def get_dummy(self):
-        """ We don't actually need to 'get' anything ..."""
+        """We don't actually need to 'get' anything ..."""
         return ''
 
     current_password = property(get_dummy)

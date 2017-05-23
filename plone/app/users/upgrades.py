@@ -1,14 +1,19 @@
-import copy
+# -*- coding: utf-8 -*-
 from plone.app.users.browser import schemaeditor
 from plone.namedfile.field import NamedBlobImage
 from plone.schemaeditor.interfaces import IEditableSchema
-from plone.supermodel.model import finalizeSchemas, Schema, SchemaClass
+from plone.supermodel.model import finalizeSchemas
+from plone.supermodel.model import Schema
+from plone.supermodel.model import SchemaClass
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from zope import schema
 from zope.interface import Interface
 
+import copy
 import logging
+
+
 log = logging.getLogger("plone.app.users:upgrade")
 
 

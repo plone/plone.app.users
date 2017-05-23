@@ -1,21 +1,20 @@
 # -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
 from Acquisition import aq_inner
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.interfaces import ISecuritySchema
-from Products.CMFPlone.utils import safe_unicode
-from Products.PlonePAS.tools.membership import default_portrait
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
-from Products.statusmessages.interfaces import IStatusMessage
-from ZTUtils import make_query
-from Products.CMFPlone.controlpanel.events import ConfigurationChangedEvent
 from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.autoform.form import AutoExtensibleForm
 from plone.namedfile.file import NamedBlobImage
 from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
+from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone import PloneMessageFactory as _
+from Products.CMFPlone.controlpanel.events import ConfigurationChangedEvent
+from Products.CMFPlone.interfaces import ISecuritySchema
+from Products.CMFPlone.utils import safe_unicode
+from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
+from Products.PlonePAS.tools.membership import default_portrait
+from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from z3c.form import form
 from zope import schema
@@ -24,6 +23,7 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.event import notify
 from zope.interface import implementer
+from ZTUtils import make_query
 
 
 MESSAGE_EMAIL_CANNOT_CHANGE = \
@@ -69,7 +69,7 @@ class AccountPanelSchemaAdapter(object):
         return value
 
     def _setProperty(self, name, value):
-        if type(value) is set:
+        if isinstance(value, set):
             value = list(value)
         if value and isinstance(self.schema[name], schema.Choice):
             value = str(value)

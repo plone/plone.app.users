@@ -1,10 +1,14 @@
+# -*- coding: utf-8 -*-
 from pkg_resources import resource_stream
-from plone.app.testing import TEST_USER_NAME, TEST_USER_PASSWORD, TEST_USER_ID
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.testing.bbb import PloneTestCase
 from plone.app.users.setuphandlers import import_schema
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.testing.z2 import Browser
 from Products.GenericSetup.tests.common import DummyImportContext
+
 import transaction
 
 

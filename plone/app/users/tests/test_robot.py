@@ -1,8 +1,10 @@
-import unittest
-import os
-import robotsuite
+# -*- coding: utf-8 -*-
 from plone.app.users.testing import PLONE_APP_USERS_ROBOT
 from plone.testing import layered
+
+import os
+import robotsuite
+import unittest
 
 
 def test_suite():

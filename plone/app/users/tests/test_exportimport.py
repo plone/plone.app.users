@@ -1,11 +1,13 @@
-from Products.CMFCore.utils import getToolByName
-from Products.GenericSetup.tests.common import DummyImportContext
-from Products.GenericSetup.tests.common import DummyExportContext
+# -*- coding: utf-8 -*-
 from plone.app.testing.bbb import PloneTestCase
 from plone.app.users.browser.userdatapanel import getUserDataSchema
-from plone.app.users.setuphandlers import import_schema, export_schema
+from plone.app.users.setuphandlers import export_schema
+from plone.app.users.setuphandlers import import_schema
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.namedfile.field import NamedBlobImage
+from Products.CMFCore.utils import getToolByName
+from Products.GenericSetup.tests.common import DummyExportContext
+from Products.GenericSetup.tests.common import DummyImportContext
 from zope import schema
 
 

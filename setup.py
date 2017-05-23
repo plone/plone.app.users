@@ -2,11 +2,12 @@
 from setuptools import find_packages
 from setuptools import setup
 
-version = '2.3.9.dev0'
+version = '2.4.dev0'
 
-long_description = '{0}\n{1}'.format(open('README.rst').read(),
-                                     open('CHANGES.rst').read())
-
+long_description = u'{0}\n\n{1}'.format(
+    open('README.rst').read(),
+    open('CHANGES.rst').read()
+)
 
 extras_require = {
     'test': [
@@ -66,7 +67,6 @@ setup(
         'zope.event',
         'zope.interface',
         'zope.schema',
-        'zope.site',
     ],
     entry_points="""
     [z3c.autoinclude.plugin]

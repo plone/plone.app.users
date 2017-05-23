@@ -7,23 +7,22 @@ without the PloneTestCase.setupPloneSite() side effects.
 """
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
-from Products.CMFPlone.interfaces.controlpanel import IMailSchema
+from OFS.Cache import Cacheable
+from plone.app.testing.bbb import PloneTestCase
+from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
+from plone.registry.interfaces import IRegistry
+from plone.testing.z2 import Browser
 from Products.CMFPlone.interfaces import ISecuritySchema
+from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
 from Products.PlonePAS.Extensions.Install import activatePluginInterfaces
-from plone.app.testing.bbb import PloneTestCase
 from Products.PluggableAuthService.interfaces.plugins import IValidationPlugin
 from Products.PluggableAuthService.plugins.BasePlugin import BasePlugin
 from Products.PluggableAuthService.utils import classImplements
-from plone.registry.interfaces import IRegistry
-from OFS.Cache import Cacheable
+from transaction import commit
 from zope.component import getSiteManager
 from zope.component import getUtility
-
-from plone.testing.z2 import Browser
-from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
-from transaction import commit
 
 
 class BaseTestCase(PloneTestCase):
@@ -37,7 +36,7 @@ class BaseTestCase(PloneTestCase):
         self.membership = self.portal.portal_membership
         self.security_settings = get_security_settings()
 
-        self.browser = Browser(self.layer['app']) 
+        self.browser = Browser(self.layer['app'])
         self.request = self.layer['request']
 
     def beforeTearDown(self):
@@ -87,6 +86,7 @@ def setMailHost():
     mail_settings.email_from_address = 'admin@foo.com'
     commit()
 
+
 def unsetMailHost():
     registry = getUtility(IRegistry)
     mail_settings = registry.forInterface(IMailSchema, prefix='plone')
@@ -94,10 +94,12 @@ def unsetMailHost():
     mail_settings.email_from_address = ''
     commit()
 
+
 def activateDefaultPasswordPolicy(portal):
     uf = portal.acl_users
     for policy in uf.objectIds(['Default Plone Password Policy']):
         activatePluginInterfaces(portal, policy)
+
 
 def addParrotPasswordPolicy(portal):
     # remove default policy
@@ -110,17 +112,20 @@ def addParrotPasswordPolicy(portal):
     obj = uf[obj.getId()]
     activatePluginInterfaces(portal, obj.getId())
 
-    #portal = getUtility(ISiteRoot)
+    # portal = getUtility(ISiteRoot)
     plugins = uf._getOb('plugins')
     validators = plugins.listPlugins(IValidationPlugin)
     assert validators
     commit()
 
+
 classImplements(DeadParrotPassword, IValidationPlugin)
+
 
 def get_security_settings():
     registry = getUtility(IRegistry)
     return registry.forInterface(ISecuritySchema, prefix="plone")
+
 
 def set_mock_mailhost(portal):
     portal._original_MailHost = portal.MailHost
@@ -129,9 +134,9 @@ def set_mock_mailhost(portal):
     sm.unregisterUtility(provided=IMailHost)
     sm.registerUtility(mailhost, provided=IMailHost)
 
+
 def unset_mock_mailhost(portal):
     portal.MailHost = portal._original_MailHost
     sm = getSiteManager(context=portal)
     sm.unregisterUtility(provided=IMailHost)
     sm.registerUtility(aq_base(portal._original_MailHost), provided=IMailHost)
-
