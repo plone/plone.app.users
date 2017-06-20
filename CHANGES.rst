@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.4 (unreleased)
+2.4 (2017-06-20)
 ----------------
 
 New features:
