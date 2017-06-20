@@ -4,19 +4,14 @@ CHANGES
 2.4 (unreleased)
 ----------------
 
-Breaking changes:
-
-- *add item here*
-
 New features:
-
-- *add item here*
-
-Bug fixes:
 
 - Use ``get_portal`` from Products.CMFPlone.utils instead of ``getSite``.
   For plone.app.users we always want the Plone portal object until this package is fixed to support individual subsite settings.
+  This requires ``Products.CMFPlone 5.1a2`` or higher.
   [thet]
+
+Bug fixes:
 
 - Remove dependency on ``zope.site``.
   [thet]
