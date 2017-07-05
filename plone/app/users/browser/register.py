@@ -34,8 +34,10 @@ from zope.component import getMultiAdapter
 from zope.component import getUtility
 from zope.component import provideAdapter
 from zope.component import queryUtility
+from zope.publisher.browser import BrowserView
 from zope.schema import getFieldNames
 
+import datetime
 import logging
 
 
@@ -714,3 +716,19 @@ class AddUserForm(BaseRegistrationForm):
             '/@@usergroup-userprefs?searchstring=' + user_id)
 
         self._finishedRegister = True
+
+
+class RegisteredView(BrowserView):
+
+    def expire_date(self):
+        reset_tool = getToolByName(self.context, 'portal_password_reset')
+        expire_length = reset_tool.getExpirationTimeout()
+        expire_date = datetime.datetime.now() + datetime.timedelta(days=expire_length)
+        plone_view = getMultiAdapter(
+            (self.context, self.request), name='plone')
+        return plone_view.toLocalizedTime(expire_date)
+
+    def enable_user_pwd_choice(self):
+        registry = getUtility(IRegistry)
+        security = registry.forInterface(ISecuritySchema, prefix="plone")
+        return security.enable_user_pwd_choice

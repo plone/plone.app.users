@@ -22,6 +22,14 @@
       />
 
   <browser:page
+      name="registered"
+      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      class=".register.RegisteredView"
+      template="registered.pt"
+      permission="zope2.View"
+      />
+
+  <browser:page
       name="new-user"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".register.AddUserForm"
