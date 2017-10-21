@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.4.1 (unreleased)
+2.5.0 (unreleased)
 ------------------
 
 Breaking changes:
