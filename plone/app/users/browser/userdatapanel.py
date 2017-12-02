@@ -2,6 +2,7 @@
 from zope.component import getUtility
 from zope.component import provideAdapter
 from zope.component.hooks import getSite
+from plone.app.layout.navigation.interfaces import INavigationRoot
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
@@ -106,6 +107,7 @@ def getUserDataSchema():
         # as schema is a generated supermodel,
         # needed adapters can only be registered at run time
         provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)
+        provideAdapter(UserDataPanelAdapter, (INavigationRoot,), schema)
     return schema
 
 
