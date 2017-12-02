@@ -14,7 +14,9 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Provide the UserDataPanelAdapter for INavigationRoot, so @@personal-information
+  is not broken with p.a.multilingual
+  [ebrehault]
 
 
 2.4 (2017-06-20)
