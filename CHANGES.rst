@@ -1,7 +1,7 @@
 CHANGES
 =======
 
-2.4.1 (unreleased)
+2.5.0 (unreleased)
 ------------------
 
 Breaking changes:
@@ -17,6 +17,7 @@ Bug fixes:
 - Provide the UserDataPanelAdapter for INavigationRoot, so @@personal-information
   is not broken with p.a.multilingual
   [ebrehault]
+- Fix tests to avoid using testbrowser internals. [davisagli]
 
 
 2.4 (2017-06-20)

@@ -167,7 +167,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     def makeQuery(self):
         if hasattr(self.request, 'userid'):
             return '?' + make_query({
-                'userid': self.request.form.get('userid')
+                'userid': self.request.form.get('userid').encode('utf8')
             })
         return ''
 
