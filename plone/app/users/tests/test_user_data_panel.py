@@ -27,17 +27,6 @@ class TestUserDataPanel(PloneTestCase):
         # form can be called without raising exception.
         self.assertTrue(form())
 
-    def test_pam(self):
-        import plone.app.multilingual
-        self.loadZCML(package=plone.app.multilingual)
-        z2.installProduct(app, 'plone.app.multilingual')
-        applyProfile(portal, 'plone.app.multilingual:default')
-        language_tool = getToolByName(portal, 'portal_languages')
-        language_tool.addSupportedLanguage('fr')
-        language_tool.addSupportedLanguage('it')
-        self.browser.addHeader('Authorization', 'Basic siteadmin:secret')
-        self.browser.open('http://nohost/plone/en/@@personal-information')
-
     def test_escape_html(self):
         portal = self.layer['portal']
         request = self.layer['request']
