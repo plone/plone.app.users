@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
+from Products.CMFCore.utils import getToolByName
 from plone.app.users.browser.userdatapanel import UserDataPanel
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
+from plone.app.testing import applyProfile
+from plone.app.testing.bbb import PloneTestCase
+from plone.testing import z2
 from zExceptions import NotFound
 from zope.i18n import translate
 
 import unittest
 
 
-class TestUserDataPanel(unittest.TestCase):
+class TestUserDataPanel(PloneTestCase):
 
     layer = PLONE_APP_USERS_FUNCTIONAL_TESTING
 

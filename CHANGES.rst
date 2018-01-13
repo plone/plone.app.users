@@ -14,6 +14,9 @@ New features:
 
 Bug fixes:
 
+- Provide the UserDataPanelAdapter for INavigationRoot, so @@personal-information
+  is not broken with p.a.multilingual
+  [ebrehault]
 - Fix tests to avoid using testbrowser internals. [davisagli]
 
 

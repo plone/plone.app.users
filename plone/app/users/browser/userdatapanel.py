@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.browser.schemaeditor import getFromBaseSchema
@@ -104,6 +105,7 @@ def getUserDataSchema():
         # as schema is a generated supermodel,
         # needed adapters can only be registered at run time
         provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)
+        provideAdapter(UserDataPanelAdapter, (INavigationRoot,), schema)
     return schema
 
 
