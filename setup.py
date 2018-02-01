@@ -48,7 +48,7 @@ setup(
         'Acquisition',
         'Products.CMFCore',
         'Products.CMFPlone >= 5.1a2',
-        'Products.PlonePAS',
+        'Products.PlonePAS >= 5.0.1',
         'Products.statusmessages',
         'ZODB3',
         'Zope2 >= 2.12.3',
