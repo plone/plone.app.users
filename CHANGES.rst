@@ -14,6 +14,9 @@ New features:
 
 Bug fixes:
 
+- Import ``activatePluginInterfaces`` from canonical location in PlonePAS.
+  [maurits]
+
 - Provide the UserDataPanelAdapter for INavigationRoot, so @@personal-information
   is not broken with p.a.multilingual
   [ebrehault]
