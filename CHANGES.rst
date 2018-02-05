@@ -4,14 +4,6 @@ CHANGES
 2.4.1 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Provide the UserDataPanelAdapter for INavigationRoot, so @@personal-information
