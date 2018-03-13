@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Make ``IUserDataSchema.email`` field ``description`` translatable.
+  [jensens]
 
 
 2.4.1 (2018-02-05)
