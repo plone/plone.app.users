@@ -80,8 +80,8 @@ class IUserDataSchema(Interface):
 
     email = ProtectedEmail(
         title=_(u'label_email', default=u'E-mail'),
-        description=u'We will use this address if you need to recover your '
-                    u'password',
+        description=_(u'We will use this address if you need to recover your '
+                      u'password'),
         required=True,
         constraint=checkEmailAddress,
     )
