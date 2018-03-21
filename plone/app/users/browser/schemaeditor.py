@@ -337,7 +337,7 @@ def copySchemaAttrs(schema, form_name):
     ])
 
 
-default_fields = IUserDataSchema.names() + IRegisterSchema.names()
+default_fields = list(IUserDataSchema.names()) + list(IRegisterSchema.names())
 
 
 def field_in_form(field, form_name=None):

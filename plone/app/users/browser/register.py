@@ -443,7 +443,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         try:
             registration.addMember(user_id, password, REQUEST=self.request)
-        except (AttributeError, ValueError), err:
+        except (AttributeError, ValueError) as err:
             logging.exception(err)
             IStatusMessage(self.request).addStatusMessage(err, type="error")
             return
@@ -703,7 +703,7 @@ class AddUserForm(BaseRegistrationForm):
                         raise Forbidden
                     portal_groups.addPrincipalToGroup(user_id, groupname,
                                                       self.request)
-        except (AttributeError, ValueError), err:
+        except (AttributeError, ValueError) as err:
             IStatusMessage(self.request).addStatusMessage(err, type="error")
             return
 
