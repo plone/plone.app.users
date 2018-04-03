@@ -4,14 +4,6 @@ CHANGES
 2.4.2 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Make ``IUserDataSchema.email`` field ``description`` translatable.
