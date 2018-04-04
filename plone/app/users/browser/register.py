@@ -37,6 +37,7 @@ from zope.component import queryUtility
 from zope.schema import getFieldNames
 
 import logging
+import six
 
 
 # Number of retries for creating a user id like bob-jones-42:
@@ -418,13 +419,14 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         # user_id and login_name should be in the data, but let's be safe.
         user_id = data.get('user_id', data.get('username'))
         login_name = data.get('login_name', data.get('username'))
-        # I have seen a unicode user id.  I cannot reproduce it, but
-        # let's make them strings, otherwise you run into trouble with
-        # plone.session when trying to login.
-        if isinstance(user_id, unicode):
-            user_id = user_id.encode('utf8')
-        if isinstance(login_name, unicode):
-            login_name = login_name.encode('utf8')
+        if six.PY2:
+            # I have seen a unicode user id.  I cannot reproduce it, but
+            # let's make them strings, otherwise you run into trouble with
+            # plone.session when trying to login.
+            if isinstance(user_id, six.text_type):
+                user_id = user_id.encode('utf8')
+            if isinstance(login_name, six.text_type):
+                login_name = login_name.encode('utf8')
 
         # Set the username for good measure, as some code may expect
         # it to exist and contain the user id.
@@ -438,12 +440,12 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         self.request.form['form.username'] = login_name
 
         password = data.get('password') or registration.generatePassword()
-        if isinstance(password, unicode):
+        if six.PY2 and isinstance(password, six.text_type):
             password = password.encode('utf8')
 
         try:
             registration.addMember(user_id, password, REQUEST=self.request)
-        except (AttributeError, ValueError), err:
+        except (AttributeError, ValueError) as err:
             logging.exception(err)
             IStatusMessage(self.request).addStatusMessage(err, type="error")
             return
@@ -703,7 +705,7 @@ class AddUserForm(BaseRegistrationForm):
                         raise Forbidden
                     portal_groups.addPrincipalToGroup(user_id, groupname,
                                                       self.request)
-        except (AttributeError, ValueError), err:
+        except (AttributeError, ValueError) as err:
             IStatusMessage(self.request).addStatusMessage(err, type="error")
             return
 
