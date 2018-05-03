@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Move forgotten 'registered' template from Products.CMFPlone skins to here, were it belongs to.
+  [jensens]
 
 
 2.4.2 (2018-04-03)
