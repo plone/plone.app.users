@@ -16,6 +16,23 @@ Bug fixes:
 
 - Import ``activatePluginInterfaces`` from canonical location in PlonePAS.
   [maurits]
+- Move forgotten 'registered' template from Products.CMFPlone skins to here, were it belongs to.
+  [jensens]
+
+
+2.4.2 (2018-04-03)
+------------------
+
+Bug fixes:
+
+- Make ``IUserDataSchema.email`` field ``description`` translatable.
+  [jensens]
+
+
+2.4.1 (2018-02-05)
+------------------
+
+Bug fixes:
 
 - Provide the UserDataPanelAdapter for INavigationRoot, so @@personal-information
   is not broken with p.a.multilingual
