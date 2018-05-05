@@ -25,6 +25,8 @@ from zope.event import notify
 from zope.interface import implementer
 from ZTUtils import make_query
 
+import six
+
 
 MESSAGE_EMAIL_CANNOT_CHANGE = \
     _('message_email_cannot_change',
@@ -165,10 +167,9 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         return email not in (member.getId(), member.getUserName())
 
     def makeQuery(self):
-        if hasattr(self.request, 'userid'):
-            return '?' + make_query({
-                'userid': self.request.form.get('userid').encode('utf8')
-            })
+        userid = self.request.form.get('userid', None)
+        if userid is not None:
+            return '?{}'.format(make_query({'userid': userid}))
         return ''
 
     def action(self):
