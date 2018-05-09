@@ -50,7 +50,6 @@ setup(
         'Products.CMFPlone >= 5.1a2',
         'Products.PlonePAS >= 5.0.1',
         'Products.statusmessages',
-        'ZODB3',
         'Zope2 >= 2.12.3',
         'plone.app.controlpanel >=2.1b1',
         'plone.app.layout',

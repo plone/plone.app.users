@@ -16,8 +16,12 @@ Bug fixes:
 
 - Import ``activatePluginInterfaces`` from canonical location in PlonePAS.
   [maurits]
+
 - Move forgotten 'registered' template from Products.CMFPlone skins to here, were it belongs to.
   [jensens]
+
+- Don't depend on ZODB version directly. Rely on Zope dependency 
+  [tomgross]
 
 
 2.4.2 (2018-04-03)
@@ -44,6 +48,7 @@ Bug fixes:
 - Python 3 fixes.
   [pbauer]
 
+- Fix tests to avoid using testbrowser internals. [davisagli]
 
 2.4 (2017-06-20)
 ----------------
