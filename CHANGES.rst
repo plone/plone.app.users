@@ -20,9 +20,11 @@ Bug fixes:
 - Move forgotten 'registered' template from Products.CMFPlone skins to here, were it belongs to.
   [jensens]
 
-- Don't depend on ZODB version directly. Rely on Zope dependency 
+- Don't depend on ZODB version directly. Rely on Zope dependency
   [tomgross]
 
+- Consider group.id as untrusted source (e.g. ldap) and encode it accordingly.
+  [pbauer]
 
 2.4.2 (2018-04-03)
 ------------------
@@ -41,10 +43,10 @@ Bug fixes:
 - Provide the UserDataPanelAdapter for INavigationRoot, so @@personal-information
   is not broken with p.a.multilingual
   [ebrehault]
-  
-- Fix tests to avoid using testbrowser internals. 
+
+- Fix tests to avoid using testbrowser internals.
   [davisagli]
-  
+
 - Python 3 fixes.
   [pbauer]
 

@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from AccessControl import getSecurityManager
-from .browser.schemaeditor import getFromBaseSchema
+from binascii import b2a_qp
+from plone.app.users.browser.schemaeditor import getFromBaseSchema
 from plone.app.users.schema import ICombinedRegisterSchema
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import get_portal
 from Products.CMFPlone.utils import normalizeString
+from Products.CMFPlone.utils import safe_encode
 from Products.CMFPlone.utils import safe_unicode
 from zope.interface import implementer
 from zope.schema import getFieldNames
@@ -116,7 +118,7 @@ class GroupIdVocabulary(object):
                 title = u'%s (%s)' % (group_title, g.id)
             else:
                 title = group_title
-            terms.append(SimpleTerm(g.id, g.id, title))
+            terms.append(SimpleTerm(g.id, b2a_qp(safe_encode(g.id)), title))
 
         # Sort by title
         terms.sort(key=lambda x: normalizeString(x.title))
