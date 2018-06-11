@@ -66,7 +66,7 @@ def extractCriteriaFromRequest(criteria):
                 'form.widgets.roles-empty-marker', ]:
         if key in criteria:
             del criteria[key]
-    for (key, value) in criteria.items():
+    for (key, value) in list(criteria.items()):
         if not value:
             del criteria[key]
         else:

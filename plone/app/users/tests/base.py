@@ -30,7 +30,9 @@ class BaseTestCase(PloneTestCase):
 
     layer = PLONE_APP_USERS_FUNCTIONAL_TESTING
 
-    def afterSetUp(self):
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.request = self.layer['request']
         self.portal.acl_users._doAddUser('admin', 'secret', ['Manager'], [])
         set_mock_mailhost(self.portal)
         self.membership = self.portal.portal_membership

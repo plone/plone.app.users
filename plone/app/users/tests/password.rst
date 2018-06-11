@@ -27,7 +27,7 @@ Viewing this form should not be possible for anonymous users:
     >>> browser.open('http://nohost/plone/' + view_name)
     Traceback (most recent call last):
     ...
-    Unauthorized: ...You are not authorized to access this resource...
+    zExceptions.unauthorized.Unauthorized: ...You are not authorized to access this resource...
 
 So let's login as Plone user:
     >>> browser.open('http://nohost/plone/')
@@ -94,7 +94,7 @@ Now let's test using a PAS Password validation plugin. Add a test plugin.
 
 Check that we are given instructions on what is a valid password
 
-   >>> print browser.contents
+   >>> print(browser.contents)
     <...
     ...Enter your new password. Must not be dead...
 
@@ -105,7 +105,7 @@ Let's try to change the password with an invalid password:
     >>> browser.getControl('New password').value = 'dead parrot'
     >>> browser.getControl('Confirm password').value = 'dead parrot'
     >>> browser.getControl('Change Password').click()
-    >>> print browser.contents
+    >>> print(browser.contents)
     <...
     ...Must not be dead...
 
@@ -115,7 +115,7 @@ Now try a valid password
     >>> browser.getControl('New password').value = 'fish'
     >>> browser.getControl('Confirm password').value = 'fish'
     >>> browser.getControl('Change Password').click()
-    >>> print browser.contents
+    >>> print(browser.contents)
     <...
     ...Password changed...
 

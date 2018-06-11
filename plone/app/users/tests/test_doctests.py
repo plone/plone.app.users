@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from plone.app.users.testing import optionflags
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.testing import layered
 
@@ -22,6 +21,11 @@ doc_tests = [
     '../vocabularies.py',
 ]
 
+optionflags = (
+    doctest.ELLIPSIS |
+    doctest.NORMALIZE_WHITESPACE |
+    doctest.REPORT_ONLY_FIRST_FAILURE
+)
 
 def test_suite():
     suite = unittest.TestSuite()

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from plone.app.users.testing import PLONE_APP_USERS_ROBOT
+from plone.app.users.testing import PLONE_APP_USERS_ACCEPTANCE_TESTING
 from plone.testing import layered
 
 import os
@@ -18,6 +18,6 @@ def test_suite():
 #                    robotsuite.RobotTestSuite(
 #                        testfilepath,
 #                        noncritical=['fixme']),
-#                    layer=PLONE_APP_USERS_ROBOT),
+#                    layer=PLONE_APP_USERS_ACCEPTANCE_TESTING),
 #            ])
     return suite
