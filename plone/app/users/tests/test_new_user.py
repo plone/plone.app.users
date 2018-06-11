@@ -36,8 +36,8 @@ class TestGenerateUserIdLoginName(BaseTestCase):
     security settings.
     """
 
-    def afterSetUp(self):
-        super(TestGenerateUserIdLoginName, self).afterSetUp()
+    def setUp(self):
+        super(TestGenerateUserIdLoginName, self).setUp()
         self.portal_url = self.portal.absolute_url()
         self.portal.acl_users._doAddUser(
             'siteadmin', 'secret', ['Site Administrator'], []
