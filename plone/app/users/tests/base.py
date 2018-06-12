@@ -8,7 +8,8 @@ without the PloneTestCase.setupPloneSite() side effects.
 from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
 from OFS.Cache import Cacheable
-from plone.app.testing.bbb import PloneTestCase
+from plone.app.testing import setRoles
+from plone.app.testing import login
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.registry.interfaces import IRegistry
 from plone.testing.z2 import Browser
@@ -24,8 +25,10 @@ from transaction import commit
 from zope.component import getSiteManager
 from zope.component import getUtility
 
+import unittest
 
-class BaseTestCase(PloneTestCase):
+
+class BaseTestCase(unittest.TestCase):
     """ base test case which adds amin user """
 
     layer = PLONE_APP_USERS_FUNCTIONAL_TESTING
@@ -41,8 +44,8 @@ class BaseTestCase(PloneTestCase):
         self.browser = Browser(self.layer['app'])
         self.request = self.layer['request']
 
-    def beforeTearDown(self):
-        self.login('admin')
+    def tearDown(self):
+        login(self.portal, 'admin')
         unset_mock_mailhost(self.portal)
         pas_instance = self.portal.acl_users
         plugin = getattr(pas_instance, 'test', None)
