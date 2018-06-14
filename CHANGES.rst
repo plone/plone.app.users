@@ -14,6 +14,9 @@ New features:
 
 Bug fixes:
 
+- Fix browser test to use name of user/password field instead of label.
+  [jensens]
+
 - Import ``activatePluginInterfaces`` from canonical location in PlonePAS.
   [maurits]
 
