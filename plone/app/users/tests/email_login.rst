@@ -22,8 +22,8 @@ Configure security
 ------------------
 
     >>> browser.open('http://nohost/plone/login_form')
-    >>> browser.getControl('Login Name').value = SITE_OWNER_NAME
-    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
+    >>> browser.getControl(name='__ac_name').value = SITE_OWNER_NAME
+    >>> browser.getControl(name='__ac_password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
 
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
