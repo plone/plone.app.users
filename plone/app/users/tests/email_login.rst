@@ -83,8 +83,8 @@ Fill out the form, using an odd email address that should not give problems.
     We login as manager. The login form now has a different label for
     the login name.
     >>> browser.open('http://nohost/plone/login_form')
-    >>> browser.getControl('E-mail').value = SITE_OWNER_NAME
-    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
+    >>> browser.getControl(name='__ac_name').value = SITE_OWNER_NAME
+    >>> browser.getControl(name='__ac_password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
 
 The user id is now bob-jones, based on the full name:

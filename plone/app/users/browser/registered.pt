@@ -89,6 +89,7 @@
                     <input class="standalone"
                            type="submit"
                            value="Log in"
+                           name="buttons.login"
                            i18n:attributes="value label_log_in;"
                            />
                 </form>

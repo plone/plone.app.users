@@ -495,7 +495,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                           "to your email address: ${address}",
                           mapping={u'address': data.get('email', '')}),
                         type='error')
-                    return
                 else:
                     # This should only happen when an admin registers
                     # a user.  The admin should have seen a warning
@@ -507,9 +506,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                           "password to this email address: ${address}",
                           mapping={u'address': data.get('email', '')}),
                         type='warning')
-                    return
-
-        return
 
     def applyProperties(self, userid, data):
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
@@ -694,8 +690,9 @@ class AddUserForm(BaseRegistrationForm):
         portal_groups = getToolByName(self.context, 'portal_groups')
         user_id = data['user_id']
         is_zope_manager = getSecurityManager().checkPermission(
-            ManagePortal, self.context)
-
+            ManagePortal,
+            self.context,
+        )
         try:
             # Add user to the selected group(s)
             if 'groups' in data.keys():
