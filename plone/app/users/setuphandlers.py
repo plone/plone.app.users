@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from Products.CMFPlone.utils import safe_encode
+
 import logging
 import plone.app.users.browser.schemaeditor as ttw
 import six
@@ -24,5 +26,5 @@ def export_schema(context):
     """Export TTW schema
     """
     schema = ttw.serialize_ttw_schema()
-    context.writeDataFile(FILE, schema, 'text/xml')
+    context.writeDataFile(FILE, safe_encode(schema), 'text/xml')
     logger.info('Exported schema')
