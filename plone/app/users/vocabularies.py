@@ -91,7 +91,7 @@ class GroupIdVocabulary(object):
       >>> [k.value for k in fields] # doctest: +NORMALIZE_WHITESPACE
       ['fancygroup', 'Reviewers', 'Site Administrators']
       >>> [k.title for k in fields] # doctest: +NORMALIZE_WHITESPACE
-      [u'Group Title (fancygroup)', u'Reviewers', u'Site Administrators']
+      ['Group Title (fancygroup)', 'Reviewers', 'Site Administrators']
 
     """
 

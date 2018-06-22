@@ -115,5 +115,7 @@ form::
     >>> browser.getControl('Cancel').click()
     >>> 'Changes canceled.' in browser.contents
     True
-    >>> '?userid=test_user_1_' in browser.url
+    >>> import six
+    >>> searchstring = '?userid:utf8:ustring=test_user_1_' if six.PY2 else '?userid=test_user_1_'
+    >>> searchstring in browser.url
     True
