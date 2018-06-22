@@ -4,14 +4,6 @@ CHANGES
 2.4.3 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Move forgotten 'registered' template from Products.CMFPlone skins to here, were it belongs to.
