@@ -695,7 +695,7 @@ class AddUserForm(BaseRegistrationForm):
         )
         try:
             # Add user to the selected group(s)
-            if 'groups' in data.keys():
+            if data.get('groups', None) is not None:
                 for groupname in data['groups']:
                     group = portal_groups.getGroupById(groupname)
                     if 'Manager' in group.getRoles() and not is_zope_manager:
