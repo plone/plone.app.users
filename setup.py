@@ -51,7 +51,6 @@ setup(
         'Products.PlonePAS >= 5.0.1',
         'Products.statusmessages',
         'Zope2 >= 2.12.3',
-        'plone.app.controlpanel >=2.1b1',
         'plone.app.layout',
         'plone.autoform >= 1.2',
         'plone.formwidget.namedfile >= 1.0.3',

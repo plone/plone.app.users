@@ -14,6 +14,9 @@ New features:
 
 Bug fixes:
 
+- Remove dependency on plone,app.controlpanel.
+  [jensens]
+
 - Fix browser test to use name of user/password field instead of label.
   [jensens]
 

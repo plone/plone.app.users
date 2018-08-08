@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from plone.app.controlpanel.interfaces import IPloneControlPanelForm
+from Products.CMFPlone.interfaces.controlpanel import IPloneControlPanelForm
 from zope.interface import Interface
 
 
