@@ -25,8 +25,6 @@ from zope.event import notify
 from zope.interface import implementer
 from ZTUtils import make_query
 
-import six
-
 
 MESSAGE_EMAIL_CANNOT_CHANGE = \
     _('message_email_cannot_change',
