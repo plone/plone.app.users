@@ -165,10 +165,9 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         return email not in (member.getId(), member.getUserName())
 
     def makeQuery(self):
-        if hasattr(self.request, 'userid'):
-            return '?' + make_query({
-                'userid': self.request.form.get('userid').encode('utf8')
-            })
+        userid = self.request.form.get('userid', None)
+        if userid is not None:
+            return '?{}'.format(make_query({'userid': userid}))
         return ''
 
     def action(self):

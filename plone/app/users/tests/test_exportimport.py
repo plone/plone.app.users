@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from plone.app.testing.bbb import PloneTestCase
 from plone.app.users.browser.userdatapanel import getUserDataSchema
 from plone.app.users.setuphandlers import export_schema
 from plone.app.users.setuphandlers import import_schema
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
+from plone.app.users.tests.base import BaseTestCase
 from plone.namedfile.field import NamedBlobImage
 from Products.CMFCore.utils import getToolByName
 from Products.GenericSetup.tests.common import DummyExportContext
@@ -11,11 +11,10 @@ from Products.GenericSetup.tests.common import DummyImportContext
 from zope import schema
 
 
-class TestImport(PloneTestCase):
+class TestImport(BaseTestCase):
 
-    layer = PLONE_APP_USERS_FUNCTIONAL_TESTING
-
-    def afterSetUp(self):
+    def setUp(self):
+        super(TestImport, self).setUp()
         xml = """<model xmlns:lingua="http://namespaces.plone.org/supermodel/lingua" xmlns:users="http://namespaces.plone.org/supermodel/users" xmlns:form="http://namespaces.plone.org/supermodel/form" xmlns:i18n="http://xml.zope.org/namespaces/i18n" xmlns:security="http://namespaces.plone.org/supermodel/security" xmlns:marshal="http://namespaces.plone.org/supermodel/marshal" xmlns="http://namespaces.plone.org/supermodel/schema" i18n:domain="plone">
   <schema name="member-fields">
     <field name="home_page" type="zope.schema.URI" users:forms="In User Profile">
@@ -168,14 +167,14 @@ class TestImport(PloneTestCase):
         context = DummyExportContext(self.portal)
         export_schema(context)
         self.assertEqual('userschema.xml', context._wrote[0][0])
-        self.assertIn('field name="home_page"', context._wrote[0][1])
-        self.assertIn('field name="description"', context._wrote[0][1])
-        self.assertIn('field name="location"', context._wrote[0][1])
-        self.assertIn('field name="portrait"', context._wrote[0][1])
-        self.assertIn('field name="birthdate"', context._wrote[0][1])
-        self.assertIn('field name="another_date"', context._wrote[0][1])
-        self.assertIn('field name="age"', context._wrote[0][1])
-        self.assertIn('field name="department"', context._wrote[0][1])
-        self.assertIn('field name="skills"', context._wrote[0][1])
-        self.assertIn('field name="pi"', context._wrote[0][1])
-        self.assertIn('field name="vegetarian"', context._wrote[0][1])
+        self.assertIn(b'field name="home_page"', context._wrote[0][1])
+        self.assertIn(b'field name="description"', context._wrote[0][1])
+        self.assertIn(b'field name="location"', context._wrote[0][1])
+        self.assertIn(b'field name="portrait"', context._wrote[0][1])
+        self.assertIn(b'field name="birthdate"', context._wrote[0][1])
+        self.assertIn(b'field name="another_date"', context._wrote[0][1])
+        self.assertIn(b'field name="age"', context._wrote[0][1])
+        self.assertIn(b'field name="department"', context._wrote[0][1])
+        self.assertIn(b'field name="skills"', context._wrote[0][1])
+        self.assertIn(b'field name="pi"', context._wrote[0][1])
+        self.assertIn(b'field name="vegetarian"', context._wrote[0][1])

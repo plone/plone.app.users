@@ -69,7 +69,7 @@ We should be able to add a field::
 
     >>> browser.open('http://nohost/plone/@@member-fields')
     >>> browser.getLink(id="add-field").click()
-    >>> print browser.url
+    >>> print(browser.url)
     http://nohost/plone/member-fields/@@add-field...
 
     >>> 'Add new field' in browser.contents

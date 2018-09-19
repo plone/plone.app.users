@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
-from Products.CMFCore.utils import getToolByName
 from plone.app.multilingual.browser.setup import SetupMultilingualSite
-from plone.app.users.browser.userdatapanel import UserDataPanel
-from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
-from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, TEST_USER_PASSWORD
-from plone.app.testing import setRoles
+from plone.app.testing import applyProfile
 from plone.app.testing import login
 from plone.app.testing import PloneSandboxLayer
-from plone.app.testing import applyProfile
+from plone.app.testing import setRoles
+from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, TEST_USER_PASSWORD
 from plone.app.testing.layers import FunctionalTesting
-from plone.app.testing.bbb import PloneTestCase
+from plone.app.users.browser.userdatapanel import UserDataPanel
+from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.testing import z2
+from Products.CMFCore.utils import getToolByName
+from transaction import commit
 from zExceptions import NotFound
 from zope.i18n import translate
 
-from transaction import commit
 import unittest
+
 
 class WITHPAMLayer(PloneSandboxLayer):
 
@@ -37,7 +37,7 @@ WITHPAM_FUNCTIONAL_TESTING = FunctionalTesting(
     name="PloneAppUsersWithPAMLayer:Functional")
 
 
-class TestUserDataPanelWithPAM(PloneTestCase):
+class TestUserDataPanelWithPAM(unittest.TestCase):
 
     layer = WITHPAM_FUNCTIONAL_TESTING
 

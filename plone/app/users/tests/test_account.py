@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from Products.CMFCore.interfaces import IMembershipTool
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
+from plone.app.users.tests.base import BaseTestCase
 from plone.testing import z2
 from zope.interface import implementer
 from zope.component import provideUtility

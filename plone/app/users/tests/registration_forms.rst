@@ -2,6 +2,14 @@ Testing the flexible user registration
 ======================================
 
     >>> portal = layer['portal']
+    >>> from plone.app.testing import setRoles
+    >>> from plone.app.testing import TEST_USER_ID
+    >>> setRoles(portal, TEST_USER_ID, ['Manager'])
+    >>> portal.invokeFactory('Folder', 'news')
+    'news'
+
+    >>> import transaction
+    >>> transaction.commit()
     >>> from plone.testing.z2 import Browser
     >>> browser = Browser(layer['app'])
     >>> browser.open('http://nohost/plone')
@@ -79,8 +87,8 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...There were errors...Invalid email address...'
-    
-    Fill out the form. 
+
+    Fill out the form.
     >>> browser.getControl('User Name').value = 'user1'
     >>> browser.getControl('E-mail').value = 'user1@example.com'
     >>> browser.getControl('Register').click()
@@ -143,6 +151,7 @@ Testing the flexible user registration
     particular view. Let's make sure a came_from parameter in the query
     string will be respected.
 
+    >>> browser.handleErrors = False
     >>> browser.open('http://nohost/plone/@@register?came_from=http://nohost/plone/news')
     >>> browser.getControl('User Name').value = 'user5'
     >>> browser.getControl('E-mail').value = 'user5@example.com'
@@ -263,9 +272,9 @@ Testing the flexible user registration
     As we want to validate emails. The password fields have become optional.
     >>> browser.getControl(name='form.widgets.mail_me' + list_widget_suffix).value = True
     >>> browser.getControl('Register').click()
-    >>> print browser.url
+    >>> print(browser.url)
     http://...@@usergroup-userprefs...
-    >>> print browser.contents
+    >>> print(browser.contents)
     <...User added...user4...
 
     Check that at least this one error does not show up:
@@ -313,7 +322,7 @@ Testing the flexible user registration
 
     Check that we are given instructions on what is a valid password
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <...
     ...Enter your new password. Must not be dead...
 
@@ -331,7 +340,7 @@ Testing the flexible user registration
     >>> browser.getControl('Confirm password').value = 'dead parrot'
     >>> browser.getControl('Register').click()
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <...<div class="fieldErrorBox">...Must not be dead...</div>...
 
 
@@ -370,7 +379,7 @@ Testing the flexible user registration
 
     Check that we are given instructions on what is a valid password
 
-    >>> print browser.getControl("Password").labels[0]
+    >>> print(browser.getControl("Password").labels[0])
     Password...Enter your new password. Must not be dead. Minimum 5 characters...
 
     We'll enter an invalid password
@@ -382,7 +391,7 @@ Testing the flexible user registration
     >>> browser.getControl('Confirm password').value = 'dead'
     >>> browser.getControl('Register').click()
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <...<div class="fieldErrorBox">...Must not be dead. Your password must contain at least 5 characters....</div>...
 
     Now try a valid password -- and we'll make sure non-ASCII characters are
