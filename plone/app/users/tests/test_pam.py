@@ -45,4 +45,7 @@ class TestUserDataPanelWithPAM(unittest.TestCase):
         browser = z2.Browser(self.layer['app'])
         browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD))
         browser.open('http://nohost/plone/fr/@@personal-information')
-        self.assertTrue('Saisissez votre nom complet, par exemple Jean Dupont.' in browser.contents)
+        self.assertIn(
+            'Saisissez votre nom complet, par exemple Jean Dupont.',
+            browser.contents,
+        )
