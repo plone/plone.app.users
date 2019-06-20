@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+2.5.1 (2019-06-19)
+------------------
+
+Bug fixes:
+
+
+- Improve test assertion [ale-rt] (#78)
+
+
 2.5.0 (2018-11-02)
 ------------------
 
