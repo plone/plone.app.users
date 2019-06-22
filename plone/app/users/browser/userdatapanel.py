@@ -16,7 +16,10 @@ from zExceptions import NotFound
 from zope.component import getUtility
 from zope.component import provideAdapter
 
-import cgi
+try:
+    from html import escape
+except ImportError:
+    from cgi import escape
 
 
 class UserDataPanelAdapter(AccountPanelSchemaAdapter):
@@ -75,7 +78,7 @@ class UserDataPanel(AccountPanelForm):
             return _(
                 u'description_personal_information_form_otheruser',
                 default='Change personal information for $name',
-                mapping={'name': cgi.escape(userid)}
+                mapping={'name': escape(userid)}
             )
         else:
             # editing my own profile
