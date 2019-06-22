@@ -38,7 +38,7 @@
                     tal:content="view/label" />
 
                 <div id="content-core">
-                  <div class="documentDescription">
+                  <div class="documentDescription" i18n:translate="">
                       This site doesn't have a valid email setup, so you
                       cannot register at this time.
                   </div>
