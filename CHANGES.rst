@@ -8,6 +8,22 @@ Changelog
 
 .. towncrier release notes start
 
+2.6.0 (2019-06-27)
+------------------
+
+New features:
+
+
+- Add support for Python 3.8 [pbauer] (#82)
+
+
+Bug fixes:
+
+
+- Fix missing i18n:translate calls
+  [erral] (#80)
+
+
 2.5.1 (2019-06-19)
 ------------------
 
