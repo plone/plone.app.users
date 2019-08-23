@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.6.1 (2019-08-23)
+------------------
+
+Bug fixes:
+
+
+- Fix many_groups usage in AddUserForm
+  [tmassman] (#83)
+
+
 2.6.0 (2019-06-27)
 ------------------
 
