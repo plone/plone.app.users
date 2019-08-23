@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from AccessControl import getSecurityManager
+from Acquisition import aq_inner
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.interfaces import IUserIdGenerator
@@ -18,6 +19,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.interfaces import ISecuritySchema
+from Products.CMFPlone.interfaces import IUserGroupsSettingsSchema
 from Products.CMFPlone.utils import get_portal
 from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -639,9 +641,11 @@ class AddUserForm(BaseRegistrationForm):
                 not settings.enable_user_pwd_choice
 
         # Append the manager-focused fields
-        portal_props = getToolByName(self.context, 'portal_properties')
-        props = portal_props.site_properties
-        many_groups = props.getProperty('many_groups', False)
+        user_group_settings = getAdapter(
+            aq_inner(self.context),
+            IUserGroupsSettingsSchema,
+        )
+        many_groups = user_group_settings.many_groups
         if not many_groups:
             allFields = defaultFields + field.Fields(IAddUserSchema)
             allFields['groups'].widgetFactory = CheckBoxFieldWidget
