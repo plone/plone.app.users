@@ -401,8 +401,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         self.handle_join_success(data)
 
-        self._finishedRegister = True
-
         # XXX Return somewhere else, depending on what
         # handle_join_success returns?
         came_from = self.request.form.get('came_from')
@@ -450,6 +448,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         except (AttributeError, ValueError) as err:
             logging.exception(err)
             IStatusMessage(self.request).addStatusMessage(err, type="error")
+            self._finishedRegister = False
             return
 
         if user_id != login_name:
@@ -462,6 +461,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         self.applyProperties(user_id, data)
 
         settings = self._get_security_settings()
+        self._finishedRegister = True
         if data.get('mail_me') or (not settings.enable_user_pwd_choice and
                                    not data.get('password')):
             # We want to validate the email address (users cannot
@@ -491,6 +491,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                     # Remove the account:
                     self.context.acl_users.userFolderDelUsers(
                         [user_id], REQUEST=self.request)
+                    self._finishedRegister = False
                     IStatusMessage(self.request).addStatusMessage(
                         _(u'status_fatal_password_mail',
                           default=u"Failed to create your account: we were "
@@ -692,6 +693,9 @@ class AddUserForm(BaseRegistrationForm):
 
         self.handle_join_success(data)
 
+        if not self._finishedRegister:
+            return
+
         portal_groups = getToolByName(self.context, 'portal_groups')
         user_id = data['user_id']
         is_zope_manager = getSecurityManager().checkPermission(
@@ -717,4 +721,3 @@ class AddUserForm(BaseRegistrationForm):
             self.context.absolute_url() +
             '/@@usergroup-userprefs?searchstring=' + user_id)
 
-        self._finishedRegister = True
