@@ -479,7 +479,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             except ConflictError:
                 # Let Zope handle this exception.
                 raise
-            except Exception:
+            except Exception as err:
+                logging.exception(err)
                 ctrlOverview = getMultiAdapter((portal, self.request),
                                                name='overview-controlpanel')
                 mail_settings_correct = not ctrlOverview.mailhost_warning()
