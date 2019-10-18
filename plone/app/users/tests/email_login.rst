@@ -60,7 +60,7 @@ The form should be using CSRF protection.
 Fill out the form, using an odd email address that should not give problems.
 
     >>> browser.getControl('Full Name').value = 'Bob Jones'
-    >>> browser.getControl('E-mail').value = 'bob-jones+test@example.com'
+    >>> browser.getControl('Email').value = 'bob-jones+test@example.com'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Confirm password').value = 'secret'
     >>> browser.getControl('Register').click()
@@ -117,7 +117,7 @@ Fill out the form.
 Use the same full name as before, to test that we get a different user id.
 
     >>> browser.getControl('Full Name').value = 'Bob Jones'
-    >>> browser.getControl('E-mail').value = 'bob-jones+test2@example.com'
+    >>> browser.getControl('Email').value = 'bob-jones+test2@example.com'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Confirm password').value = 'secret'
     >>> browser.getControl('Register').click()

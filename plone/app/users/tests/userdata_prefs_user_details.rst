@@ -44,7 +44,7 @@ We have these controls in the form:
 
     >>> browser.getControl('Full Name').value
     ''
-    >>> browser.getControl('E-mail').value
+    >>> browser.getControl('Email').value
     ''
 
 The form should be using CSRF protection:
@@ -60,7 +60,7 @@ Modifying user data
     >>> browser.getControl('Full Name').value = full_name
 
     >>> email_address = 'person@example.com'
-    >>> browser.getControl('E-mail').value = email_address
+    >>> browser.getControl('Email').value = email_address
 
     >>> browser.getControl('Save').click()
     >>> 'Required input is missing.' in browser.contents

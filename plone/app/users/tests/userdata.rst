@@ -53,7 +53,7 @@ We have these controls in the form:
 
     >>> browser.getControl('Full Name').value
     ''
-    >>> browser.getControl('E-mail').value
+    >>> browser.getControl('Email').value
     ''
 
 The form should be using CSRF protection:
@@ -90,7 +90,7 @@ If we do set an e-mail address, we should be able to save the form.
     >>> browser.getControl('Full Name').value = full_name
 
     >>> email_address = 'person@example.com'
-    >>> browser.getControl('E-mail').value = email_address
+    >>> browser.getControl('Email').value = email_address
 
     >>> browser.getControl('Save').click()
     >>> 'Required input is missing.' in browser.contents
@@ -173,7 +173,7 @@ Let's switch to using Email as Login Name
 
 Update our email and see if login name was synced:
 
-    >>> browser.getControl('E-mail').value = 'my.new.email@example.com'
+    >>> browser.getControl('Email').value = 'my.new.email@example.com'
     >>> browser.getControl('Save').click()
     >>> 'Changes saved.' in browser.contents
     True
@@ -189,7 +189,7 @@ should fail with validation errors.
     >>> transaction.commit()
 
     >>> browser.open(view_url)
-    >>> browser.getControl('E-mail').value = 'user2@example.com'
+    >>> browser.getControl('Email').value = 'user2@example.com'
     >>> browser.getControl('Save').click()
     >>> 'The email address you selected is already in use or is not valid as login name. Please choose another' in browser.contents
     True
