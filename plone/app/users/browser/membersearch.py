@@ -26,7 +26,7 @@ class IMemberSearchSchema(model.Schema):
         required=False,
     )
     email = schema.TextLine(
-        title=_(u'label_email', default=u'E-mail'),
+        title=_(u'label_email', default=u'Email'),
         description=_(
             u'help_search_email',
             default=u'Find users whose email address contain'),

@@ -64,7 +64,7 @@ FullnameFieldFactory = NotEditableFieldFactory(
 
 EmailFieldFactory = NotEditableFieldFactory(
     ProtectedEmail,
-    _(u'label_email', default=u'E-mail'),
+    _(u'label_email', default=u'Email'),
 )
 
 
@@ -79,7 +79,7 @@ class IUserDataSchema(Interface):
         required=False)
 
     email = ProtectedEmail(
-        title=_(u'label_email', default=u'E-mail'),
+        title=_(u'label_email', default=u'Email'),
         description=u'We will use this address if you need to recover your '
                     u'password',
         required=True,
