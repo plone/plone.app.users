@@ -41,7 +41,7 @@ Fill out the form.
 
     >>> browser.getControl('Full Name').value = 'Bob Jones'
     >>> browser.getControl('User Name').value = 'bob-jones'
-    >>> browser.getControl('E-mail').value = 'bob-jones+test2@example.com'
+    >>> browser.getControl('Email').value = 'bob-jones+test2@example.com'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Confirm password').value = 'secret'
     >>> browser.getControl('Register').click()
@@ -67,7 +67,7 @@ We have these controls in the form:
 
     >>> browser.getControl(name='form.widgets.login').value
     ''
-    >>> browser.getControl('E-mail').value
+    >>> browser.getControl('Email').value
     ''
     >>> browser.getControl('Full Name').value
     ''

@@ -48,7 +48,7 @@ Now we should be able to access the user data panel:
 
 Setting the e-mail address to an existing one should give an error message:
 
-    >>> browser.getControl('E-mail').value = 'userone@example.com'
+    >>> browser.getControl('Email').value = 'userone@example.com'
     >>> browser.getControl('Save').click()
     >>> 'The email address you selected is already in use' in browser.contents
     True

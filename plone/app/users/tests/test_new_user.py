@@ -18,7 +18,7 @@ class TestNewUser(BaseTestCase):
         self.browser.addHeader('Authorization', 'Basic siteadmin:secret')
         self.browser.open('http://nohost/plone/new-user')
         self.browser.getControl('User Name').value = 'newuser'
-        self.browser.getControl('E-mail').value = 'newuser@example.com'
+        self.browser.getControl('Email').value = 'newuser@example.com'
         self.browser.getControl('Password').value = 'foobar'
         self.browser.getControl('Confirm password').value = 'foobar'
         self.browser.getControl('Site Administrators').selected = True
@@ -54,7 +54,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
         self.browser.open('http://nohost/plone/@@new-user')
         self.browser.getControl('Full Name').value = 'New User'
         self.browser.getControl('User Name').value = 'newie'
-        self.browser.getControl('E-mail').value = 'NewUser@Example.Com'
+        self.browser.getControl('Email').value = 'NewUser@Example.Com'
         self.browser.getControl('Password').value = 'foobar'
         self.browser.getControl('Confirm password').value = 'foobar'
         self.browser.getControl('Register').click()
@@ -73,7 +73,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
-        self.browser.getControl('E-mail').value = 'newuser@example.com'
+        self.browser.getControl('Email').value = 'newuser@example.com'
         self.browser.getControl('Password').value = 'foobar'
         self.browser.getControl('Confirm password').value = 'foobar'
         self.browser.getControl('Register').click()
@@ -94,7 +94,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
 
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
-        self.browser.getControl('E-mail').value = 'NewUser@Example.Com'
+        self.browser.getControl('Email').value = 'NewUser@Example.Com'
         self.browser.getControl('Password').value = 'foobar'
         self.browser.getControl('Confirm password').value = 'foobar'
         self.browser.getControl('Register').click()
@@ -115,7 +115,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
         self.browser.getControl('Full Name').value = 'New User'
-        self.browser.getControl('E-mail').value = 'NewUser@Example.Com'
+        self.browser.getControl('Email').value = 'NewUser@Example.Com'
         self.browser.getControl('Password').value = 'foobar'
         self.browser.getControl('Confirm password').value = 'foobar'
         self.browser.getControl('Register').click()
@@ -138,7 +138,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
         self.browser.open('http://nohost/plone/@@new-user')
         self.browser.getControl('Full Name').value = 'New User'
         self.browser.getControl('User Name').value = 'newie'
-        self.browser.getControl('E-mail').value = 'NewUser@Example.Com'
+        self.browser.getControl('Email').value = 'NewUser@Example.Com'
         self.browser.getControl('Password').value = 'foobar'
         self.browser.getControl('Confirm password').value = 'foobar'
         self.browser.getControl('Register').click()
@@ -161,7 +161,7 @@ class TestGenerateUserIdLoginName(BaseTestCase):
         # create a user
         self.browser.open('http://nohost/plone/@@new-user')
         self.browser.getControl('Full Name').value = 'New User'
-        self.browser.getControl('E-mail').value = 'NewUser@Example.Com'
+        self.browser.getControl('Email').value = 'NewUser@Example.Com'
         self.browser.getControl('Password').value = 'foobar'
         self.browser.getControl('Confirm password').value = 'foobar'
         self.browser.getControl('Register').click()

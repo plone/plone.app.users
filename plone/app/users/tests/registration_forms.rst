@@ -78,19 +78,19 @@ Testing the flexible user registration
     >>> browser.contents
     '...There were errors...User Name...Required input is missing...'
     >>> browser.contents
-    '...There were errors...E-mail...Required input is missing...'
+    '...There were errors...Email...Required input is missing...'
 
     We have to provide a valid email address
     >>> browser.open('http://nohost/plone/@@register')
     >>> browser.getControl('User Name').value = 'user1'
-    >>> browser.getControl('E-mail').value = 'user1-AT-example.com'
+    >>> browser.getControl('Email').value = 'user1-AT-example.com'
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...There were errors...Invalid email address...'
 
     Fill out the form.
     >>> browser.getControl('User Name').value = 'user1'
-    >>> browser.getControl('E-mail').value = 'user1@example.com'
+    >>> browser.getControl('Email').value = 'user1@example.com'
     >>> browser.getControl('Register').click()
     >>> 'Failed to create your account' not in browser.contents
     True
@@ -131,7 +131,7 @@ Testing the flexible user registration
 
     Fill out the form.
     >>> browser.getControl('User Name').value = 'user2'
-    >>> browser.getControl('E-mail').value = 'user2@example.com'
+    >>> browser.getControl('Email').value = 'user2@example.com'
     >>> browser.getControl('Password').value = 'bigfïsh'
     >>> browser.getControl('Confirm password').value = 'bigfïsh'
     >>> browser.getControl('Register').click()
@@ -154,7 +154,7 @@ Testing the flexible user registration
     >>> browser.handleErrors = False
     >>> browser.open('http://nohost/plone/@@register?came_from=http://nohost/plone/news')
     >>> browser.getControl('User Name').value = 'user5'
-    >>> browser.getControl('E-mail').value = 'user5@example.com'
+    >>> browser.getControl('Email').value = 'user5@example.com'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Confirm password').value = 'secret'
     >>> browser.getControl('Register').click()
@@ -205,7 +205,7 @@ Testing the flexible user registration
     We have to provide a valid email address
     >>> browser.open('http://nohost/plone/@@new-user')
     >>> browser.getControl('User Name').value = 'user2a'
-    >>> browser.getControl('E-mail').value = 'user2a-AT-example.com'
+    >>> browser.getControl('Email').value = 'user2a-AT-example.com'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Confirm password').value = 'secret'
     >>> browser.getControl('Register').click()
@@ -215,7 +215,7 @@ Testing the flexible user registration
     Fill out the form.
     >>> browser.open('http://nohost/plone/@@new-user')
     >>> browser.getControl('User Name').value = 'user3'
-    >>> browser.getControl('E-mail').value = 'user3@example.com'
+    >>> browser.getControl('Email').value = 'user3@example.com'
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Confirm password').value = 'secret'
     >>> browser.getControl('Register').click()
@@ -256,7 +256,7 @@ Testing the flexible user registration
 
     Fill out the form.
     >>> browser.getControl('User Name').value = 'user4'
-    >>> browser.getControl('E-mail').value = 'user4@example.com'
+    >>> browser.getControl('Email').value = 'user4@example.com'
     >>> browser.getControl('Reviewers').selected = True
 
     But, at first, let's try to check form validation a bit. Do not set 'mail me' and 'password' fields.
@@ -335,7 +335,7 @@ Testing the flexible user registration
 
     Fill out the form.
     >>> browser.getControl('User Name').value = 'user5pas'
-    >>> browser.getControl('E-mail').value = 'user5@example.com'
+    >>> browser.getControl('Email').value = 'user5@example.com'
     >>> browser.getControl('Password').value = 'dead parrot'
     >>> browser.getControl('Confirm password').value = 'dead parrot'
     >>> browser.getControl('Register').click()
@@ -386,7 +386,7 @@ Testing the flexible user registration
 
     Fill out the form.
     >>> browser.getControl('User Name').value = 'user6pas'
-    >>> browser.getControl('E-mail').value = 'user6@example.com'
+    >>> browser.getControl('Email').value = 'user6@example.com'
     >>> browser.getControl('Password').value = 'dead'
     >>> browser.getControl('Confirm password').value = 'dead'
     >>> browser.getControl('Register').click()

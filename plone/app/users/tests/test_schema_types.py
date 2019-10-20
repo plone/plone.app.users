@@ -115,7 +115,7 @@ class TestSchema(BaseTestCase):
         self.browser.getControl('Log in').click()
         self.browser.open("http://nohost/plone/@@personal-information")
         self.browser.getControl('Full Name').value = 'Isaac Newton'
-        self.browser.getControl('E-mail').value = 'isaac@cambridge.com'
+        self.browser.getControl('Email').value = 'isaac@cambridge.com'
         self.browser.getControl('Home Page').value = 'http://gravity.org'
         self.browser.getControl('Biography').value = 'I like apples'
         self.browser.getControl('Location').value = 'Cambridge'

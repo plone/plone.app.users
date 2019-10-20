@@ -137,10 +137,10 @@ Log out. Assert that we now have the home_page in the join form.
     >>> 'User Name' in browser.contents
     True
     >>> browser.contents
-    '...E-mail...Password...Confirm password...'
+    '...Email...Password...Confirm password...'
     >>> browser.getControl('User Name').value = 'test1'
     >>> browser.getControl('Full Name').value = 'Mister test1'
-    >>> browser.getControl('E-mail').value = 'test1@example.com'
+    >>> browser.getControl('Email').value = 'test1@example.com'
     >>> browser.getControl('Password').value = 'testpassword'
     >>> browser.getControl('Confirm password').value = 'testpassword'
     >>> browser.getControl('Register').click()
@@ -175,7 +175,7 @@ Check register form with portrait field.
     >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
     >>> browser.getControl(name='form.widgets.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
     >>> browser.getControl('User Name').value = 'testuser'
-    >>> browser.getControl('E-mail').value = 'test@example.com'
+    >>> browser.getControl('Email').value = 'test@example.com'
     >>> browser.getControl('Password').value = 'testpassword'
     >>> browser.getControl('Confirm password').value = 'testpassword'
     >>> browser.getControl('Register').click()
@@ -188,7 +188,7 @@ email, and reserved user name validations:
     >>> 'Registration form' in browser.contents
     True
     >>> browser.getControl('User Name').value = 'plone'
-    >>> browser.getControl('E-mail').value = 'invalid email'
+    >>> browser.getControl('Email').value = 'invalid email'
     >>> browser.getControl('Password').value = 'testpassword'
     >>> browser.getControl('Confirm password').value = 'testpassword2'
     >>> browser.getControl('Register').click()
