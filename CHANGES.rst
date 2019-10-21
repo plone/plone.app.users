@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+2.6.2 (2019-10-21)
+------------------
+
+Bug fixes:
+
+
+- Error happening during user add notification is logged. fixes #85 (#85)
+- User feedback if error happens during user add notification. fixes #86 (#86)
+- Fix default value for label_msgid
+  [erral] (#88)
+
+
 2.6.1 (2019-08-23)
 ------------------
 
