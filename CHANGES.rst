@@ -14,10 +14,10 @@ Changelog
 Bug fixes:
 
 
-- Error happening during user add notification is logged. fixes #85 (#85)
-- User feedback if error happens during user add notification. fixes #86 (#86)
-- Fix default value for label_msgid
-  [erral] (#88)
+- Error happening during user add notification is logged. (#85)
+- User feedback if error happens during user add notification. (#86)
+- Fix default value for label_msgid. (#88)
+  [erral]
 
 
 2.6.1 (2019-08-23)
