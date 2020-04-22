@@ -341,7 +341,7 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
 
     >>> print(browser.contents)
-    <...<div class="fieldErrorBox">...Must not be dead...</div>...
+    <...<div class="...">...Must not be dead...</div>...
 
 
     Now try a valid password
@@ -392,7 +392,7 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
 
     >>> print(browser.contents)
-    <...<div class="fieldErrorBox">...Must not be dead. Your password must contain at least 5 characters....</div>...
+    <...<div class="...">...Must not be dead. Your password must contain at least 5 characters....</div>...
 
     Now try a valid password -- and we'll make sure non-ASCII characters are
     handled too.
