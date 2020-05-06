@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.6.4 (2020-05-06)
+------------------
+
+New features:
+
+
+- Doctest markup generalization
+  [petschki] (#92)
+
+
 2.6.3 (2020-04-20)
 ------------------
 

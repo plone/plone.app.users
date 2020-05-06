@@ -1,2 +1,0 @@
-Doctest markup generalization
-[petschki]
