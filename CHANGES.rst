@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.6.5 (2020-07-17)
+------------------
+
+Bug fixes:
+
+
+- Remove unneeded arrow next to Site Setup button in "Edit Member Form Fields" controlpanel.
+  [vincentfretin] (#93)
+
+
 2.6.4 (2020-05-06)
 ------------------
 
