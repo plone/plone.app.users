@@ -134,6 +134,7 @@ def get_security_settings():
 
 def set_mock_mailhost(portal):
     portal._original_MailHost = portal.MailHost
+    del portal['MailHost']
     portal['MailHost'] = mailhost = MockMailHost('MailHost')
     sm = getSiteManager(context=portal)
     sm.unregisterUtility(provided=IMailHost)
