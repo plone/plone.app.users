@@ -142,6 +142,7 @@ def set_mock_mailhost(portal):
 
 
 def unset_mock_mailhost(portal):
+    del portal['MailHost']
     portal['MailHost'] = portal._original_MailHost
     sm = getSiteManager(context=portal)
     sm.unregisterUtility(provided=IMailHost)
