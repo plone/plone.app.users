@@ -126,6 +126,18 @@ class AccountPanelSchemaAdapter(object):
 
     portrait = property(get_portrait, set_portrait)
 
+    @property
+    def wysiwyg_editor(self):
+        return self._getProperty('wysiwyg_editor')
+
+    @wysiwyg_editor.setter
+    def wysiwyg_editor(self, value):
+        if value is None:
+            # set property that the site-default from the registry is used
+            # since both 'None' and None result in plaintexteditor
+            value = ''
+        return self._setProperty('wysiwyg_editor', value)
+
 
 @implementer(IAccountPanelForm)
 class AccountPanelForm(AutoExtensibleForm, form.Form):
