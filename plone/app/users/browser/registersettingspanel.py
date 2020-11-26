@@ -71,7 +71,7 @@ class RegistrationControlPanel(form.Form):
     def updateActions(self):
         super(RegistrationControlPanel, self).updateActions()
         if self.actions and 'save' in self.actions:
-            self.actions['save'].addClass('context')
+            self.actions['save'].addclass('btn btn-primary')
 
     def props(self):
         pprop = getToolByName(self.context, 'portal_properties')
