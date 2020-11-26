@@ -8,17 +8,9 @@
 
 <body>
 
-<metal:main fill-slot="prefs_configlet_content">
+<metal:main fill-slot="prefs_configlet_main">
 
-  <article id="content">
-
-    <a href=""
-       id="setup-link"
-       tal:attributes="href string:$portal_url/@@overview-controlpanel"
-       i18n:translate="">
-        Site Setup
-    </a>
-
+  <header>
     <h1 class="documentFirstHeading"
         i18n:translate="">Users and Groups</h1>
 
@@ -26,24 +18,30 @@
       Portal status message
     </div>
 
-    <div class="autotabs">
-      <div class="autotoc-nav">
-        <a class="autotoc-level-1"
-           href="${portal_url}/@@usergroup-userprefs"
-           i18n:translate="label_users">Users</a>
-        <a class="autotoc-level-1"
-           href="${portal_url}/@@usergroup-groupprefs"
-           i18n:translate="label_groups">Groups</a>
-        <a class="autotoc-level-1"
-           href="${portal_url}/@@usergroup-controlpanel"
-           i18n:translate="label_usergroup_settings">Settings</a>
-        <a class="autotoc-level-1 active"
-           href="${portal_url}/@@member-fields"
-           i18n:translate="label_member_fields">Member fields</a>
-      </div>
-
-      <metal:b use-macro="context/@@ploneform-macros/titlelessform" />
-    </div>
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a href="${portal_url}/@@usergroup-userprefs"
+            class="nav-link active"
+            i18n:translate="label_users">Users</a>
+      </li>
+      <li class="nav-item">
+        <a href="${portal_url}/@@usergroup-groupprefs"
+            class="nav-link"
+            i18n:translate="label_groups">Groups</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active"
+            href="${portal_url}/@@usergroup-controlpanel"
+            i18n:translate="label_usergroup_settings">Settings</a>
+      </li>
+      <li class="nav-item">
+        <a href="${portal_url}/@@member-fields" class="nav-link"
+            i18n:translate="label_member_fields">Member fields</a>
+      </li>
+    </ul>
+  </header>
+  <article id="content">
+    <metal:b use-macro="context/@@ploneform-macros/titlelessform" />
   </article>
 
 </metal:main>
