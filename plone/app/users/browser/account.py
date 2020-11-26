@@ -237,7 +237,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     def updateActions(self):
         super(AccountPanelForm, self).updateActions()
         if self.actions and 'save' in self.actions:
-            self.actions['save'].addclass('btn btn-primary')
+            self.actions['save'].addClass('btn btn-primary')
 
     @button.buttonAndHandler(_(u'Cancel'))
     def cancel(self, action):
