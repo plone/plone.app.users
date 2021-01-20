@@ -115,3 +115,5 @@ def getUserDataSchema():
 class UserDataConfiglet(UserDataPanel):
     """Control panel version of the userdata panel"""
     template = ViewPageTemplateFile('account-configlet.pt')
+    tab = "userdata"
+
