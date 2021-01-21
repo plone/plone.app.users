@@ -45,7 +45,7 @@
         <li class="nav-item">
           <a href="${portal_url}/@@user-information${userquery}"
               class="nav-link ${python:'active' if getattr(view, 'tab', None)=='userdata' else ''}"
-              i18n:translate="title_personal_information_form">Personal Information"</a>
+              i18n:translate="title_personal_information_form">Personal Information</a>
         </li>
         <li class="nav-item">
           <a href="${portal_url}/@@user-preferences${userquery}"
