@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.6.6 (2021-01-08)
+------------------
+
+Bug fixes:
+
+
+- Fix setting "Use site default" for wysiwyg_editor. Fix https://github.com/plone/Products.CMFPlone/issues/3173
+  [pbauer] (#95)
+
+
 2.6.5 (2020-07-17)
 ------------------
 
