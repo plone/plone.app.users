@@ -108,3 +108,4 @@ class PersonalPreferencesPanel(AccountPanelForm):
 class PersonalPreferencesConfiglet(PersonalPreferencesPanel):
     """Control panel version of the personal preferences panel"""
     template = ViewPageTemplateFile('account-configlet.pt')
+    tab = "userprefs"

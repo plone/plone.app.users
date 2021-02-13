@@ -4,49 +4,46 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="context/main_template/macros/master"
       i18n:domain="plone">
-<head>
-    <metal:block fill-slot="top_slot"
-                 tal:define="dummy python:request.set('disable_border',1);
-                             disable_column_one python:request.set('disable_plone.leftcolumn',1);
-                             disable_column_two python:request.set('disable_plone.rightcolumn',1);" />
-</head>
 
 <body>
-    <metal:body fill-slot="body">
+  <metal:main fill-slot="main">
+  <metal:main-macro define-macro="main">
 
-        <article id="content">
-            <tal:mailhost tal:condition="view/showForm">
-            <h1 class="documentFirstHeading"
+    <article id="content" class="login-wrapper">
+
+    <div class="card">
+        <div class="card-body">
+
+          <tal:mailhost tal:condition="view/showForm">
+            <h1 class="card-title h5"
                 tal:content="view/label | nothing" />
-            <div id="content-core">
-                <metal:block use-macro="context/@@ploneform-macros/titlelessform">
-                    <metal:bottom fill-slot="formbottom">
-                    <input tal:define="came_from request/form/came_from|nothing"
-                           tal:condition="came_from"
-                           type="hidden"
-                           name="came_from"
-                           tal:attributes="value came_from" />
-                  </metal:bottom>
-                </metal:block>
+            <metal:block use-macro="context/@@ploneform-macros/titlelessform">
+              <metal:bottom fill-slot="formbottom">
+              <input tal:define="came_from request/form/came_from|nothing"
+                  tal:condition="came_from"
+                  type="hidden"
+                  name="came_from"
+                  tal:attributes="value came_from" />
+              </metal:bottom>
+            </metal:block>
+          </tal:mailhost>
+
+          <tal:nomailhost tal:condition="not:view/showForm">
+            <h1 class="card-title h5"
+                i18n:translate=""
+                tal:content="view/label" />
+            <div class="documentDescription" i18n:translate="">
+                This site doesn't have a valid email setup, so you
+                cannot register at this time.
             </div>
-            </tal:mailhost>
+          </tal:nomailhost>
 
-            <tal:nomailhost tal:condition="not:view/showForm">
+        </div>
+      </div>
 
-                <h1 class="documentFirstHeading"
-                    i18n:translate=""
-                    tal:content="view/label" />
+    </article>
 
-                <div id="content-core">
-                  <div class="documentDescription" i18n:translate="">
-                      This site doesn't have a valid email setup, so you
-                      cannot register at this time.
-                  </div>
-                </div>
-
-            </tal:nomailhost>
-        </article>
-
-    </metal:body>
+  </metal:main-macro>
+  </metal:main>
 </body>
 </html>

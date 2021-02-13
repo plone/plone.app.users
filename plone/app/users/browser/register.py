@@ -128,6 +128,10 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 )
                 self.fields['password'].field.description = msg
 
+    def updateActions(self):
+        super(BaseRegistrationForm, self).updateActions()
+        self.actions['register'].addClass('btn-primary')
+
     def generate_user_id(self, data):
         """Generate a user id from data.
 

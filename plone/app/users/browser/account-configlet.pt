@@ -6,42 +6,60 @@
       metal:use-macro="here/prefs_main_template/macros/master"
       i18n:domain="plone">
 
-<div metal:fill-slot="prefs_configlet_content">
-
-  <article id="content">
-
-    <a
-       href=""
-       class="link-parent"
-       tal:attributes="href string:$portal_url/@@usergroup-userprefs"
-       i18n:translate="label_up_to_usersoverview">
-      Up to Users Overview
-    </a>
-
-    <h1 class="documentFirstHeading" tal:content="view/label | nothing" />
+<div metal:fill-slot="prefs_configlet_main">
+  <header>
+    <h1 class="documentFirstHeading"
+        i18n:translate="">Users and Groups</h1>
 
     <div metal:use-macro="context/global_statusmessage/macros/portal_message">
       Portal status message
     </div>
 
+    <ul class="nav nav-pills">
+      <li class="nav-item">
+        <a href="${portal_url}/@@usergroup-userprefs"
+            class="nav-link active"
+            i18n:translate="label_users">Users</a>
+      </li>
+      <li class="nav-item">
+        <a href="${portal_url}/@@usergroup-groupprefs"
+            class="nav-link"
+            i18n:translate="label_groups">Groups</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link"
+            href="${portal_url}/@@usergroup-controlpanel"
+            i18n:translate="label_usergroup_settings">Settings</a>
+      </li>
+      <li class="nav-item">
+        <a href="${portal_url}/@@member-fields" class="nav-link"
+            i18n:translate="label_member_fields">Member fields</a>
+      </li>
+    </ul>
+  </header>
+  <article id="content">
     <div id="content-core">
-      <div class="autotabs">
-        <nav class="autotoc-nav"
-             tal:define="view_name view/__name__;
-                         userquery python:view.makeQuery()">
+      <p class="lead mt-4">${python:view.description}</p>
+      <nav class="nav nav-tabs mb-2"
+            tal:define="userquery python:view.makeQuery()">
+        <li class="nav-item">
           <a href="${portal_url}/@@user-information${userquery}"
-             tal:define="selected python:view_name=='user-information'"
-             tal:attributes="class python:'autotoc-level-1' + (' active' if selected else '')"
-             i18n:translate="title_personal_information_form">Personal Information</a>
+              class="nav-link ${python:'active' if getattr(view, 'tab', None)=='userdata' else ''}"
+              i18n:translate="title_personal_information_form">Personal Information</a>
+        </li>
+        <li class="nav-item">
           <a href="${portal_url}/@@user-preferences${userquery}"
-             tal:define="selected python:view_name=='user-preferences'"
-             tal:attributes="class python:'autotoc-level-1' + (' active' if selected else '')"
-             i18n:translate="">Personal Preferences</a>
+              class="nav-link ${python:'active' if getattr(view, 'tab', None)=='userprefs' else ''}"
+              i18n:translate="">Personal Preferences</a>
+        </li>
+        <li class="nav-item">
           <a href="${portal_url}/@@usergroup-usermembership${userquery}"
-             i18n:translate="label_group_memberships">Group Memberships</a>
-        </nav>
-        <metal:b use-macro="context/@@ploneform-macros/titlelessform" />
-      </div>
+              class="nav-link"
+              i18n:translate="label_group_memberships">Group Memberships</a>
+        </li>
+      </nav>
+      <metal:b use-macro="context/@@ploneform-macros/titlelessform" />
+
     </div>
 
   </article>

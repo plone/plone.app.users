@@ -86,7 +86,7 @@
                            tal:attributes="name ac_password;
                                            id ac_password;
                                            value password;" />
-                    <input class="standalone"
+                    <input class="btn btn-secondary"
                            type="submit"
                            value="Log in"
                            name="buttons.login"
