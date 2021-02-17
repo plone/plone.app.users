@@ -2,7 +2,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-version = '2.6.7.dev0'
+version = '3.0.0.dev0'
 
 long_description = u'{0}\n\n{1}'.format(
     open('README.rst').read(),
@@ -24,20 +24,17 @@ setup(
                 'to plone)',
     long_description=long_description,
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
-        'Environment :: Web Environment',
-        'Framework :: Plone',
-        'Framework :: Plone :: 5.2',
-        'Framework :: Plone :: Core',
-        'Framework :: Zope2',
-        'Framework :: Zope :: 4',
-        'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
-        'Operating System :: OS Independent',
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Web Environment",
+        "Framework :: Plone",
+        "Framework :: Plone :: 6.0",
+        "Framework :: Plone :: Core",
+        "Framework :: Zope :: 5",
+        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     keywords='Zope CMF Plone Users Groups',
     author='Plone Foundation',
