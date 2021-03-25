@@ -17,7 +17,7 @@
   <metal:b fill-slot="content-core">
     <div class="autotabs">
       <nav
-          class="autotoc-nav"
+          class="autotoc-nav mb-3"
           tal:define="view_actions view/prepareObjectTabs;">
         <ul class="nav nav-tabs">
           <li
