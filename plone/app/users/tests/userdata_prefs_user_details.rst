@@ -32,9 +32,8 @@ So let's login as Plone admin:
     >>> browser.getControl('Password').value = 'secret'
     >>> browser.getControl('Log in').click()
 
-Let's see if we can navigate to the user information form in Users and groups
-    >>> browser.getLink('Site Setup').click()
-    >>> browser.getLink('Users and Groups').click()
+Let's see if we can navigate to the user information form in Users
+    >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> browser.getLink(TEST_USER_NAME).click()
     >>> browser.getLink('Personal Information').click()
     >>> browser.url == user_information_url
