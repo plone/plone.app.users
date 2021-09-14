@@ -50,7 +50,6 @@ setup(
         'AccessControl',
         'Acquisition',
         'Products.CMFCore',
-        'Products.CMFPlone >= 5.1a2',
         'Products.PlonePAS >= 5.0.1',
         'Products.statusmessages',
         'Zope2 >= 2.12.3',
