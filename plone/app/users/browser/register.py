@@ -647,10 +647,8 @@ class AddUserForm(BaseRegistrationForm):
                 not settings.enable_user_pwd_choice
 
         # Append the manager-focused fields
-        user_group_settings = getAdapter(
-            aq_inner(self.context),
-            IUserGroupsSettingsSchema,
-        )
+        registry = getUtility(IRegistry)
+        user_group_settings = registry.forInterface(IUserGroupsSettingsSchema, prefix="plone")
         many_groups = user_group_settings.many_groups
         if not many_groups:
             allFields = defaultFields + field.Fields(IAddUserSchema)
