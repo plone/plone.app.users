@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a4 (2021-10-13)
+--------------------
+
+Bug fixes:
+
+
+- Use registry API to access usergroup settings. 
+  Removes usages of deprecated API. 
+  [jensens] (#104)
+
+
 3.0.0a3 (2021-09-15)
 --------------------
 
