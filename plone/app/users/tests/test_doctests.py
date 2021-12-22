@@ -3,8 +3,6 @@ from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.testing import layered
 
 import doctest
-import re
-import six
 import unittest
 
 
@@ -30,16 +28,6 @@ optionflags = (
 )
 
 
-class Py23DocChecker(doctest.OutputChecker):
-    def check_output(self, want, got, optionflags):
-        if six.PY2:
-            got = got.replace('Unauthorized', 'zExceptions.unauthorized.Unauthorized')
-            got = got.replace(':utf8:ustring', '')
-            got = re.sub("u'(.*?)'", "'\\1'", got)
-            want = re.sub("b'(.*?)'", "'\\1'", want)
-        return doctest.OutputChecker.check_output(self, want, got, optionflags)
-
-
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTests([
@@ -48,7 +36,6 @@ def test_suite():
                 'tests/{0}'.format(test_file),
                 package='plone.app.users',
                 optionflags=optionflags,
-                checker=Py23DocChecker(),
             ),
             layer=PLONE_APP_USERS_FUNCTIONAL_TESTING)
         for test_file in doc_tests

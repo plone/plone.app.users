@@ -15,10 +15,6 @@ Set Up
     >>> membership = portal.portal_membership
 
     >>> user_information_url = 'http://nohost/plone/@@user-information?userid={0}'.format(TEST_USER_ID)
-    >>> import six
-    >>> if six.PY2:
-    ...     user_information_url = 'http://nohost/plone/@@user-information?userid:utf8:ustring=test_user_1_'
-
     >>> browser = Browser(app)
     >>> browser.handleErrors = False
 
