@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a5 (2021-12-29)
+--------------------
+
+Bug fixes:
+
+
+- Test fix: remove deprecated ustring handling, which is only needed on Python 2.
+  [maurits] (#3305)
+
+
 3.0.0a4 (2021-10-13)
 --------------------
 

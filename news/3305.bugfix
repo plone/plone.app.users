@@ -1,2 +1,0 @@
-Test fix: remove deprecated ustring handling, which is only needed on Python 2.
-[maurits]
