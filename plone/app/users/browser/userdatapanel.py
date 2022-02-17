@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from AccessControl.SecurityManagement import getSecurityManager
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
@@ -99,12 +100,22 @@ class UserDataPanel(AccountPanelForm):
 
 def getUserDataSchema():
     portal = get_portal()
-    schema = getattr(portal, '_v_userdata_schema', None)
+    form_name = u'In User Profile'
+    if getSecurityManager().checkPermission('Manage portal', portal):
+        form_name = None
+    if form_name:
+        schema = getattr(portal, '_v_userdata_schema', None)
+    else:
+        schema = getattr(portal, '_v_userdata_manager_schema', None)
     if schema is None:
-        portal._v_userdata_schema = schema = getFromBaseSchema(
+        schema = getFromBaseSchema(
             IUserDataSchema,
-            form_name=u'In User Profile'
+            form_name=form_name
         )
+        if form_name:
+            portal._v_userdata_schema = schema
+        else:
+            portal._v_userdata_manager_schema = schema
         # as schema is a generated supermodel,
         # needed adapters can only be registered at run time
         provideAdapter(UserDataPanelAdapter, (IPloneSiteRoot,), schema)
