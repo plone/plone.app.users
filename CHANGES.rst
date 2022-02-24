@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0a6 (2022-02-24)
+--------------------
+
+New features:
+
+
+- Show unfiltered member fields for manager in user profile page [MrTango] (#106)
+
+
 3.0.0a5 (2021-12-29)
 --------------------
 
