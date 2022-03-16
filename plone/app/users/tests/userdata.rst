@@ -19,6 +19,12 @@ Set Up
     >>> browser = Browser(app)
     >>> browser.handleErrors = False
 
+We must first view the homepage, otherwise we get a weird error with zope.component 5+:
+ZODB.POSException.ConnectionStateError: Shouldn't load state for persistent.list.PersistentList 0x... when the connection is closed
+
+    >>> browser.open('http://nohost/plone/')
+
+
 Viewing the  personal information
 ---------------------------------
 
