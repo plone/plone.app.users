@@ -11,7 +11,7 @@
     <h1 class="documentFirstHeading"
         i18n:translate="">User Details</h1>
     <div>
-      <a href="${portal_url}/@@usergroup-userprefs" i18n:translate="label_users" class="mt-n2">Up to List of Users</a>
+      <a href="${portal_url}/@@usergroup-userprefs" i18n:translate="label_go_to_users" class="mt-n2">Up to List of Users</a>
     </div>
     <div metal:use-macro="context/global_statusmessage/macros/portal_message">
       Portal status message

@@ -29,7 +29,7 @@ class RegistrationControlPanel(form.Form):
             'user_registration_fields', [])}
 
     @button.buttonAndHandler(
-        _(u'label_apply_changes', default=u'Apply Changes'),
+        _(u'label_apply_changes', default=u'Apply changes'),
         name='save'
     )
     def action_save(self, action):
