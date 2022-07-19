@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0b1 (2022-07-19)
+--------------------
+
+Bug fixes:
+
+
+- Change default msgids for translations
+  [erral] (#108)
+
+
 3.0.0a7 (2022-03-23)
 --------------------
 
