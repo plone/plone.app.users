@@ -138,6 +138,16 @@ class AccountPanelSchemaAdapter(object):
             value = ''
         return self._setProperty('wysiwyg_editor', value)
 
+    @property
+    def timezone(self):
+        return self._getProperty('timezone')
+
+    @timezone.setter
+    def timezone(self, value):
+        if value is None:
+            value = ''
+        return self._setProperty('timezone', value)
+
 
 @implementer(IAccountPanelForm)
 class AccountPanelForm(AutoExtensibleForm, form.Form):
