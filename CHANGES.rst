@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0b2 (2022-09-01)
+--------------------
+
+Bug fixes:
+
+
+- Ensure that, when no timezone is selected, the value of the stored timezone is an empty string (#109)
+
+
 3.0.0b1 (2022-07-19)
 --------------------
 
