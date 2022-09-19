@@ -7,6 +7,7 @@ Set up
 
     >>> from plone.app.testing import SITE_OWNER_NAME
     >>> from plone.app.testing import SITE_OWNER_PASSWORD
+    >>> from plone.app.testing import TEST_USER_PASSWORD
     >>> from plone.testing.z2 import Browser
 
     >>> app = layer['app']
@@ -61,8 +62,8 @@ Fill out the form, using an odd email address that should not give problems.
 
     >>> browser.getControl('Full Name').value = 'Bob Jones'
     >>> browser.getControl('Email').value = 'bob-jones+test@example.com'
-    >>> browser.getControl('Password').value = 'secret'
-    >>> browser.getControl('Confirm password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Confirm password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Register').click()
     >>> 'Failed to create your account' in browser.contents
     False
@@ -118,8 +119,8 @@ Use the same full name as before, to test that we get a different user id.
 
     >>> browser.getControl('Full Name').value = 'Bob Jones'
     >>> browser.getControl('Email').value = 'bob-jones+test2@example.com'
-    >>> browser.getControl('Password').value = 'secret'
-    >>> browser.getControl('Confirm password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Confirm password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Register').click()
     >>> '@@usergroup-userprefs' in browser.url
     True

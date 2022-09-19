@@ -5,6 +5,7 @@ When email address is used as login name, duplicates are not allowed.
 
 Use email addresses as login name:
 
+    >>> from plone.app.testing import TEST_USER_PASSWORD
     >>> from plone.app.users.tests.base import get_security_settings
     >>> security_settings = get_security_settings()
     >>> security_settings.use_email_as_login = True
@@ -13,13 +14,13 @@ Create a new user one:
 
     >>> portal = layer['portal']
     >>> mtool = portal.portal_membership
-    >>> mtool.addMember('userone@example.com', 'secret', [], [])
+    >>> mtool.addMember('userone@example.com', TEST_USER_PASSWORD, [], [])
     >>> userone = mtool.getMemberById('userone@example.com')
     >>> userone.setMemberProperties({'email':'userone@example.com'})
 
 Create a new user two:
 
-    >>> mtool.addMember('usertwo@example.com', 'secret', [], [])
+    >>> mtool.addMember('usertwo@example.com', TEST_USER_PASSWORD, [], [])
     >>> usertwo = mtool.getMemberById('usertwo@example.com')
     >>> usertwo.setMemberProperties({'email':'usertwo@example.com'})
     >>> from transaction import commit
@@ -33,7 +34,7 @@ Login as user two:
     >>> browser.getLink('Log in').click()
 
     >>> browser.getControl(name='__ac_name').value = 'usertwo@example.com'
-    >>> browser.getControl(name='__ac_password').value = 'secret'
+    >>> browser.getControl(name='__ac_password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> 'Login failed' in browser.contents
     False

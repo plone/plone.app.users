@@ -5,6 +5,7 @@ Set up
 ======
 
     >>> from plone.app.testing import TEST_USER_NAME
+    >>> from plone.app.testing import TEST_USER_PASSWORD
     >>> from plone.testing.z2 import Browser
 
     >>> app = layer['app']
@@ -27,7 +28,7 @@ So let's login as Plone admin:
     >>> browser.open('http://nohost/plone/')
     >>> browser.getLink('Log in').click()
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
 
 Let's see if we can navigate to the user information form in Users

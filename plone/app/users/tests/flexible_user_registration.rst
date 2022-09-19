@@ -3,6 +3,7 @@ Testing the flexible user registration
 ======================================
 
     >>> from plone.testing.z2 import Browser
+    >>> from plone.app.testing import TEST_USER_PASSWORD
     >>> import transaction
     >>> app = layer['app']
     >>> portal = layer['portal']
@@ -27,7 +28,7 @@ First things first... turn on self-registration so that we can see the
 depend on a mail server properly set-up:
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
     >>> browser.getControl('Enable self-registration').selected = True
@@ -145,7 +146,7 @@ Log in again
 
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
 
 Add portrait to registration form

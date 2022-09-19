@@ -10,6 +10,7 @@ from Acquisition import aq_base
 from OFS.Cache import Cacheable
 from plone.app.testing import setRoles
 from plone.app.testing import login
+from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.registry.interfaces import IRegistry
 from plone.testing.z2 import Browser
@@ -36,7 +37,7 @@ class BaseTestCase(unittest.TestCase):
     def setUp(self):
         self.portal = self.layer['portal']
         self.request = self.layer['request']
-        self.portal.acl_users._doAddUser('admin', 'secret', ['Manager'], [])
+        self.portal.acl_users._doAddUser('admin', TEST_USER_PASSWORD, ['Manager'], [])
         set_mock_mailhost(self.portal)
         self.membership = self.portal.portal_membership
         self.security_settings = get_security_settings()

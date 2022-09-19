@@ -4,6 +4,7 @@ Testing the flexible user registration
     >>> portal = layer['portal']
     >>> from plone.app.testing import setRoles
     >>> from plone.app.testing import TEST_USER_ID
+    >>> from plone.app.testing import TEST_USER_PASSWORD
     >>> setRoles(portal, TEST_USER_ID, ['Manager'])
     >>> portal.invokeFactory('Folder', 'news')
     'news'
@@ -22,7 +23,7 @@ Testing the flexible user registration
     Enable self-registration
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
     >>> browser.getControl('Enable self-registration').selected = True
@@ -98,7 +99,7 @@ Testing the flexible user registration
     Ensure that the user has, in fact, been added.
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user1' in browser.contents
@@ -108,7 +109,7 @@ Testing the flexible user registration
     >>> unsetMailHost()
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
     >>> browser.getControl('Let users select their own passwords').selected = True
@@ -132,8 +133,8 @@ Testing the flexible user registration
     Fill out the form.
     >>> browser.getControl('User Name').value = 'user2'
     >>> browser.getControl('Email').value = 'user2@example.com'
-    >>> browser.getControl('Password').value = 'bigfïsh'
-    >>> browser.getControl('Confirm password').value = 'bigfïsh'
+    >>> browser.getControl('Password').value = 'biggerfïsh'
+    >>> browser.getControl('Confirm password').value = 'biggerfïsh'
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...Welcome!...You have been registered...'
@@ -141,7 +142,7 @@ Testing the flexible user registration
     Ensure that the user has, in fact, been added.
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user2' in browser.contents
@@ -155,8 +156,8 @@ Testing the flexible user registration
     >>> browser.open('http://nohost/plone/@@register?came_from=http://nohost/plone/news')
     >>> browser.getControl('User Name').value = 'user5'
     >>> browser.getControl('Email').value = 'user5@example.com'
-    >>> browser.getControl('Password').value = 'secret'
-    >>> browser.getControl('Confirm password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Confirm password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Register').click()
     >>> browser.url
     'http://nohost/plone/news'
@@ -206,8 +207,8 @@ Testing the flexible user registration
     >>> browser.open('http://nohost/plone/@@new-user')
     >>> browser.getControl('User Name').value = 'user2a'
     >>> browser.getControl('Email').value = 'user2a-AT-example.com'
-    >>> browser.getControl('Password').value = 'secret'
-    >>> browser.getControl('Confirm password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Confirm password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...There were errors...Invalid email address...'
@@ -216,8 +217,8 @@ Testing the flexible user registration
     >>> browser.open('http://nohost/plone/@@new-user')
     >>> browser.getControl('User Name').value = 'user3'
     >>> browser.getControl('Email').value = 'user3@example.com'
-    >>> browser.getControl('Password').value = 'secret'
-    >>> browser.getControl('Confirm password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Confirm password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Register').click()
     >>> '@@usergroup-userprefs' in browser.url
     True
@@ -300,7 +301,7 @@ Testing the flexible user registration
     >>> unsetMailHost()
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
     >>> browser.getControl('Let users select their own passwords').selected = True
@@ -327,7 +328,7 @@ Testing the flexible user registration
     ...Enter your new password. Must not be dead...
 
     And we no longer see the default message
-    >>> 'Minimum 5 characters.' not in browser.contents
+    >>> 'Minimum 8 characters.' not in browser.contents
     True
 
 
@@ -346,8 +347,8 @@ Testing the flexible user registration
 
     Now try a valid password
 
-    >>> browser.getControl('Password').value = 'fish'
-    >>> browser.getControl('Confirm password').value = 'fish'
+    >>> browser.getControl('Password').value = 'tuna fish'
+    >>> browser.getControl('Confirm password').value = 'tuna fish'
 
     >>> browser.getControl('Register').click()
     >>> browser.contents
@@ -356,7 +357,7 @@ Testing the flexible user registration
     Ensure that the user has, in fact, been added.
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user5pas' in browser.contents
@@ -392,13 +393,13 @@ Testing the flexible user registration
     >>> browser.getControl('Register').click()
 
     >>> print(browser.contents)
-    <...<div class="...">...Must not be dead. Your password must contain at least 5 characters....</div>...
+    <...<div class="...">...Must not be dead. Your password must contain at least 8 characters....</div>...
 
     Now try a valid password -- and we'll make sure non-ASCII characters are
     handled too.
 
-    >>> browser.getControl('Password').value = 'bigfïsh'
-    >>> browser.getControl('Confirm password').value = 'bigfïsh'
+    >>> browser.getControl('Password').value = 'biggerfïsh'
+    >>> browser.getControl('Confirm password').value = 'biggerfïsh'
 
     >>> browser.getControl('Register').click()
     >>> browser.contents
@@ -407,7 +408,7 @@ Testing the flexible user registration
     Ensure that the user has, in fact, been added.
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user6pas' in browser.contents

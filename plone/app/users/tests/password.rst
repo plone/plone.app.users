@@ -54,7 +54,7 @@ Let's try to change the password with a new one containing non-ascii chars:
 
     >>> browser.getControl(name='_authenticator', index=0)
     <Control name='_authenticator' type='hidden'>
-    >>> browser.getControl('Current password').value = 'secret'
+    >>> browser.getControl('Current password').value = TEST_USER_PASSWORD
     >>> browser.getControl('New password').value = 'super-secrét'
     >>> browser.getControl('Confirm password').value = 'super-secrét'
     >>> browser.getControl('Change Password').click()
