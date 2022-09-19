@@ -42,8 +42,8 @@ Fill out the form.
     >>> browser.getControl('Full Name').value = 'Bob Jones'
     >>> browser.getControl('User Name').value = 'bob-jones'
     >>> browser.getControl('Email').value = 'bob-jones+test2@example.com'
-    >>> browser.getControl('Password').value = 'secret'
-    >>> browser.getControl('Confirm password').value = 'secret'
+    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Confirm password').value = TEST_USER_PASSWORD
     >>> browser.getControl('Register').click()
     >>> browser.contents
     '...User added...bob-jones...'
