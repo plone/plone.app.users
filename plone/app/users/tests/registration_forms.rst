@@ -3,6 +3,7 @@ Testing the flexible user registration
 
     >>> portal = layer['portal']
     >>> from plone.app.testing import setRoles
+    >>> from plone.app.testing import SITE_OWNER_PASSWORD
     >>> from plone.app.testing import TEST_USER_ID
     >>> from plone.app.testing import TEST_USER_PASSWORD
     >>> setRoles(portal, TEST_USER_ID, ['Manager'])
@@ -23,7 +24,7 @@ Testing the flexible user registration
     Enable self-registration
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
     >>> browser.getControl('Enable self-registration').selected = True
@@ -99,7 +100,7 @@ Testing the flexible user registration
     Ensure that the user has, in fact, been added.
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user1' in browser.contents
@@ -109,7 +110,7 @@ Testing the flexible user registration
     >>> unsetMailHost()
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
     >>> browser.getControl('Let users select their own passwords').selected = True
@@ -142,7 +143,7 @@ Testing the flexible user registration
     Ensure that the user has, in fact, been added.
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user2' in browser.contents
