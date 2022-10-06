@@ -4,9 +4,9 @@ Admin modifies user information thru 'Users and groups'
 Set Up
 ======
 
+    >>> from plone.app.testing import SITE_OWNER_PASSWORD
     >>> from plone.app.testing import TEST_USER_ID
     >>> from plone.app.testing import TEST_USER_NAME
-    >>> from plone.app.testing import TEST_USER_PASSWORD
     >>> from plone.testing.z2 import Browser
 
     >>> import transaction
@@ -26,7 +26,7 @@ So let's login as Plone admin:
     >>> browser.open('http://nohost/plone/')
     >>> browser.getLink('Log in').click()
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
 
 Let's see if we can navigate to the user information form in Users
