@@ -302,7 +302,7 @@ Testing the flexible user registration
     >>> unsetMailHost()
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@security-controlpanel')
     >>> browser.getControl('Let users select their own passwords').selected = True
@@ -358,7 +358,7 @@ Testing the flexible user registration
     Ensure that the user has, in fact, been added.
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user5pas' in browser.contents
@@ -409,7 +409,7 @@ Testing the flexible user registration
     Ensure that the user has, in fact, been added.
     >>> browser.open('http://nohost/plone/login_form')
     >>> browser.getControl('Login Name').value = 'admin'
-    >>> browser.getControl('Password').value = TEST_USER_PASSWORD
+    >>> browser.getControl('Password').value = SITE_OWNER_PASSWORD
     >>> browser.getControl('Log in').click()
     >>> browser.open('http://nohost/plone/@@usergroup-userprefs')
     >>> 'user6pas' in browser.contents
