@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0b4 (2022-10-11)
+--------------------
+
+Bug fixes:
+
+
+- Fix admin password in tests. [davisagli] (#113)
+
+
 3.0.0b3 (2022-10-02)
 --------------------
 
