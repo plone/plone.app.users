@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from pkg_resources import resource_stream
+from plone.app.testing import SITE_OWNER_NAME
+from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.users.setuphandlers import import_schema
-from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.testing.z2 import Browser
 from Products.GenericSetup.tests.common import DummyImportContext
 from plone.app.users.tests.base import BaseTestCase
@@ -105,6 +106,7 @@ class TestSchema(BaseTestCase):
         transaction.commit()
 
         self.browser = Browser(self.layer['app'])
+        self.browser.handleErrors = False
         self.request = self.layer['request']
 
     def test_schema_types(self):
@@ -155,3 +157,97 @@ class TestSchema(BaseTestCase):
         self.assertEqual(member.getProperty('pi'), 3.14)
         self.assertTrue(isinstance(member.getProperty('vegetarian'), bool))
         self.assertEqual(member.getProperty('vegetarian'), True)
+
+    def test_regression_76_user_information(self):
+        # Test that issue 76 does not return: user info sometimes appears empty.
+        # https://github.com/plone/plone.app.users/issues/76
+        # Here we test as admin.
+        portal_url = self.portal.absolute_url()
+        self.browser.open(portal_url)
+        self.browser.getLink('Log in').click()
+        self.browser.getControl('Login Name').value = SITE_OWNER_NAME
+        self.browser.getControl('Password').value = SITE_OWNER_PASSWORD
+        self.browser.getControl('Log in').click()
+
+        # Set information for the test user.
+        info_page = "{}/@@user-information?userid={}".format(
+            portal_url, TEST_USER_ID,
+        )
+        self.browser.open(info_page)
+        self.browser.getControl('Full Name').value = 'Isaac Newton'
+        self.browser.getControl('Email').value = 'isaac@cambridge.com'
+        self.browser.getControl('Age').value = '40'
+        self.browser.getControl('Save').click()
+
+        # Open the page again, check that the information is set.
+        self.browser.open(info_page)
+        self.assertEqual(self.browser.getControl('Full Name').value, 'Isaac Newton')
+        self.assertEqual(self.browser.getControl('Email').value, 'isaac@cambridge.com')
+        self.assertEqual(self.browser.getControl('Age').value, '40')
+
+        # Opening the new-user/register page used to be enough to trigger the problem.
+        self.browser.open("{}/@@new-user".format(portal_url))
+
+        # Any next calls to the user or personal information pages would show empty.
+        self.browser.open(info_page)
+        self.assertEqual(self.browser.getControl('Full Name').value, 'Isaac Newton')
+        self.assertEqual(self.browser.getControl('Email').value, 'isaac@cambridge.com')
+        self.assertEqual(self.browser.getControl('Age').value, '40')
+
+    def _enable_self_registration(self):
+        from plone.registry.interfaces import IRegistry
+        from Products.CMFPlone.interfaces import ISecuritySchema
+        from zope.component import getUtility
+
+        self.portal.manage_permission('Add portal member', roles=['Anonymous'])
+        registry = getUtility(IRegistry)
+        security_settings = registry.forInterface(ISecuritySchema, prefix="plone")
+        security_settings.enable_user_pwd_choice = True
+        transaction.commit()
+
+    def test_regression_76_personal_information(self):
+        # Test that issue 76 does not return: personal info sometimes appears empty.
+        # https://github.com/plone/plone.app.users/issues/76
+        # Here we test as user.
+        portal_url = self.portal.absolute_url()
+        self.browser.open(portal_url)
+        self.browser.getLink('Log in').click()
+        self.browser.getControl('Login Name').value = TEST_USER_NAME
+        self.browser.getControl('Password').value = TEST_USER_PASSWORD
+        self.browser.getControl('Log in').click()
+
+        # Set information for the test user.
+        info_page = "{}/@@personal-information".format(portal_url)
+        self.browser.open(info_page)
+        self.browser.getControl('Full Name').value = 'Isaac Newton'
+        self.browser.getControl('Email').value = 'isaac@cambridge.com'
+        self.browser.getControl('Age').value = '40'
+        self.browser.getControl('Save').click()
+
+        # Open the page again, check that the information is set.
+        self.browser.open(info_page)
+        self.assertEqual(self.browser.getControl('Full Name').value, 'Isaac Newton')
+        self.assertEqual(self.browser.getControl('Email').value, 'isaac@cambridge.com')
+        self.assertEqual(self.browser.getControl('Age').value, '40')
+
+        # Enable self registration.
+        self._enable_self_registration()
+
+        # Opening the new-user/register page used to be enough to trigger the problem.
+        # Logout, try it, and login again.
+        self.browser.open("{}/@@logout".format(portal_url))
+        self.browser.open("{}/@@register".format(portal_url))
+        # Check that the registration page is loading correctly.
+        self.assertNotIn("This site doesn't have a valid email setup", self.browser.contents)
+        self.assertIn("Enter your new password.", self.browser.contents)
+
+        self.browser.open("{}/@@login".format(portal_url))
+        self.browser.getControl('Login Name').value = TEST_USER_NAME
+        self.browser.getControl('Password').value = TEST_USER_PASSWORD
+        self.browser.getControl('Log in').click()
+
+        # Any next calls to the user or personal information pages would show empty.
+        self.browser.open(info_page)
+        self.assertEqual(self.browser.getControl('Full Name').value, 'Isaac Newton')
+        self.assertEqual(self.browser.getControl('Email').value, 'isaac@cambridge.com')
+        self.assertEqual(self.browser.getControl('Age').value, '40')
