@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
 from Acquisition import aq_inner
+from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.app.users.browser.interfaces import IAccountPanelForm
+from plone.app.users.browser.schemaeditor import getFromBaseSchema
 from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.autoform.form import AutoExtensibleForm
 from plone.namedfile.file import NamedBlobImage
@@ -10,6 +12,7 @@ from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.controlpanel.events import ConfigurationChangedEvent
+from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
@@ -21,7 +24,9 @@ from zope import schema
 from zope.cachedescriptors.property import Lazy as lazy_property
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.component import provideAdapter
 from zope.event import notify
+from zope.globalrequest import getRequest
 from zope.interface import implementer
 from ZTUtils import make_query
 
@@ -36,6 +41,44 @@ MESSAGE_EMAIL_IN_USE = \
       default=(u"The email address you selected is "
                u"already in use or is not valid as login "
                u"name. Please choose another."))
+
+
+def getSchema(schema_interface, schema_adapter, form_name=None):
+    request = getRequest()
+    form_name_to_request_attr_name = {
+        "In User Profile": "_userdata_schema",
+        "On Registration": "_register_schema",
+        None: "_userdata_manager_schema",
+    }
+    request_attr_name = form_name_to_request_attr_name.pop(form_name, None)
+    if request_attr_name is not None:
+        schema = getattr(request, request_attr_name, None)
+    else:
+        schema = None
+    if schema is None:
+        schema = getFromBaseSchema(
+            schema_interface,
+            form_name=form_name
+        )
+        # Unset all request attr names.
+        # We do not want other caches to linger.
+        # See https://github.com/plone/plone.app.users/issues/76
+        # This is in the unlikely case that you visit both the add-user/register form
+        # and the user/personal-information form in one request,
+        # maybe during a migration.
+        for name in form_name_to_request_attr_name.values():
+            try:
+                delattr(request, name)
+            except AttributeError:
+                pass
+        if request_attr_name is not None:
+            setattr(request, request_attr_name, schema)
+        # As schema is a generated supermodel,
+        # needed adapters can only be registered at run time.
+        # Note that this overrides previous adapters for the same interfaces.
+        provideAdapter(schema_adapter, (IPloneSiteRoot,), schema)
+        provideAdapter(schema_adapter, (INavigationRoot,), schema)
+    return schema
 
 
 def isDefaultPortrait(value, portal):
