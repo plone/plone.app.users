@@ -251,3 +251,25 @@ class TestSchema(BaseTestCase):
         self.assertEqual(self.browser.getControl('Full Name').value, 'Isaac Newton')
         self.assertEqual(self.browser.getControl('Email').value, 'isaac@cambridge.com')
         self.assertEqual(self.browser.getControl('Age').value, '40')
+
+        # Now login as Manager.
+        self.browser.getLink('Log out').click()
+        self.browser.getLink('Log in').click()
+        self.browser.getControl('Login Name').value = SITE_OWNER_NAME
+        self.browser.getControl('Password').value = SITE_OWNER_PASSWORD
+        self.browser.getControl('Log in').click()
+
+        # Check the information page of the user.
+        self.browser.open("{}/@@user-information?userid={}".format(
+            portal_url, TEST_USER_ID
+        ))
+        self.assertEqual(self.browser.getControl('Full Name').value, 'Isaac Newton')
+        self.assertEqual(self.browser.getControl('Email').value, 'isaac@cambridge.com')
+        self.assertEqual(self.browser.getControl('Age').value, '40')
+
+        # Check the personal information page of the manager.
+        # Nothing should be visible here.
+        self.browser.open(info_page)
+        self.assertEqual(self.browser.getControl('Full Name').value, '')
+        self.assertEqual(self.browser.getControl('Email').value, '')
+        self.assertEqual(self.browser.getControl('Age').value, '0')

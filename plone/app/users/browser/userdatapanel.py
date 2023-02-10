@@ -98,8 +98,13 @@ class UserDataPanel(AccountPanelForm):
 def getUserDataSchema():
     portal = get_portal()
     form_name = u'In User Profile'
-    if getSecurityManager().checkPermission('Manage portal', portal):
-        form_name = None
+    # This is needed on Plone 6, but has a bad side effect on Plone 5:
+    # as Manager you go to a member and then to your own personal-information
+    # form and you see the data of the member you just visited.
+    # I keep the code here commented out as warning in case someone compares
+    # the code.
+    # if getSecurityManager().checkPermission('Manage portal', portal):
+    #     form_name = None
     schema = getSchema(IUserDataSchema, UserDataPanelAdapter, form_name=form_name)
     return schema
 
