@@ -2,9 +2,9 @@
 from AccessControl import getSecurityManager
 from Acquisition import aq_inner
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
+from plone.app.users.browser.account import getSchema
 from plone.app.users.browser.interfaces import ILoginNameGenerator
 from plone.app.users.browser.interfaces import IUserIdGenerator
-from plone.app.users.browser.schemaeditor import getFromBaseSchema
 from plone.app.users.schema import IAddUserSchema
 from plone.app.users.schema import ICombinedRegisterSchema
 from plone.app.users.schema import IRegisterSchema
@@ -17,10 +17,8 @@ from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.interfaces import ISecuritySchema
 from Products.CMFPlone.interfaces import IUserGroupsSettingsSchema
-from Products.CMFPlone.utils import get_portal
 from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
@@ -34,7 +32,6 @@ from ZODB.POSException import ConflictError
 from zope.component import getAdapter
 from zope.component import getMultiAdapter
 from zope.component import getUtility
-from zope.component import provideAdapter
 from zope.component import queryUtility
 from zope.schema import getFieldNames
 
@@ -47,16 +44,11 @@ RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 
 def getRegisterSchema():
-    portal = get_portal()
-    schema = getattr(portal, '_v_register_schema', None)
-    if schema is None:
-        portal._v_register_schema = schema = getFromBaseSchema(
-            ICombinedRegisterSchema,
-            form_name=u'On Registration'
-        )
-        # as schema is a generated supermodel,
-        # needed adapters can only be registered at run time
-        provideAdapter(AccountPanelSchemaAdapter, (IPloneSiteRoot,), schema)
+    schema = getSchema(
+        ICombinedRegisterSchema,
+        AccountPanelSchemaAdapter,
+        form_name='On Registration',
+    )
     return schema
 
 
@@ -720,4 +712,3 @@ class AddUserForm(BaseRegistrationForm):
         self.request.response.redirect(
             self.context.absolute_url() +
             '/@@usergroup-userprefs?searchstring=' + user_id)
-
