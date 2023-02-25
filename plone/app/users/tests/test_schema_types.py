@@ -194,7 +194,7 @@ class TestSchema(BaseTestCase):
 
     def _enable_self_registration(self):
         from plone.registry.interfaces import IRegistry
-        from Products.CMFPlone.interfaces import ISecuritySchema
+        from plone.base.interfaces import ISecuritySchema
         from zope.component import getUtility
 
         self.portal.manage_permission('Add portal member', roles=['Anonymous'])
