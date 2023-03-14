@@ -47,6 +47,7 @@ setup(
     namespace_packages=['plone', 'plone.app'],
     include_package_data=True,
     zip_safe=False,
+    python_requires=">=3.8",
     extras_require=extras_require,
     install_requires=[
         'AccessControl',
