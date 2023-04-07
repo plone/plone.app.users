@@ -13,7 +13,7 @@
 
   <browser:page
       name="member-registration"
-      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      for="plone.base.interfaces.IPloneSiteRoot"
       class=".registersettingspanel.RegistrationControlPanel"
       permission="plone.app.controlpanel.UsersAndGroups"
       />

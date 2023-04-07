@@ -1,3 +1,4 @@
+from plone.base import PloneMessageFactory as _
 from plone.formwidget.namedfile.widget import NamedImageWidget
 from plone.namedfile.interfaces import INamedImageField
 from plone.schema.email import Email
@@ -5,7 +6,6 @@ from plone.schemaeditor.fields import FieldFactory
 from plone.schemaeditor.interfaces import IFieldFactory
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.RegistrationTool import EmailAddressInvalid
 from z3c.form.interfaces import IFieldWidget
 from z3c.form.interfaces import IFormLayer

@@ -1,8 +1,8 @@
 from Acquisition import aq_inner
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.utils import notifyWidgetActionExecutionError
+from plone.base import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from zope import schema

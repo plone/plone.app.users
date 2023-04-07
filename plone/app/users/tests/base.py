@@ -10,10 +10,10 @@ from OFS.Cache import Cacheable
 from plone.app.testing import login
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
+from plone.base.interfaces import IMailSchema
 from plone.base.interfaces import ISecuritySchema
 from plone.registry.interfaces import IRegistry
 from plone.testing.z2 import Browser
-from Products.CMFPlone.interfaces.controlpanel import IMailSchema
 from Products.CMFPlone.tests.utils import MockMailHost
 from Products.MailHost.interfaces import IMailHost
 from Products.PlonePAS.setuphandlers import activatePluginInterfaces

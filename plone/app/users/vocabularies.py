@@ -1,11 +1,12 @@
 from .browser.schemaeditor import getFromBaseSchema
 from AccessControl import getSecurityManager
 from plone.app.users.schema import ICombinedRegisterSchema
+from plone.base.utils import safe_text
+from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import get_portal
-from Products.CMFPlone.utils import normalizeString
-from Products.CMFPlone.utils import safe_unicode
+from zope.component import queryUtility
 from zope.interface import implementer
 from zope.schema import getFieldNames
 from zope.schema.interfaces import IVocabularyFactory
@@ -110,7 +111,7 @@ class GroupIdVocabulary:
             if "Manager" in g.getRoles() and not is_zope_manager:
                 continue
 
-            group_title = safe_unicode(g.getGroupTitleOrName())
+            group_title = safe_text(g.getGroupTitleOrName())
             if group_title != g.id:
                 title = f"{group_title} ({g.id})"
             else:
@@ -118,7 +119,8 @@ class GroupIdVocabulary:
             terms.append(SimpleTerm(g.id, g.id, title))
 
         # Sort by title
-        terms.sort(key=lambda x: normalizeString(x.title))
+        utility = queryUtility(IIDNormalizer)
+        terms.sort(key=lambda x: utility.normalize(x.title))
         return SimpleVocabulary(terms)
 
 

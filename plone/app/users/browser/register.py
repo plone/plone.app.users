@@ -9,15 +9,15 @@ from plone.app.users.schema import IRegisterSchema
 from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.app.users.utils import uuid_userid_generator
 from plone.autoform.form import AutoExtensibleForm
+from plone.base import PloneMessageFactory as _
 from plone.base.interfaces import ISecuritySchema
 from plone.base.interfaces import IUserGroupsSettingsSchema
+from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
@@ -194,7 +194,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         fullname = data.get("fullname")
         if not fullname:
             return default
-        userid = normalizeString(fullname)
+        userid = getUtility(IIDNormalizer).normalize(fullname)
         # First check that this is a valid member id, regardless of
         # whether a member with this id already exists or not.  We
         # access an underscore attribute of the registration tool, so

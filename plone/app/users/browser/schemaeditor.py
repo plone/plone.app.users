@@ -2,6 +2,8 @@ from plone.app.users.schema import IRegisterSchema
 from plone.app.users.schema import IUserDataSchema
 from plone.app.users.schema import SCHEMA_ANNOTATION
 from plone.app.users.schema import SCHEMATA_KEY
+from plone.base import PloneMessageFactory as _
+from plone.base.interfaces import IPloneSiteRoot
 from plone.schemaeditor.browser.schema.listing import SchemaListing
 from plone.schemaeditor.browser.schema.traversal import SchemaContext
 from plone.supermodel import loadString
@@ -13,8 +15,6 @@ from plone.supermodel.serializer import serialize
 from plone.supermodel.utils import ns
 from plone.z3cform.layout import FormWrapper
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.interfaces import IPloneSiteRoot
 from Products.CMFPlone.utils import get_portal
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.annotation.interfaces import IAnnotations

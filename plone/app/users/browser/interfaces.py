@@ -1,4 +1,4 @@
-from Products.CMFPlone.interfaces.controlpanel import IPloneControlPanelForm
+from plone.base.interfaces.controlpanel import IPloneControlPanelForm
 from zope.interface import Interface
 
 

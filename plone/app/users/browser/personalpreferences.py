@@ -1,8 +1,7 @@
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
+from plone.base import PloneMessageFactory as _
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
-from Products.CMFPlone.utils import getFSVersionTuple
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.interface import Interface
 from zope.schema import Choice
@@ -21,8 +20,6 @@ try:
     HAS_DT_VOCAB = True
 except ImportError:
     HAS_DT_VOCAB = False
-
-PLONE5 = getFSVersionTuple()[0] >= 5
 
 
 class IPersonalPreferences(Interface):

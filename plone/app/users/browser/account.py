@@ -5,15 +5,15 @@ from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.app.users.browser.schemaeditor import getFromBaseSchema
 from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.autoform.form import AutoExtensibleForm
+from plone.base import PloneMessageFactory as _
+from plone.base.interfaces import IPloneSiteRoot
 from plone.base.interfaces import ISecuritySchema
+from plone.base.utils import safe_text
 from plone.namedfile.file import NamedBlobImage
 from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
 from Products.CMFPlone.controlpanel.events import ConfigurationChangedEvent
-from Products.CMFPlone.interfaces import IPloneSiteRoot
-from Products.CMFPlone.utils import safe_unicode
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.PlonePAS.tools.membership import default_portrait
 from Products.statusmessages.interfaces import IStatusMessage
@@ -107,7 +107,7 @@ class AccountPanelSchemaAdapter:
             value = None
         if value:
             # PlonePAS encodes all unicode coming from PropertySheets.
-            return safe_unicode(value)
+            return safe_text(value)
         return value
 
     def _setProperty(self, name, value):

@@ -1,11 +1,11 @@
 from plone.app.users.browser import schemaeditor
+from plone.base import PloneMessageFactory as _
 from plone.namedfile.field import NamedBlobImage
 from plone.schemaeditor.interfaces import IEditableSchema
 from plone.supermodel.model import finalizeSchemas
 from plone.supermodel.model import Schema
 from plone.supermodel.model import SchemaClass
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
 from zope import schema
 from zope.interface import Interface
 
