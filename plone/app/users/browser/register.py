@@ -34,7 +34,6 @@ from zope.component import queryUtility
 from zope.schema import getFieldNames
 
 import logging
-import six
 
 
 # Number of retries for creating a user id like bob-jones-42:
@@ -410,14 +409,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         # user_id and login_name should be in the data, but let's be safe.
         user_id = data.get("user_id", data.get("username"))
         login_name = data.get("login_name", data.get("username"))
-        if six.PY2:
-            # I have seen a unicode user id.  I cannot reproduce it, but
-            # let's make them strings, otherwise you run into trouble with
-            # plone.session when trying to login.
-            if isinstance(user_id, str):
-                user_id = user_id.encode("utf8")
-            if isinstance(login_name, str):
-                login_name = login_name.encode("utf8")
 
         # Set the username for good measure, as some code may expect
         # it to exist and contain the user id.
@@ -431,8 +422,6 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         self.request.form["form.username"] = login_name
 
         password = data.get("password") or registration.generatePassword()
-        if six.PY2 and isinstance(password, str):
-            password = password.encode("utf8")
 
         try:
             registration.addMember(user_id, password, REQUEST=self.request)

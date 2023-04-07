@@ -63,7 +63,6 @@ setup(
         "plone.schema",
         "plone.uuid",
         "setuptools",
-        "six",
         "z3c.form",
         "zope.component",
         "zope.event",

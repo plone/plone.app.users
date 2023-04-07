@@ -8,8 +8,6 @@ from z3c.form import button
 from zope import schema
 from zope.interface import Interface
 
-import six
-
 
 class IPasswordSchema(Interface):
     """Provide schema for password form"""
@@ -76,9 +74,6 @@ class PasswordPanel(AccountPanelForm):
         # check if password is correct
         current_password = data.get("current_password")
         if current_password:
-            if six.PY2 and isinstance(current_password, str):
-                current_password = current_password.encode("utf8")
-
             if not membertool.testCurrentPassword(current_password):
                 # add error to current_password widget
                 err_str = _("Incorrect value for current password")
@@ -111,8 +106,6 @@ class PasswordPanel(AccountPanelForm):
         membertool = getToolByName(self.context, "portal_membership")
 
         password = data["new_password"]
-        if six.PY2 and isinstance(password, str):
-            password = password.encode("utf8")
 
         try:
             membertool.setPassword(password, None, REQUEST=self.request)
