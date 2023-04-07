@@ -14,12 +14,12 @@ from zope.schema.vocabulary import SimpleVocabulary
 import zope.schema
 
 
-form_vocab = SimpleVocabulary([
-    SimpleTerm(value='On Registration',
-               title='On Registration'),
-    SimpleTerm(value='In User Profile',
-               title='In User Profile'),
-])
+form_vocab = SimpleVocabulary(
+    [
+        SimpleTerm(value="On Registration", title="On Registration"),
+        SimpleTerm(value="In User Profile", title="In User Profile"),
+    ]
+)
 
 
 class IUserFormSelection(Interface):
@@ -47,7 +47,7 @@ class UserFormSelectionAdapter:
         self.field = field
 
     def _get_forms(self):
-        forms = getattr(self.field, 'forms_selection', [])
+        forms = getattr(self.field, "forms_selection", [])
         return forms
 
     def _set_forms(self, value):
@@ -58,16 +58,15 @@ class UserFormSelectionAdapter:
 
 @implementer(IFieldMetadataHandler)
 class UserFormSelectionMetadata:
-
     namespace = USERS_NAMESPACE
     prefix = USERS_PREFIX
 
     def read(self, fieldNode, schema, field):
-        forms = fieldNode.get(ns('forms', self.namespace))
+        forms = fieldNode.get(ns("forms", self.namespace))
         if forms:
-            field.forms_selection = forms.split('|')
+            field.forms_selection = forms.split("|")
 
     def write(self, fieldNode, schema, field):
-        forms = getattr(field, 'forms_selection', [])
+        forms = getattr(field, "forms_selection", [])
         if forms:
-            fieldNode.set(ns('forms', self.namespace), "|".join(forms))
+            fieldNode.set(ns("forms", self.namespace), "|".join(forms))

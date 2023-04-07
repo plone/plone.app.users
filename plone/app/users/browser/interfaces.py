@@ -3,8 +3,7 @@ from zope.interface import Interface
 
 
 class IAccountPanelForm(IPloneControlPanelForm):
-    """Forms using plone.app.users
-    """
+    """Forms using plone.app.users"""
 
     def _on_save():
         """Callback mehod which can be implemented by control panels to

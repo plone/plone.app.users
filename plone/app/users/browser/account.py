@@ -30,16 +30,19 @@ from zope.interface import implementer
 from ZTUtils import make_query
 
 
-MESSAGE_EMAIL_CANNOT_CHANGE = \
-    _('message_email_cannot_change',
-      default=("Sorry, you are not allowed to "
-               "change your email address."))
+MESSAGE_EMAIL_CANNOT_CHANGE = _(
+    "message_email_cannot_change",
+    default=("Sorry, you are not allowed to " "change your email address."),
+)
 
-MESSAGE_EMAIL_IN_USE = \
-    _('message_email_in_use',
-      default=("The email address you selected is "
-               "already in use or is not valid as login "
-               "name. Please choose another."))
+MESSAGE_EMAIL_IN_USE = _(
+    "message_email_in_use",
+    default=(
+        "The email address you selected is "
+        "already in use or is not valid as login "
+        "name. Please choose another."
+    ),
+)
 
 
 def getSchema(schema_interface, schema_adapter, form_name=None):
@@ -55,10 +58,7 @@ def getSchema(schema_interface, schema_adapter, form_name=None):
     else:
         schema = None
     if schema is None:
-        schema = getFromBaseSchema(
-            schema_interface,
-            form_name=form_name
-        )
+        schema = getFromBaseSchema(schema_interface, form_name=form_name)
         # Unset all request attr names.
         # We do not want other caches to linger.
         # See https://github.com/plone/plone.app.users/issues/76
@@ -87,23 +87,23 @@ def isDefaultPortrait(value, portal):
 
 class AccountPanelSchemaAdapter:
     """Data manager that gets and sets any property mentioned
-       in the schema to the property sheet
+    in the schema to the property sheet
     """
+
     context = None
     schema = IAccountPanelForm
 
     def __init__(self, context):
-        mt = getToolByName(context, 'portal_membership')
-        userid = context.REQUEST.form.get('userid')
-        if (userid and mt.checkPermission('Plone Site Setup: Users and Groups',
-                                          context)):
+        mt = getToolByName(context, "portal_membership")
+        userid = context.REQUEST.form.get("userid")
+        if userid and mt.checkPermission("Plone Site Setup: Users and Groups", context):
             self.context = mt.getMemberById(userid)
         else:
             self.context = mt.getAuthenticatedMember()
 
     def _getProperty(self, name):
-        value = self.context.getProperty(name, '')
-        if value == '':
+        value = self.context.getProperty(name, "")
+        if value == "":
             value = None
         if value:
             # PlonePAS encodes all unicode coming from PropertySheets.
@@ -115,9 +115,7 @@ class AccountPanelSchemaAdapter:
             value = list(value)
         if value and isinstance(self.schema[name], schema.Choice):
             value = str(value)
-        return self.context.setMemberProperties(
-            {name: value}, force_empty=True
-        )
+        return self.context.setMemberProperties({name: value}, force_empty=True)
 
     def __getattr__(self, name):
         if name in self.schema:
@@ -133,8 +131,7 @@ class AccountPanelSchemaAdapter:
         if name not in self.schema or hasattr(self.__class__, name):
             # Either not part of the schema or dealt with by an explicit
             # property
-            return super().__setattr__(name,
-                                                                      value)
+            return super().__setattr__(name, value)
         if isinstance(value, NamedBlobImage):
             # any image is stored as portrait
             return self.set_portrait(value)
@@ -143,19 +140,22 @@ class AccountPanelSchemaAdapter:
 
     @property
     def portal(self):
-        return getToolByName(self.context, 'portal_url').getPortalObject()
+        return getToolByName(self.context, "portal_url").getPortalObject()
 
     def get_portrait(self):
         """If user has default portrait, return none"""
-        mt = getToolByName(self.context, 'portal_membership')
+        mt = getToolByName(self.context, "portal_membership")
         value = mt.getPersonalPortrait(self.context.getId())
         if isDefaultPortrait(value, self.portal):
             return None
-        return NamedBlobImage(value.data, contentType=value.content_type,
-                              filename=getattr(value, 'filename', None))
+        return NamedBlobImage(
+            value.data,
+            contentType=value.content_type,
+            filename=getattr(value, "filename", None),
+        )
 
     def set_portrait(self, value):
-        mt = getToolByName(self.context, 'portal_membership')
+        mt = getToolByName(self.context, "portal_membership")
         member_id = self.context.getId()
         if value is None:
             previous = mt.getPersonalPortrait(member_id)
@@ -170,32 +170,33 @@ class AccountPanelSchemaAdapter:
 
     @property
     def wysiwyg_editor(self):
-        return self._getProperty('wysiwyg_editor')
+        return self._getProperty("wysiwyg_editor")
 
     @wysiwyg_editor.setter
     def wysiwyg_editor(self, value):
         if value is None:
             # set property that the site-default from the registry is used
             # since both 'None' and None result in plaintexteditor
-            value = ''
-        return self._setProperty('wysiwyg_editor', value)
+            value = ""
+        return self._setProperty("wysiwyg_editor", value)
 
     @property
     def timezone(self):
-        return self._getProperty('timezone')
+        return self._getProperty("timezone")
 
     @timezone.setter
     def timezone(self, value):
         if value is None:
-            value = ''
-        return self._setProperty('timezone', value)
+            value = ""
+        return self._setProperty("timezone", value)
 
 
 @implementer(IAccountPanelForm)
 class AccountPanelForm(AutoExtensibleForm, form.Form):
     """A simple form to be used as a basis for account panel screens."""
+
     schema = IAccountPanelForm
-    template = ViewPageTemplateFile('account-panel.pt')
+    template = ViewPageTemplateFile("account-panel.pt")
     enableCSRFProtection = True
 
     hidden_widgets = []
@@ -204,14 +205,14 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
 
     @lazy_property
     def member(self):
-        mtool = getToolByName(self.context, 'portal_membership')
-        if self.request.get('userid'):
-            return mtool.getMemberById(self.request.get('userid'))
+        mtool = getToolByName(self.context, "portal_membership")
+        if self.request.get("userid"):
+            return mtool.getMemberById(self.request.get("userid"))
         return mtool.getAuthenticatedMember()
 
     @property
     def label(self):
-        return self.member.getProperty('fullname') or self.member.getUserName()
+        return self.member.getProperty("fullname") or self.member.getUserName()
 
     def _differentEmail(self, email):
         """Check if the submitted form email address differs from the existing
@@ -221,56 +222,51 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         else on the personalize form) or changing it back to your login name,
         is fine.
         """
-        membership = getToolByName(self.context, 'portal_membership')
-        if self.request.get('userid'):
-            member = membership.getMemberById(self.request.get('userid'))
+        membership = getToolByName(self.context, "portal_membership")
+        if self.request.get("userid"):
+            member = membership.getMemberById(self.request.get("userid"))
         else:
             member = membership.getAuthenticatedMember()
         return email not in (member.getId(), member.getUserName())
 
     def makeQuery(self):
-        userid = self.request.form.get('userid', None)
+        userid = self.request.form.get("userid", None)
         if userid is not None:
-            return '?{}'.format(make_query({'userid': userid}))
-        return ''
+            return "?{}".format(make_query({"userid": userid}))
+        return ""
 
     def action(self):
         return self.request.getURL() + self.makeQuery()
 
     def validate_email(self, action, data):
         context = aq_inner(self.context)
-        error_keys = [
-            error.field.getName()
-            for error
-            in action.form.widgets.errors
-        ]
-        if 'email' not in error_keys:
-            registration = getToolByName(context, 'portal_registration')
+        error_keys = [error.field.getName() for error in action.form.widgets.errors]
+        if "email" not in error_keys:
+            registration = getToolByName(context, "portal_registration")
             registry = getUtility(IRegistry)
-            security_settings = registry.forInterface(
-                ISecuritySchema, prefix="plone")
+            security_settings = registry.forInterface(ISecuritySchema, prefix="plone")
             if security_settings.use_email_as_login:
-                err_str = ''
+                err_str = ""
                 try:
-                    id_allowed = registration.isMemberIdAllowed(data['email'])
+                    id_allowed = registration.isMemberIdAllowed(data["email"])
                 except Unauthorized:
                     err_str = MESSAGE_EMAIL_CANNOT_CHANGE
                 else:
                     if not id_allowed:
                         # only allow if unchanged
-                        if self._differentEmail(data['email']):
+                        if self._differentEmail(data["email"]):
                             err_str = MESSAGE_EMAIL_IN_USE
                 if err_str:
-                    notifyWidgetActionExecutionError(action, 'email', err_str)
+                    notifyWidgetActionExecutionError(action, "email", err_str)
 
-    @button.buttonAndHandler(_('Save'))
+    @button.buttonAndHandler(_("Save"))
     def handleSave(self, action):
         CheckAuthenticator(self.request)
         data, errors = self.extractData()
 
         # Extra validation for email, when it is there.  email is not in the
         # data when you are at the personal-preferences page.
-        if 'email' in data:
+        if "email" in data:
             self.validate_email(action, data)
 
         if action.form.widgets.errors:
@@ -278,70 +274,77 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
             return
         if self.applyChanges(data):
             IStatusMessage(self.request).addStatusMessage(
-                self.successMessage, type='info')
+                self.successMessage, type="info"
+            )
             notify(ConfigurationChangedEvent(self, data))
             self._on_save(data)
         else:
             IStatusMessage(self.request).addStatusMessage(
-                self.noChangesMessage, type='info')
+                self.noChangesMessage, type="info"
+            )
         self.request.response.redirect(self.action())
 
     def updateActions(self):
         super().updateActions()
-        if self.actions and 'save' in self.actions:
-            self.actions['save'].addClass('btn btn-primary')
+        if self.actions and "save" in self.actions:
+            self.actions["save"].addClass("btn btn-primary")
 
-    @button.buttonAndHandler(_('Cancel'))
+    @button.buttonAndHandler(_("Cancel"))
     def cancel(self, action):
-        IStatusMessage(self.request).addStatusMessage(_("Changes canceled."),
-                                                      type="info")
+        IStatusMessage(self.request).addStatusMessage(
+            _("Changes canceled."), type="info"
+        )
         self.request.response.redirect(
-            '{}{}'.format(self.request['ACTUAL_URL'], self.makeQuery())
+            "{}{}".format(self.request["ACTUAL_URL"], self.makeQuery())
         )
 
     def _on_save(self, data=None):
         pass
 
-    def prepareObjectTabs(self,
-                          default_tab='view',
-                          sort_first=['folderContents']):
+    def prepareObjectTabs(self, default_tab="view", sort_first=["folderContents"]):
         context = self.context
-        mt = getToolByName(context, 'portal_membership')
+        mt = getToolByName(context, "portal_membership")
         tabs = []
         navigation_root_url = context.absolute_url()
 
         def _check_allowed(context, request, name):
-            """Check, if user has required permissions on view.
-            """
+            """Check, if user has required permissions on view."""
             view = getMultiAdapter((context, request), name=name)
             allowed = True
             for perm in view.__ac_permissions__:
                 allowed = allowed and mt.checkPermission(perm[0], context)
             return allowed
 
-        if _check_allowed(context, self.request, 'personal-information'):
-            tabs.append({
-                'title': _('title_personal_information_form',
-                           'Personal Information'),
-                'url': navigation_root_url + '/@@personal-information',
-                'selected': (self.__name__ == 'personal-information'),
-                'id': 'user_data-personal-information',
-            })
+        if _check_allowed(context, self.request, "personal-information"):
+            tabs.append(
+                {
+                    "title": _(
+                        "title_personal_information_form", "Personal Information"
+                    ),
+                    "url": navigation_root_url + "/@@personal-information",
+                    "selected": (self.__name__ == "personal-information"),
+                    "id": "user_data-personal-information",
+                }
+            )
 
-        if _check_allowed(context, self.request, 'personal-preferences'):
-            tabs.append({
-                'title': _('Personal Preferences'),
-                'url': navigation_root_url + '/@@personal-preferences',
-                'selected': (self.__name__ == 'personal-preferences'),
-                'id': 'user_data-personal-preferences',
-            })
+        if _check_allowed(context, self.request, "personal-preferences"):
+            tabs.append(
+                {
+                    "title": _("Personal Preferences"),
+                    "url": navigation_root_url + "/@@personal-preferences",
+                    "selected": (self.__name__ == "personal-preferences"),
+                    "id": "user_data-personal-preferences",
+                }
+            )
 
         member = mt.getAuthenticatedMember()
         if member.canPasswordSet():
-            tabs.append({
-                'title': _('label_password', 'Password'),
-                'url': navigation_root_url + '/@@change-password',
-                'selected': (self.__name__ == 'change-password'),
-                'id': 'user_data-change-password',
-            })
+            tabs.append(
+                {
+                    "title": _("label_password", "Password"),
+                    "url": navigation_root_url + "/@@change-password",
+                    "selected": (self.__name__ == "change-password"),
+                    "id": "user_data-change-password",
+                }
+            )
         return tabs

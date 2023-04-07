@@ -15,7 +15,7 @@ from zope.schema.vocabulary import SimpleVocabulary
 
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
-JOIN_CONST = ['username', 'password', 'email', 'mail_me']
+JOIN_CONST = ["username", "password", "email", "mail_me"]
 
 
 @implementer(IVocabularyFactory)
@@ -97,23 +97,22 @@ class GroupIdVocabulary:
 
     def __call__(self, context):
         site = get_portal()
-        groups_tool = getToolByName(site, 'portal_groups')
-        is_zope_manager = getSecurityManager().checkPermission(
-            ManagePortal, context)
+        groups_tool = getToolByName(site, "portal_groups")
+        is_zope_manager = getSecurityManager().checkPermission(ManagePortal, context)
         groups = groups_tool.listGroups()
 
         # Get group id, title tuples for each, omitting virtual group
         # 'AuthenticatedUsers'
         terms = []
         for g in groups:
-            if g.id == 'AuthenticatedUsers':
+            if g.id == "AuthenticatedUsers":
                 continue
-            if 'Manager' in g.getRoles() and not is_zope_manager:
+            if "Manager" in g.getRoles() and not is_zope_manager:
                 continue
 
             group_title = safe_unicode(g.getGroupTitleOrName())
             if group_title != g.id:
-                title = f'{group_title} ({g.id})'
+                title = f"{group_title} ({g.id})"
             else:
                 title = group_title
             terms.append(SimpleTerm(g.id, g.id, title))

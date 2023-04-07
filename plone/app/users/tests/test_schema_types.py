@@ -13,7 +13,6 @@ import transaction
 
 
 class TestSchema(BaseTestCase):
-
     def setUp(self):
         super().setUp()
         xml = """<model xmlns:lingua="http://namespaces.plone.org/supermodel/lingua" xmlns:users="http://namespaces.plone.org/supermodel/users" xmlns:form="http://namespaces.plone.org/supermodel/form" xmlns:i18n="http://xml.zope.org/namespaces/i18n" xmlns:security="http://namespaces.plone.org/supermodel/security" xmlns:marshal="http://namespaces.plone.org/supermodel/marshal" xmlns="http://namespaces.plone.org/supermodel/schema" i18n:domain="plone">
@@ -100,62 +99,68 @@ class TestSchema(BaseTestCase):
 </model>
 """
         context = DummyImportContext(self.portal, purge=False)
-        context._files = {'userschema.xml': xml}
+        context._files = {"userschema.xml": xml}
         import_schema(context)
         transaction.commit()
 
-        self.browser = Browser(self.layer['app'])
+        self.browser = Browser(self.layer["app"])
         self.browser.handleErrors = False
-        self.request = self.layer['request']
+        self.request = self.layer["request"]
 
     def test_schema_types(self):
-        self.browser.open('http://nohost/plone/')
-        self.browser.getLink('Log in').click()
-        self.browser.getControl('Login Name').value = TEST_USER_NAME
-        self.browser.getControl('Password').value = TEST_USER_PASSWORD
-        self.browser.getControl('Log in').click()
+        self.browser.open("http://nohost/plone/")
+        self.browser.getLink("Log in").click()
+        self.browser.getControl("Login Name").value = TEST_USER_NAME
+        self.browser.getControl("Password").value = TEST_USER_PASSWORD
+        self.browser.getControl("Log in").click()
         self.browser.open("http://nohost/plone/@@personal-information")
-        self.browser.getControl('Full Name').value = 'Isaac Newton'
-        self.browser.getControl('Email').value = 'isaac@cambridge.com'
-        self.browser.getControl('Home Page').value = 'http://gravity.org'
-        self.browser.getControl('Biography').value = 'I like apples'
-        self.browser.getControl('Location').value = 'Cambridge'
-        portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
-        self.browser.getControl(name='form.widgets.portrait').add_file(portrait_file, "image/jpg", "onepixel.# jpg")
-        self.browser.getControl('Age').value = '40'
-        self.browser.getControl('Department').value = ['Marketing', ]
-        self.browser.getControl('Skills').value = ['Programming', ]
-        self.browser.getControl('Pi').value = '3.14'
-        self.browser.getControl('Vegetarian').click()
-        self.browser.getControl('Save').click()
+        self.browser.getControl("Full Name").value = "Isaac Newton"
+        self.browser.getControl("Email").value = "isaac@cambridge.com"
+        self.browser.getControl("Home Page").value = "http://gravity.org"
+        self.browser.getControl("Biography").value = "I like apples"
+        self.browser.getControl("Location").value = "Cambridge"
+        portrait_file = resource_stream("plone.app.users.tests", "onepixel.jpg")
+        self.browser.getControl(name="form.widgets.portrait").add_file(
+            portrait_file, "image/jpg", "onepixel.# jpg"
+        )
+        self.browser.getControl("Age").value = "40"
+        self.browser.getControl("Department").value = [
+            "Marketing",
+        ]
+        self.browser.getControl("Skills").value = [
+            "Programming",
+        ]
+        self.browser.getControl("Pi").value = "3.14"
+        self.browser.getControl("Vegetarian").click()
+        self.browser.getControl("Save").click()
 
         transaction.commit()
-        membership = self.layer['portal'].portal_membership
+        membership = self.layer["portal"].portal_membership
         member = membership.getMemberById(TEST_USER_ID)
-        self.assertTrue(isinstance(member.getProperty('fullname'), str))
-        self.assertEqual(member.getProperty('fullname'), 'Isaac Newton')
-        self.assertTrue(isinstance(member.getProperty('email'), str))
-        self.assertEqual(member.getProperty('email'), 'isaac@cambridge.com')
-        self.assertTrue(isinstance(member.getProperty('home_page'), str))
-        self.assertEqual(member.getProperty('home_page'), 'http://gravity.org')
-        self.assertTrue(isinstance(member.getProperty('description'), str))
-        self.assertEqual(member.getProperty('description'), 'I like apples')
-        self.assertTrue(isinstance(member.getProperty('location'), str))
-        portrait = self.layer['portal'].portal_memberdata._getPortrait(TEST_USER_ID)
-        self.assertEqual(portrait.content_type, 'image/jpeg')
+        self.assertTrue(isinstance(member.getProperty("fullname"), str))
+        self.assertEqual(member.getProperty("fullname"), "Isaac Newton")
+        self.assertTrue(isinstance(member.getProperty("email"), str))
+        self.assertEqual(member.getProperty("email"), "isaac@cambridge.com")
+        self.assertTrue(isinstance(member.getProperty("home_page"), str))
+        self.assertEqual(member.getProperty("home_page"), "http://gravity.org")
+        self.assertTrue(isinstance(member.getProperty("description"), str))
+        self.assertEqual(member.getProperty("description"), "I like apples")
+        self.assertTrue(isinstance(member.getProperty("location"), str))
+        portrait = self.layer["portal"].portal_memberdata._getPortrait(TEST_USER_ID)
+        self.assertEqual(portrait.content_type, "image/jpeg")
         self.assertEqual(portrait.width, 1)
         self.assertEqual(portrait.height, 1)
-        self.assertEqual(member.getProperty('location'), 'Cambridge')
-        self.assertTrue(isinstance(member.getProperty('age'), int))
-        self.assertEqual(member.getProperty('age'), 40)
-        self.assertTrue(isinstance(member.getProperty('department'), str))
-        self.assertEqual(member.getProperty('department'), 'Marketing')
-        self.assertTrue(isinstance(member.getProperty('skills'), tuple))
-        self.assertEqual(member.getProperty('skills'), ('Programming', ))
-        self.assertTrue(isinstance(member.getProperty('pi'), float))
-        self.assertEqual(member.getProperty('pi'), 3.14)
-        self.assertTrue(isinstance(member.getProperty('vegetarian'), bool))
-        self.assertEqual(member.getProperty('vegetarian'), True)
+        self.assertEqual(member.getProperty("location"), "Cambridge")
+        self.assertTrue(isinstance(member.getProperty("age"), int))
+        self.assertEqual(member.getProperty("age"), 40)
+        self.assertTrue(isinstance(member.getProperty("department"), str))
+        self.assertEqual(member.getProperty("department"), "Marketing")
+        self.assertTrue(isinstance(member.getProperty("skills"), tuple))
+        self.assertEqual(member.getProperty("skills"), ("Programming",))
+        self.assertTrue(isinstance(member.getProperty("pi"), float))
+        self.assertEqual(member.getProperty("pi"), 3.14)
+        self.assertTrue(isinstance(member.getProperty("vegetarian"), bool))
+        self.assertEqual(member.getProperty("vegetarian"), True)
 
     def test_regression_76_user_information(self):
         # Test that issue 76 does not return: user info sometimes appears empty.
@@ -163,40 +168,40 @@ class TestSchema(BaseTestCase):
         # Here we test as admin.
         portal_url = self.portal.absolute_url()
         self.browser.open(portal_url)
-        self.browser.getLink('Log in').click()
-        self.browser.getControl('Login Name').value = SITE_OWNER_NAME
-        self.browser.getControl('Password').value = SITE_OWNER_PASSWORD
-        self.browser.getControl('Log in').click()
+        self.browser.getLink("Log in").click()
+        self.browser.getControl("Login Name").value = SITE_OWNER_NAME
+        self.browser.getControl("Password").value = SITE_OWNER_PASSWORD
+        self.browser.getControl("Log in").click()
 
         # Set information for the test user.
         info_page = f"{portal_url}/@@user-information?userid={TEST_USER_ID}"
         self.browser.open(info_page)
-        self.browser.getControl('Full Name').value = 'Isaac Newton'
-        self.browser.getControl('Email').value = 'isaac@cambridge.com'
-        self.browser.getControl('Age').value = '40'
-        self.browser.getControl('Save').click()
+        self.browser.getControl("Full Name").value = "Isaac Newton"
+        self.browser.getControl("Email").value = "isaac@cambridge.com"
+        self.browser.getControl("Age").value = "40"
+        self.browser.getControl("Save").click()
 
         # Open the page again, check that the information is set.
         self.browser.open(info_page)
-        self.assertEqual(self.browser.getControl('Full Name').value, 'Isaac Newton')
-        self.assertEqual(self.browser.getControl('Email').value, 'isaac@cambridge.com')
-        self.assertEqual(self.browser.getControl('Age').value, '40')
+        self.assertEqual(self.browser.getControl("Full Name").value, "Isaac Newton")
+        self.assertEqual(self.browser.getControl("Email").value, "isaac@cambridge.com")
+        self.assertEqual(self.browser.getControl("Age").value, "40")
 
         # Opening the new-user/register page used to be enough to trigger the problem.
         self.browser.open(f"{portal_url}/@@new-user")
 
         # Any next calls to the user or personal information pages would show empty.
         self.browser.open(info_page)
-        self.assertEqual(self.browser.getControl('Full Name').value, 'Isaac Newton')
-        self.assertEqual(self.browser.getControl('Email').value, 'isaac@cambridge.com')
-        self.assertEqual(self.browser.getControl('Age').value, '40')
+        self.assertEqual(self.browser.getControl("Full Name").value, "Isaac Newton")
+        self.assertEqual(self.browser.getControl("Email").value, "isaac@cambridge.com")
+        self.assertEqual(self.browser.getControl("Age").value, "40")
 
     def _enable_self_registration(self):
         from plone.base.interfaces import ISecuritySchema
         from plone.registry.interfaces import IRegistry
         from zope.component import getUtility
 
-        self.portal.manage_permission('Add portal member', roles=['Anonymous'])
+        self.portal.manage_permission("Add portal member", roles=["Anonymous"])
         registry = getUtility(IRegistry)
         security_settings = registry.forInterface(ISecuritySchema, prefix="plone")
         security_settings.enable_user_pwd_choice = True
@@ -208,24 +213,24 @@ class TestSchema(BaseTestCase):
         # Here we test as user.
         portal_url = self.portal.absolute_url()
         self.browser.open(portal_url)
-        self.browser.getLink('Log in').click()
-        self.browser.getControl('Login Name').value = TEST_USER_NAME
-        self.browser.getControl('Password').value = TEST_USER_PASSWORD
-        self.browser.getControl('Log in').click()
+        self.browser.getLink("Log in").click()
+        self.browser.getControl("Login Name").value = TEST_USER_NAME
+        self.browser.getControl("Password").value = TEST_USER_PASSWORD
+        self.browser.getControl("Log in").click()
 
         # Set information for the test user.
         info_page = f"{portal_url}/@@personal-information"
         self.browser.open(info_page)
-        self.browser.getControl('Full Name').value = 'Isaac Newton'
-        self.browser.getControl('Email').value = 'isaac@cambridge.com'
-        self.browser.getControl('Age').value = '40'
-        self.browser.getControl('Save').click()
+        self.browser.getControl("Full Name").value = "Isaac Newton"
+        self.browser.getControl("Email").value = "isaac@cambridge.com"
+        self.browser.getControl("Age").value = "40"
+        self.browser.getControl("Save").click()
 
         # Open the page again, check that the information is set.
         self.browser.open(info_page)
-        self.assertEqual(self.browser.getControl('Full Name').value, 'Isaac Newton')
-        self.assertEqual(self.browser.getControl('Email').value, 'isaac@cambridge.com')
-        self.assertEqual(self.browser.getControl('Age').value, '40')
+        self.assertEqual(self.browser.getControl("Full Name").value, "Isaac Newton")
+        self.assertEqual(self.browser.getControl("Email").value, "isaac@cambridge.com")
+        self.assertEqual(self.browser.getControl("Age").value, "40")
 
         # Enable self registration.
         self._enable_self_registration()
@@ -235,16 +240,18 @@ class TestSchema(BaseTestCase):
         self.browser.open(f"{portal_url}/@@logout")
         self.browser.open(f"{portal_url}/@@register")
         # Check that the registration page is loading correctly.
-        self.assertNotIn("This site doesn't have a valid email setup", self.browser.contents)
+        self.assertNotIn(
+            "This site doesn't have a valid email setup", self.browser.contents
+        )
         self.assertIn("Enter your new password.", self.browser.contents)
 
         self.browser.open(f"{portal_url}/@@login")
-        self.browser.getControl('Login Name').value = TEST_USER_NAME
-        self.browser.getControl('Password').value = TEST_USER_PASSWORD
-        self.browser.getControl('Log in').click()
+        self.browser.getControl("Login Name").value = TEST_USER_NAME
+        self.browser.getControl("Password").value = TEST_USER_PASSWORD
+        self.browser.getControl("Log in").click()
 
         # Any next calls to the user or personal information pages would show empty.
         self.browser.open(info_page)
-        self.assertEqual(self.browser.getControl('Full Name').value, 'Isaac Newton')
-        self.assertEqual(self.browser.getControl('Email').value, 'isaac@cambridge.com')
-        self.assertEqual(self.browser.getControl('Age').value, '40')
+        self.assertEqual(self.browser.getControl("Full Name").value, "Isaac Newton")
+        self.assertEqual(self.browser.getControl("Email").value, "isaac@cambridge.com")
+        self.assertEqual(self.browser.getControl("Age").value, "40")

@@ -19,14 +19,13 @@ import unittest
 
 
 class WITHPAMLayer(PloneSandboxLayer):
-
     def setUpPloneSite(self, portal):
-        applyProfile(portal, 'plone.app.multilingual:default')
-        setRoles(portal, TEST_USER_ID, ['Manager'])
+        applyProfile(portal, "plone.app.multilingual:default")
+        setRoles(portal, TEST_USER_ID, ["Manager"])
         login(portal, TEST_USER_NAME)
-        language_tool = getToolByName(portal, 'portal_languages')
-        language_tool.addSupportedLanguage('fr')
-        language_tool.addSupportedLanguage('it')
+        language_tool = getToolByName(portal, "portal_languages")
+        language_tool.addSupportedLanguage("fr")
+        language_tool.addSupportedLanguage("it")
         setup_tool = SetupMultilingualSite()
         setup_tool.setupSite(portal)
 
@@ -34,19 +33,20 @@ class WITHPAMLayer(PloneSandboxLayer):
 WITHPAM_FIXTURE = WITHPAMLayer()
 
 WITHPAM_FUNCTIONAL_TESTING = FunctionalTesting(
-    bases=(WITHPAM_FIXTURE,),
-    name="PloneAppUsersWithPAMLayer:Functional")
+    bases=(WITHPAM_FIXTURE,), name="PloneAppUsersWithPAMLayer:Functional"
+)
 
 
 class TestUserDataPanelWithPAM(unittest.TestCase):
-
     layer = WITHPAM_FUNCTIONAL_TESTING
 
     def test_pam(self):
-        browser = z2.Browser(self.layer['app'])
-        browser.addHeader('Authorization', f'Basic {TEST_USER_NAME}:{TEST_USER_PASSWORD}')
-        browser.open('http://nohost/plone/fr/@@personal-information')
+        browser = z2.Browser(self.layer["app"])
+        browser.addHeader(
+            "Authorization", f"Basic {TEST_USER_NAME}:{TEST_USER_PASSWORD}"
+        )
+        browser.open("http://nohost/plone/fr/@@personal-information")
         self.assertIn(
-            'Saisissez votre nom complet, par exemple Jean Dupont.',
+            "Saisissez votre nom complet, par exemple Jean Dupont.",
             browser.contents,
         )

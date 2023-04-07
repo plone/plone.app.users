@@ -7,26 +7,21 @@ from zope.i18n import translate
 
 
 class TestUserDataPanel(BaseTestCase):
-
     def test_regression(self):
-        portal = self.layer['portal']
-        request = self.layer['request']
-        request.form.update({
-            'userid': 'admin'
-        })
+        portal = self.layer["portal"]
+        request = self.layer["request"]
+        request.form.update({"userid": "admin"})
         form = UserDataPanel(portal, request)
         description = translate(form.description, context=request)
-        self.assertTrue('admin' in description)
+        self.assertTrue("admin" in description)
         # form can be called without raising exception.
         self.assertTrue(form())
 
     def test_escape_html(self):
-        portal = self.layer['portal']
-        request = self.layer['request']
-        request.form.update({
-            'userid': 'admin<script>alert("userid")</script>'
-        })
+        portal = self.layer["portal"]
+        request = self.layer["request"]
+        request.form.update({"userid": 'admin<script>alert("userid")</script>'})
         form = UserDataPanel(portal, request)
         description = translate(form.description, context=request)
-        self.assertTrue('<script>' not in description)
+        self.assertTrue("<script>" not in description)
         self.assertRaises(NotFound, form)

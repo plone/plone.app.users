@@ -16,20 +16,22 @@ class RegistrationControlPanel(form.Form):
     form_name = _("Registration settings")
     enableCSRFProtection = True
 
-    formErrorsMessage = _('There were errors.')
-    template = ViewPageTemplateFile('memberregistration.pt')
+    formErrorsMessage = _("There were errors.")
+    template = ViewPageTemplateFile("memberregistration.pt")
 
     fields = field.Fields(IRegistrationSettingsSchema)
-    fields['user_registration_fields'].widgetFactory = OrderedSelectFieldWidget
+    fields["user_registration_fields"].widgetFactory = OrderedSelectFieldWidget
 
     def getContent(self):
         props = self.props()
-        return {'user_registration_fields': props.getProperty(
-            'user_registration_fields', [])}
+        return {
+            "user_registration_fields": props.getProperty(
+                "user_registration_fields", []
+            )
+        }
 
     @button.buttonAndHandler(
-        _('label_apply_changes', default='Apply changes'),
-        name='save'
+        _("label_apply_changes", default="Apply changes"), name="save"
     )
     def action_save(self, action):
         # CSRF protection
@@ -38,16 +40,18 @@ class RegistrationControlPanel(form.Form):
         data, errors = self.extractData()
         if errors:
             IStatusMessage(self.request).addStatusMessage(
-                self.formErrorsMessage, type='error')
+                self.formErrorsMessage, type="error"
+            )
             return
 
         # save property
-        if data['user_registration_fields'] != \
-                self.getContent()['user_registration_fields']:
+        if (
+            data["user_registration_fields"]
+            != self.getContent()["user_registration_fields"]
+        ):
             props = self.props()
             props._updateProperty(
-                'user_registration_fields',
-                data['user_registration_fields']
+                "user_registration_fields", data["user_registration_fields"]
             )
             msg = _("Changes saved.")
         else:
@@ -69,9 +73,9 @@ class RegistrationControlPanel(form.Form):
 
     def updateActions(self):
         super().updateActions()
-        if self.actions and 'save' in self.actions:
-            self.actions['save'].addclass('btn btn-primary')
+        if self.actions and "save" in self.actions:
+            self.actions["save"].addclass("btn btn-primary")
 
     def props(self):
-        pprop = getToolByName(self.context, 'portal_properties')
+        pprop = getToolByName(self.context, "portal_properties")
         return pprop.site_properties

@@ -26,7 +26,7 @@ SCHEMATA_KEY = "member-fields"
 def checkEmailAddress(value):
     portal = getUtility(ISiteRoot)
 
-    reg_tool = getToolByName(portal, 'portal_registration')
+    reg_tool = getToolByName(portal, "portal_registration")
     if value and reg_tool.isValidEmail(value):
         pass
     else:
@@ -36,21 +36,20 @@ def checkEmailAddress(value):
 
 
 class ProtectedTextLine(schema.TextLine):
-    """ TextLine field which cannot be edited via shema editor
-    """
+    """TextLine field which cannot be edited via shema editor"""
+
     pass
 
 
 class ProtectedEmail(Email):
-    """ Email field which cannot be edited via shema editor
-    """
+    """Email field which cannot be edited via shema editor"""
+
     pass
 
 
 @implementer(IFieldFactory)
 class NotEditableFieldFactory(FieldFactory):
-
-    title = _('(protected)')
+    title = _("(protected)")
 
     def protected(self, field):
         return True
@@ -58,65 +57,67 @@ class NotEditableFieldFactory(FieldFactory):
 
 FullnameFieldFactory = NotEditableFieldFactory(
     ProtectedTextLine,
-    _('label_full_name', default='Full Name'),
+    _("label_full_name", default="Full Name"),
 )
 
 EmailFieldFactory = NotEditableFieldFactory(
     ProtectedEmail,
-    _('label_email', default='Email'),
+    _("label_email", default="Email"),
 )
 
 
 class IUserDataSchema(Interface):
-    """
-    """
+    """ """
 
     fullname = ProtectedTextLine(
-        title=_('label_full_name', default='Full Name'),
-        description=_('help_full_name_creation',
-                      default="Enter full name, e.g. John Smith."),
-        required=False)
+        title=_("label_full_name", default="Full Name"),
+        description=_(
+            "help_full_name_creation", default="Enter full name, e.g. John Smith."
+        ),
+        required=False,
+    )
 
     email = ProtectedEmail(
-        title=_('label_email', default='Email'),
-        description='We will use this address if you need to recover your '
-                    'password',
+        title=_("label_email", default="Email"),
+        description="We will use this address if you need to recover your " "password",
         required=True,
         constraint=checkEmailAddress,
     )
 
 
 class IRegisterSchema(Interface):
-
     username = schema.ASCIILine(
-        title=_('label_user_name', default='User Name'),
+        title=_("label_user_name", default="User Name"),
         description=_(
-            'help_user_name_creation_casesensitive',
+            "help_user_name_creation_casesensitive",
             default="Enter a user name, usually something like 'jsmith'. "
-                    "No spaces or special characters. Usernames and "
-                    "passwords are case sensitive, make sure the caps lock "
-                    "key is not enabled. This is the name used to log in."
-        )
+            "No spaces or special characters. Usernames and "
+            "passwords are case sensitive, make sure the caps lock "
+            "key is not enabled. This is the name used to log in.",
+        ),
     )
 
     password = schema.Password(
-        title=_('label_password', default='Password'),
-        description=_('help_password_creation',
-                      default='Enter your new password.'))
+        title=_("label_password", default="Password"),
+        description=_("help_password_creation", default="Enter your new password."),
+    )
 
     password_ctl = schema.Password(
-        title=_('label_confirm_password',
-                default='Confirm password'),
-        description=_('help_confirm_password',
-                      default="Re-enter the password. "
-                      "Make sure the passwords are identical."))
+        title=_("label_confirm_password", default="Confirm password"),
+        description=_(
+            "help_confirm_password",
+            default="Re-enter the password. " "Make sure the passwords are identical.",
+        ),
+    )
 
     mail_me = schema.Bool(
-        title=_('label_mail_password',
-                default="Send a confirmation mail with a link to set the "
-                "password"),
+        title=_(
+            "label_mail_password",
+            default="Send a confirmation mail with a link to set the " "password",
+        ),
         required=False,
-        default=False)
+        default=False,
+    )
 
 
 class ICombinedRegisterSchema(IRegisterSchema, IUserDataSchema):
@@ -124,13 +125,12 @@ class ICombinedRegisterSchema(IRegisterSchema, IUserDataSchema):
 
 
 class IAddUserSchema(Interface):
-
     groups = schema.List(
-        title=_('label_add_to_groups',
-                default='Add to the following groups:'),
-        description='',
+        title=_("label_add_to_groups", default="Add to the following groups:"),
+        description="",
         required=False,
-        value_type=schema.Choice(vocabulary='plone.app.users.group_ids'))
+        value_type=schema.Choice(vocabulary="plone.app.users.group_ids"),
+    )
 
 
 class PortraitWidget(NamedImageWidget):
@@ -141,9 +141,9 @@ class PortraitWidget(NamedImageWidget):
     #   another user's image does not work.
     @property
     def download_url(self):
-        userid = self.request.form.get('userid')
+        userid = self.request.form.get("userid")
         if not userid:
-            mt = getToolByName(self.form.context, 'portal_membership')
+            mt = getToolByName(self.form.context, "portal_membership")
             userid = mt.getAuthenticatedMember().getId()
 
         # anonymous
@@ -154,7 +154,7 @@ class PortraitWidget(NamedImageWidget):
         if not url:
             return None
 
-        return '{}?{}'.format(url, make_query({'userid': userid}))
+        return "{}?{}".format(url, make_query({"userid": userid}))
 
 
 @implementer(IFieldWidget)
@@ -164,26 +164,22 @@ def PortraitFieldWidget(field, request):
 
 
 class IRegistrationSettingsSchema(Interface):
-
     user_registration_fields = schema.Tuple(
-        title=_(
-            'title_user_registration_fields',
-            default='User registration fields'
-        ),
+        title=_("title_user_registration_fields", default="User registration fields"),
         description=_(
             "description_user_registration_fields",
-            default=("Select the fields for the join form. Fields in the "
-                     "right box will be shown on the form, fields on the "
-                     "left are disabled. Use the left/right buttons to move "
-                     "a field from right to left (to disable it) and vice "
-                     "versa. Use the up/down buttons to change the order in "
-                     "which the fields appear on the form."),
+            default=(
+                "Select the fields for the join form. Fields in the "
+                "right box will be shown on the form, fields on the "
+                "left are disabled. Use the left/right buttons to move "
+                "a field from right to left (to disable it) and vice "
+                "versa. Use the up/down buttons to change the order in "
+                "which the fields appear on the form."
+            ),
         ),
-        value_type=schema.Choice(
-            vocabulary='plone.app.users.user_registration_fields'),
+        value_type=schema.Choice(vocabulary="plone.app.users.user_registration_fields"),
     )
 
 
 class IUserSchemaProvider(Interface):
-
     pass
