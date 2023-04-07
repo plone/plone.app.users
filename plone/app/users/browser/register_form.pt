@@ -1,49 +1,61 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="context/main_template/macros/master"
-      i18n:domain="plone">
+      i18n:domain="plone"
+>
 
-<body>
-  <metal:main fill-slot="main">
-  <metal:main-macro define-macro="main">
+  <body>
+    <metal:main fill-slot="main">
+      <metal:main-macro define-macro="main">
 
-    <article id="content" class="login-wrapper">
+        <article class="login-wrapper"
+                 id="content"
+        >
 
-    <div class="card">
-        <div class="card-body">
+          <div class="card">
+            <div class="card-body">
 
-          <tal:mailhost tal:condition="view/showForm">
-            <h1 class="card-title h5"
-                tal:content="view/label | nothing" />
-            <metal:block use-macro="context/@@ploneform-macros/titlelessform">
-              <metal:bottom fill-slot="formbottom">
-              <input tal:define="came_from request/form/came_from|nothing"
-                  tal:condition="came_from"
-                  type="hidden"
-                  name="came_from"
-                  tal:attributes="value came_from" />
-              </metal:bottom>
-            </metal:block>
-          </tal:mailhost>
+              <tal:mailhost tal:condition="view/showForm">
+                <h1 class="card-title h5"
+                    tal:content="view/label | nothing"
+                ></h1>
+                <metal:block use-macro="context/@@ploneform-macros/titlelessform">
+                  <metal:bottom fill-slot="formbottom">
+                    <input name="came_from"
+                           type="hidden"
+                           tal:define="
+                             came_from request/form/came_from|nothing;
+                           "
+                           tal:condition="came_from"
+                           tal:attributes="
+                             value came_from;
+                           "
+                    />
+                  </metal:bottom>
+                </metal:block>
+              </tal:mailhost>
 
-          <tal:nomailhost tal:condition="not:view/showForm">
-            <h1 class="card-title h5"
-                i18n:translate=""
-                tal:content="view/label" />
-            <div class="documentDescription" i18n:translate="">
+              <tal:nomailhost tal:condition="not:view/showForm">
+                <h1 class="card-title h5"
+                    tal:content="view/label"
+                    i18n:translate=""
+                ></h1>
+                <div class="documentDescription"
+                     i18n:translate=""
+                >
                 This site doesn't have a valid email setup, so you
                 cannot register at this time.
+                </div>
+              </tal:nomailhost>
+
             </div>
-          </tal:nomailhost>
+          </div>
 
-        </div>
-      </div>
+        </article>
 
-    </article>
-
-  </metal:main-macro>
-  </metal:main>
-</body>
+      </metal:main-macro>
+    </metal:main>
+  </body>
 </html>
