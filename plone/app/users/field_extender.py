@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.users.browser.schemaeditor import USERS_NAMESPACE
 from plone.app.users.browser.schemaeditor import USERS_PREFIX
 from plone.autoform import directives as form
@@ -16,18 +15,18 @@ import zope.schema
 
 
 form_vocab = SimpleVocabulary([
-    SimpleTerm(value=u'On Registration',
-               title=u'On Registration'),
-    SimpleTerm(value=u'In User Profile',
-               title=u'In User Profile'),
+    SimpleTerm(value='On Registration',
+               title='On Registration'),
+    SimpleTerm(value='In User Profile',
+               title='In User Profile'),
 ])
 
 
 class IUserFormSelection(Interface):
     form.widget(forms=CheckBoxFieldWidget)
     forms = zope.schema.List(
-        title=u"Where should this field be shown",
-        description=u"Does not apply to username or to email fields",
+        title="Where should this field be shown",
+        description="Does not apply to username or to email fields",
         required=True,
         value_type=zope.schema.Choice(vocabulary=form_vocab),
     )
@@ -41,7 +40,7 @@ def get_user_addform_selection(schema_context):
     return IUserFormSelection
 
 
-class UserFormSelectionAdapter(object):
+class UserFormSelectionAdapter:
     adapts(IField)
 
     def __init__(self, field):
@@ -58,7 +57,7 @@ class UserFormSelectionAdapter(object):
 
 
 @implementer(IFieldMetadataHandler)
-class UserFormSelectionMetadata(object):
+class UserFormSelectionMetadata:
 
     namespace = USERS_NAMESPACE
     prefix = USERS_PREFIX

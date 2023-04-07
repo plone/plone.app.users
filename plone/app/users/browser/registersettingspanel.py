@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.users.schema import IRegistrationSettingsSchema
 from plone.protect import CheckAuthenticator
 from Products.CMFCore.utils import getToolByName
@@ -13,8 +12,8 @@ from z3c.form.browser.orderedselect import OrderedSelectFieldWidget
 
 class RegistrationControlPanel(form.Form):
     label = _("Users and Groups")
-    description = _(u"Registration settings for this site.")
-    form_name = _(u"Registration settings")
+    description = _("Registration settings for this site.")
+    form_name = _("Registration settings")
     enableCSRFProtection = True
 
     formErrorsMessage = _('There were errors.')
@@ -29,7 +28,7 @@ class RegistrationControlPanel(form.Form):
             'user_registration_fields', [])}
 
     @button.buttonAndHandler(
-        _(u'label_apply_changes', default=u'Apply changes'),
+        _('label_apply_changes', default='Apply changes'),
         name='save'
     )
     def action_save(self, action):
@@ -69,7 +68,7 @@ class RegistrationControlPanel(form.Form):
     #     self.request.response.redirect(url + '/@@overview-controlpanel')
 
     def updateActions(self):
-        super(RegistrationControlPanel, self).updateActions()
+        super().updateActions()
         if self.actions and 'save' in self.actions:
             self.actions['save'].addclass('btn btn-primary')
 

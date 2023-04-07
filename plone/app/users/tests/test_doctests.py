@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.testing import layered
 
@@ -33,7 +32,7 @@ def test_suite():
     suite.addTests([
         layered(
             doctest.DocFileSuite(
-                'tests/{0}'.format(test_file),
+                f'tests/{test_file}',
                 package='plone.app.users',
                 optionflags=optionflags,
             ),

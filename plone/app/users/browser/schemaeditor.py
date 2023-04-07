@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.users.schema import IRegisterSchema
 from plone.app.users.schema import IUserDataSchema
 from plone.app.users.schema import SCHEMA_ANNOTATION
@@ -33,17 +32,17 @@ USERS_PREFIX = 'users'
 SPLITTER = '_//_'
 
 ALLOWED_FIELDS = [
-    u'zope.schema._bootstrapfields.TextLine',
-    u'zope.schema._bootstrapfields.Text',
-    u'zope.schema._bootstrapfields.Bool',
-    u'zope.schema._bootstrapfields.Int',
-    u'zope.schema._field.Float',
-    u'zope.schema._field.Set',
-    u'zope.schema._field.Choice',
-    u'zope.schema._field.Date',
-    u'zope.schema._field.Datetime',
-    u'plone.namedfile.field.NamedBlobImage',
-    u'zope.schema._field.URI',
+    'zope.schema._bootstrapfields.TextLine',
+    'zope.schema._bootstrapfields.Text',
+    'zope.schema._bootstrapfields.Bool',
+    'zope.schema._bootstrapfields.Int',
+    'zope.schema._field.Float',
+    'zope.schema._field.Set',
+    'zope.schema._field.Choice',
+    'zope.schema._field.Date',
+    'zope.schema._field.Datetime',
+    'plone.namedfile.field.NamedBlobImage',
+    'zope.schema._field.URI',
 ]
 field_type_mapping = {
     "ProtectedEmail": 'string',
@@ -95,7 +94,7 @@ class SchemaListingPage(FormWrapper):
 @implementer(IMemberSchemaContext)
 class MemberSchemaContext(SchemaContext):
 
-    label = _(u"Edit Member Form Fields")
+    label = _("Edit Member Form Fields")
 
     def __init__(self, context, request):
         self.fieldsWhichCannotBeDeleted = ['fullname', 'email']
@@ -104,11 +103,11 @@ class MemberSchemaContext(SchemaContext):
         self.allowedFields = ALLOWED_FIELDS
 
         schema = getFromBaseSchema(IUserDataSchema)
-        super(MemberSchemaContext, self).__init__(
+        super().__init__(
             schema,
             request,
             name=SCHEMATA_KEY,
-            title=_(u"Member Fields"),
+            title=_("Member Fields"),
         )
 
 
@@ -126,7 +125,7 @@ def applySchema(snew_schema):
     # check if more than 2 image fields:
     if snew_schema.count('NamedBlobImage') > 1:
         site.plone_utils.addPortalMessage(
-            _(u'One image field maximum.'), 'error')
+            _('One image field maximum.'), 'error')
         return
 
     # store the current schema in the annotation
@@ -143,7 +142,7 @@ def applySchema(snew_schema):
             new_schema[field_id].__class__.__name__,
             None)
         if not field_type:
-            log('Unsupported field: %s (%s)' % (
+            log('Unsupported field: {} ({})'.format(
                 field_id,
                 new_schema[field_id].__class__.__name__))
             continue
@@ -182,7 +181,7 @@ def get_ttw_edited_schema():
 
 
 @implementer(IFieldMetadataHandler)
-class UsersMetadataSchemaExporter(object):
+class UsersMetadataSchemaExporter:
     """Support the security: namespace in model definitions.
     """
     namespace = ns = USERS_NAMESPACE
@@ -237,9 +236,9 @@ class UsersMetadataSchemaExporter(object):
         if isinstance(value, bool):
             value = value and "bool:true" or "bool:false"
         elif isinstance(value, (list, set, tuple)):
-            value = u"%s:%s" % (type(value).__name__, SPLITTER.join(value))
+            value = f"{type(value).__name__}:{SPLITTER.join(value)}"
         elif value is not None:
-            value = u"int:%s" % unicode(value)
+            value = "int:%s" % unicode(value)
         return value
 
 
@@ -330,11 +329,11 @@ def getFromBaseSchema(baseSchema, form_name=None):
 
 
 def copySchemaAttrs(schema, form_name):
-    return dict([
-        (a, copy.deepcopy(schema[a]))
+    return {
+        a: copy.deepcopy(schema[a])
         for a in schema
         if field_in_form(schema[a], form_name)
-    ])
+    }
 
 
 default_fields = list(IUserDataSchema.names()) + list(IRegisterSchema.names())

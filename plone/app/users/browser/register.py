@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import getSecurityManager
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.browser.account import getSchema
@@ -53,8 +52,8 @@ def getRegisterSchema():
 
 class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     """Form to be used as base for Register and Add User forms."""
-    label = u""
-    description = u""
+    label = ""
+    description = ""
     formErrorsMessage = _('There were errors.')
     ignoreContext = True
     enableCSRFProtection = True
@@ -75,7 +74,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         if self._finishedRegister:
             return self.context.unrestrictedTraverse('registered')()
 
-        return super(BaseRegistrationForm, self).render()
+        return super().render()
 
     def updateFields(self):
         """Fields are dynamic in this form, to be able to handle
@@ -86,22 +85,22 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 
         # Finally, let autoform process the schema and any FormExtenders do
         # their thing
-        super(BaseRegistrationForm, self).updateFields()
+        super().updateFields()
 
         if use_email_as_login:
             self.fields['email'].field.description = _(
-                u'help_email_creation_for_login', default=u"Enter an email "
+                'help_email_creation_for_login', default="Enter an email "
                 "address. This will be your login name. We respect your "
                 "privacy, and will not give the address away to any third "
                 "parties or expose it anywhere.")
             del self.fields['username']
         else:
             self.fields['email'].field.description = _(
-                u'help_email_creation',
-                default=u"Enter an email address. This is necessary in case "
-                        u"the password is lost. We respect your privacy, and "
-                        u"will not give the address away to any third parties "
-                        u"or expose it anywhere."
+                'help_email_creation',
+                default="Enter an email address. This is necessary in case "
+                        "the password is lost. We respect your privacy, and "
+                        "will not give the address away to any third parties "
+                        "or expose it anywhere."
             )
 
         # Change the password description based on PAS Plugin The user needs a
@@ -113,14 +112,14 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             err_str = registration.testPasswordValidity('')
             if err_str:
                 msg = _(
-                    u'help_password_creation_with_errors',
-                    default=u'Enter your new password. ${errors}',
+                    'help_password_creation_with_errors',
+                    default='Enter your new password. ${errors}',
                     mapping=dict(errors=err_str)
                 )
                 self.fields['password'].field.description = msg
 
     def updateActions(self):
-        super(BaseRegistrationForm, self).updateActions()
+        super().updateActions()
         self.actions['register'].addClass('btn-primary')
 
     def generate_user_id(self, data):
@@ -299,7 +298,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 password = data.get('password')
                 password_ctl = data.get('password_ctl')
                 if password != password_ctl:
-                    err_str = _(u'Passwords do not match.')
+                    err_str = _('Passwords do not match.')
                     notifyWidgetActionExecutionError(action,
                                                      'password', err_str)
                     notifyWidgetActionExecutionError(action,
@@ -346,7 +345,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         if username_field not in error_keys:
             # user id may not be the same as the portal id.
             if user_id == portal.getId():
-                err_str = _(u"This username is reserved. Please choose a "
+                err_str = _("This username is reserved. Please choose a "
                             "different name.")
                 notifyWidgetActionExecutionError(action,
                                                  username_field, err_str)
@@ -354,7 +353,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         # Check if user id is allowed by the member id pattern.
         if username_field not in error_keys:
             if not registration.isMemberIdAllowed(user_id):
-                err_str = _(u"The login name you selected is already in use "
+                err_str = _("The login name you selected is already in use "
                             "or is not valid. Please choose another.")
                 notifyWidgetActionExecutionError(action,
                                                  username_field, err_str)
@@ -365,7 +364,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             pas = getToolByName(self, 'acl_users')
             results = pas.searchUsers(name=login_name, exact_match=True)
             if results:
-                err_str = _(u"The login name you selected is already in use "
+                err_str = _("The login name you selected is already in use "
                             "or is not valid. Please choose another.")
                 notifyWidgetActionExecutionError(action,
                                                  username_field, err_str)
@@ -374,7 +373,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             # Admin can either set a password or mail the user (or both).
             if not (data['password'] or data['mail_me']):
                 err_str = _('msg_no_password_no_mail_me',
-                            default=u"You must set a password or choose to "
+                            default="You must set a password or choose to "
                             "send an email.")
 
                 # set error on password field
@@ -382,7 +381,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 notifyWidgetActionExecutionError(action, 'mail_me', err_str)
 
     @button.buttonAndHandler(
-        _(u'label_register', default=u'Register'), name='register'
+        _('label_register', default='Register'), name='register'
     )
     def action_join(self, action):
         data, errors = self.extractData()
@@ -418,9 +417,9 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             # I have seen a unicode user id.  I cannot reproduce it, but
             # let's make them strings, otherwise you run into trouble with
             # plone.session when trying to login.
-            if isinstance(user_id, six.text_type):
+            if isinstance(user_id, str):
                 user_id = user_id.encode('utf8')
-            if isinstance(login_name, six.text_type):
+            if isinstance(login_name, str):
                 login_name = login_name.encode('utf8')
 
         # Set the username for good measure, as some code may expect
@@ -435,7 +434,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
         self.request.form['form.username'] = login_name
 
         password = data.get('password') or registration.generatePassword()
-        if six.PY2 and isinstance(password, six.text_type):
+        if six.PY2 and isinstance(password, str):
             password = password.encode('utf8')
 
         try:
@@ -488,22 +487,22 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                         [user_id], REQUEST=self.request)
                     self._finishedRegister = False
                     IStatusMessage(self.request).addStatusMessage(
-                        _(u'status_fatal_password_mail',
-                          default=u"Failed to create your account: we were "
+                        _('status_fatal_password_mail',
+                          default="Failed to create your account: we were "
                           "unable to send instructions for setting a password "
                           "to your email address: ${address}",
-                          mapping={u'address': data.get('email', '')}),
+                          mapping={'address': data.get('email', '')}),
                         type='error')
                 else:
                     # This should only happen when an admin registers
                     # a user.  The admin should have seen a warning
                     # already, but we warn again for clarity.
                     IStatusMessage(self.request).addStatusMessage(
-                        _(u'status_nonfatal_password_mail',
-                          default=u"This account has been created, but we "
+                        _('status_nonfatal_password_mail',
+                          default="This account has been created, but we "
                           "were unable to send instructions for setting a "
                           "password to this email address: ${address}",
-                          mapping={u'address': data.get('email', '')}),
+                          mapping={'address': data.get('email', '')}),
                         type='warning')
 
     def applyProperties(self, userid, data):
@@ -544,8 +543,8 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
 class RegistrationForm(BaseRegistrationForm):
     """Dynamically get fields from user data, through admin config settings.
     """
-    label = _(u'heading_registration_form', default=u'Registration form')
-    description = u""
+    label = _('heading_registration_form', default='Registration form')
+    description = ""
     template = ViewPageTemplateFile('register_form.pt')
 
     @property
@@ -570,7 +569,7 @@ class RegistrationForm(BaseRegistrationForm):
             # will never get displayed.
             return
 
-        super(RegistrationForm, self).updateFields()
+        super().updateFields()
         defaultFields = field.Fields(self.fields)
 
         # Can the user actually set his/her own password?
@@ -593,7 +592,7 @@ class RegistrationForm(BaseRegistrationForm):
             # will never get displayed.
             return
 
-        super(RegistrationForm, self).updateWidgets()
+        super().updateWidgets()
         settings = self._get_security_settings()
         if not settings.enable_user_pwd_choice:
             # Show a message indicating that a password reset link
@@ -602,22 +601,22 @@ class RegistrationForm(BaseRegistrationForm):
             widget.mode = DISPLAY_MODE
             widget.value = ['selected']
             widget.label = _(
-                u'label_password_change_mail',
-                default=u"A URL will be generated and e-mailed to you; "
-                        u"follow the link to reach a page where you can "
-                        u"change your password and complete the registration "
-                        u"process.")
+                'label_password_change_mail',
+                default="A URL will be generated and e-mailed to you; "
+                        "follow the link to reach a page where you can "
+                        "change your password and complete the registration "
+                        "process.")
             widget.terms = None
             widget.updateTerms()
 
 
 class AddUserForm(BaseRegistrationForm):
-    label = _(u'heading_add_user_form', default=u'Add New User')
-    description = u""
+    label = _('heading_add_user_form', default='Add New User')
+    description = ""
     template = ViewPageTemplateFile('newuser_form.pt')
 
     def updateFields(self):
-        super(AddUserForm, self).updateFields()
+        super().updateFields()
         defaultFields = field.Fields(self.fields)
 
         # The mail_me field needs special handling depending on the
@@ -649,7 +648,7 @@ class AddUserForm(BaseRegistrationForm):
         self.fields = allFields
 
     def updateWidgets(self):
-        super(AddUserForm, self).updateWidgets()
+        super().updateWidgets()
 
         # set display mode for mail_me field if no mailhost is configured
         portal = getUtility(ISiteRoot)
@@ -662,17 +661,17 @@ class AddUserForm(BaseRegistrationForm):
             widget.mode = DISPLAY_MODE
             widget.value = ['selected']
             widget.label = _(
-                u'label_cant_mail_password_reset',
-                default=u"Normally we would offer to send the user an email "
-                        u"with instructions to set a password on completion "
-                        u"of this form. But this site does not have a valid "
-                        u"email setup. You can fix this in the Mail settings."
+                'label_cant_mail_password_reset',
+                default="Normally we would offer to send the user an email "
+                        "with instructions to set a password on completion "
+                        "of this form. But this site does not have a valid "
+                        "email setup. You can fix this in the Mail settings."
             )
             widget.terms = None
             widget.updateTerms()
 
     @button.buttonAndHandler(
-        _(u'label_register', default=u'Register'), name='register'
+        _('label_register', default='Register'), name='register'
     )
     def action_join(self, action):
         data, errors = self.extractData()
@@ -709,7 +708,7 @@ class AddUserForm(BaseRegistrationForm):
             return
 
         IStatusMessage(self.request).addStatusMessage(
-            _(u"User added."), type='info')
+            _("User added."), type='info')
         self.request.response.redirect(
             self.context.absolute_url() +
             '/@@usergroup-userprefs?searchstring=' + user_id)

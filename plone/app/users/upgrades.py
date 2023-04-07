@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.users.browser import schemaeditor
 from plone.namedfile.field import NamedBlobImage
 from plone.schemaeditor.interfaces import IEditableSchema
@@ -21,7 +20,7 @@ def copySchemaAttrs(sch):
     fields = {}
     for id in sch:
         field = copy.deepcopy(sch[id])
-        field.forms_selection = [u'In User Profile']
+        field.forms_selection = ['In User Profile']
         fields[id] = field
     return fields
 
@@ -35,9 +34,9 @@ class IHomePageSchema(Interface):
     """
 
     home_page = schema.TextLine(
-        title=_(u'label_homepage', default=u'Home page'),
-        description=_(u'help_homepage',
-                      default=u"The URL for your external home page, "
+        title=_('label_homepage', default='Home page'),
+        description=_('help_homepage',
+                      default="The URL for your external home page, "
                       "if you have one."),
         required=False)
 
@@ -47,9 +46,9 @@ class IDescriptionSchema(Interface):
     """
 
     description = schema.Text(
-        title=_(u'label_biography', default=u'Biography'),
-        description=_(u'help_biography',
-                      default=u"A short overview of who you are and what you "
+        title=_('label_biography', default='Biography'),
+        description=_('help_biography',
+                      default="A short overview of who you are and what you "
                       "do. Will be displayed on your author page, linked "
                       "from the items you create."),
         required=False)
@@ -60,9 +59,9 @@ class ILocationSchema(Interface):
     """
 
     location = schema.TextLine(
-        title=_(u'label_location', default=u'Location'),
-        description=_(u'help_location',
-                      default=u"Your location - either city and "
+        title=_('label_location', default='Location'),
+        description=_('help_location',
+                      default="Your location - either city and "
                       "country - or in a company setting, where "
                       "your office is located."),
         required=False)
@@ -73,12 +72,12 @@ class IPortraitSchema(Interface):
     """
 
     portrait = NamedBlobImage(
-        title=_(u'label_portrait', default=u'Portrait'),
+        title=_('label_portrait', default='Portrait'),
         description=_(
-            u'help_portrait',
-            default=u'To add or change the portrait: click the "Browse" '
-                    u'button; select a picture of yourself. Recommended '
-                    u'image size is 75 pixels wide by 100 pixels tall.'
+            'help_portrait',
+            default='To add or change the portrait: click the "Browse" '
+                    'button; select a picture of yourself. Recommended '
+                    'image size is 75 pixels wide by 100 pixels tall.'
         ),
         required=False)
 

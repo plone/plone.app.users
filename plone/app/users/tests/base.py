@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Base class for flexible user registration test cases.
 
 This is in a separate module because it's potentially useful to other
@@ -77,7 +76,7 @@ class DeadParrotPassword(BasePlugin, Cacheable):
         if set_info and set_info.get('password', None) is not None:
             password = set_info['password']
             if password.count('dead') or password == '':
-                errors = [{'id': 'password', 'error': u'Must not be dead'}]
+                errors = [{'id': 'password', 'error': 'Must not be dead'}]
             else:
                 errors = []
         return errors
@@ -88,7 +87,7 @@ class DeadParrotPassword(BasePlugin, Cacheable):
 def setMailHost():
     registry = getUtility(IRegistry)
     mail_settings = registry.forInterface(IMailSchema, prefix='plone')
-    mail_settings.smtp_host = u'localhost'
+    mail_settings.smtp_host = 'localhost'
     mail_settings.email_from_address = 'admin@foo.com'
     commit()
 
@@ -96,7 +95,7 @@ def setMailHost():
 def unsetMailHost():
     registry = getUtility(IRegistry)
     mail_settings = registry.forInterface(IMailSchema, prefix='plone')
-    mail_settings.smtp_host = u''
+    mail_settings.smtp_host = ''
     mail_settings.email_from_address = ''
     commit()
 

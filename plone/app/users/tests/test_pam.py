@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.multilingual.browser.setup import SetupMultilingualSite
 from plone.app.testing import applyProfile
 from plone.app.testing import login
@@ -43,7 +42,7 @@ class TestUserDataPanelWithPAM(unittest.TestCase):
 
     def test_pam(self):
         browser = z2.Browser(self.layer['app'])
-        browser.addHeader('Authorization', 'Basic %s:%s' % (TEST_USER_NAME, TEST_USER_PASSWORD))
+        browser.addHeader('Authorization', f'Basic {TEST_USER_NAME}:{TEST_USER_PASSWORD}')
         browser.open('http://nohost/plone/fr/@@personal-information')
         self.assertIn(
             'Saisissez votre nom complet, par exemple Jean Dupont.',

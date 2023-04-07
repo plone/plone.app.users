@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.users.browser.userdatapanel import getUserDataSchema
 from plone.app.users.setuphandlers import export_schema
 from plone.app.users.setuphandlers import import_schema
@@ -14,7 +13,7 @@ from zope import schema
 class TestImport(BaseTestCase):
 
     def setUp(self):
-        super(TestImport, self).setUp()
+        super().setUp()
         xml = """<model xmlns:lingua="http://namespaces.plone.org/supermodel/lingua" xmlns:users="http://namespaces.plone.org/supermodel/users" xmlns:form="http://namespaces.plone.org/supermodel/form" xmlns:i18n="http://xml.zope.org/namespaces/i18n" xmlns:security="http://namespaces.plone.org/supermodel/security" xmlns:marshal="http://namespaces.plone.org/supermodel/marshal" xmlns="http://namespaces.plone.org/supermodel/schema" i18n:domain="plone">
   <schema name="member-fields">
     <field name="home_page" type="zope.schema.URI" users:forms="In User Profile">

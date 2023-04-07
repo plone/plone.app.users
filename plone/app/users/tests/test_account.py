@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Products.CMFCore.interfaces import IMembershipTool
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.tests.base import BaseTestCase
@@ -9,7 +8,7 @@ import unittest
 
 
 @implementer(IMembershipTool)
-class DummyPortalMembership(object):
+class DummyPortalMembership:
 
     def __init__(self, allowed):
         self.allowed = allowed

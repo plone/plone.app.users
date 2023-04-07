@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import getSecurityManager
 from .browser.schemaeditor import getFromBaseSchema
 from plone.app.users.schema import ICombinedRegisterSchema
@@ -20,7 +19,7 @@ JOIN_CONST = ['username', 'password', 'email', 'mail_me']
 
 
 @implementer(IVocabularyFactory)
-class UserRegistrationFieldsVocabulary(object):
+class UserRegistrationFieldsVocabulary:
     """Returns list of fields available for registration form.
 
     It gets fields from z3c.form adopted Registration form schema.
@@ -65,7 +64,7 @@ UserRegistrationFieldsVocabularyFactory = UserRegistrationFieldsVocabulary()
 
 
 @implementer(IVocabularyFactory)
-class GroupIdVocabulary(object):
+class GroupIdVocabulary:
     """
     Return vocab of groups to add new user to.
 
@@ -114,7 +113,7 @@ class GroupIdVocabulary(object):
 
             group_title = safe_unicode(g.getGroupTitleOrName())
             if group_title != g.id:
-                title = u'%s (%s)' % (group_title, g.id)
+                title = f'{group_title} ({g.id})'
             else:
                 title = group_title
             terms.append(SimpleTerm(g.id, g.id, title))

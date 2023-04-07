@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from Acquisition import aq_inner
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.utils import notifyWidgetActionExecutionError
@@ -16,30 +15,30 @@ class IPasswordSchema(Interface):
     """Provide schema for password form """
 
     current_password = schema.Password(
-        title=_(u'label_current_password', default=u'Current password'),
+        title=_('label_current_password', default='Current password'),
         description=_(
-            u'help_current_password',
-            default=u'Enter your current password.'),
+            'help_current_password',
+            default='Enter your current password.'),
         # constraint=checkCurrentPassword,
     )
 
     new_password = schema.Password(
-        title=_(u'label_new_password', default=u'New password'),
+        title=_('label_new_password', default='New password'),
         description=_(
-            u'help_new_password',
-            default=u"Enter your new password."),
+            'help_new_password',
+            default="Enter your new password."),
     )
 
     new_password_ctl = schema.Password(
-        title=_(u'label_confirm_password', default=u'Confirm password'),
+        title=_('label_confirm_password', default='Confirm password'),
         description=_(
-            u'help_confirm_password',
-            default=u"Re-enter the password. "
-            u"Make sure the passwords are identical."),
+            'help_confirm_password',
+            default="Re-enter the password. "
+            "Make sure the passwords are identical."),
     )
 
 
-class PasswordPanelAdapter(object):
+class PasswordPanelAdapter:
 
     def __init__(self, context):
         self.context = getToolByName(context, 'portal_membership')
@@ -58,12 +57,12 @@ class PasswordPanelAdapter(object):
 class PasswordPanel(AccountPanelForm):
     """Implementation of password reset form that uses z3c.form."""
 
-    description = _(u"Change Password")
-    form_name = _(u'legend_password_details', default=u'Password Details')
+    description = _("Change Password")
+    form_name = _('legend_password_details', default='Password Details')
     schema = IPasswordSchema
 
     def updateFields(self):
-        super(PasswordPanel, self).updateFields()
+        super().updateFields()
         # Change the password description based on PAS Plugin The user needs a
         # list of instructions on what kind of password is required.  We'll
         # reuse password errors as instructions e.g. "Must contain a letter and
@@ -72,7 +71,7 @@ class PasswordPanel(AccountPanelForm):
         err_str = registration.testPasswordValidity('')
         if err_str:
             msg = _(
-                u'Enter your new password. ${errors}',
+                'Enter your new password. ${errors}',
                 mapping=dict(errors=err_str)
             )
             self.fields['new_password'].field.description = msg
@@ -85,12 +84,12 @@ class PasswordPanel(AccountPanelForm):
         # check if password is correct
         current_password = data.get('current_password')
         if current_password:
-            if six.PY2 and isinstance(current_password, six.text_type):
+            if six.PY2 and isinstance(current_password, str):
                 current_password = current_password.encode('utf8')
 
             if not membertool.testCurrentPassword(current_password):
                 # add error to current_password widget
-                err_str = _(u"Incorrect value for current password")
+                err_str = _("Incorrect value for current password")
                 notifyWidgetActionExecutionError(action,
                                                  'current_password', err_str)
 
@@ -109,7 +108,7 @@ class PasswordPanel(AccountPanelForm):
                                                  'new_password_ctl', err_str)
 
     @button.buttonAndHandler(
-        _(u'label_change_password', default=u'Change Password'),
+        _('label_change_password', default='Change Password'),
         name='reset_passwd'
     )
     def action_reset_passwd(self, action):
@@ -125,15 +124,15 @@ class PasswordPanel(AccountPanelForm):
         membertool = getToolByName(self.context, 'portal_membership')
 
         password = data['new_password']
-        if six.PY2 and isinstance(password, six.text_type):
+        if six.PY2 and isinstance(password, str):
             password = password.encode('utf8')
 
         try:
             membertool.setPassword(password, None, REQUEST=self.request)
         except AttributeError:
-            failMessage = _(u'While changing your password an AttributeError '
-                            u'occurred. This is usually caused by your user '
-                            u'being defined outside the portal.')
+            failMessage = _('While changing your password an AttributeError '
+                            'occurred. This is usually caused by your user '
+                            'being defined outside the portal.')
 
             IStatusMessage(self.request).addStatusMessage(
                 _(failMessage), type="error"
@@ -145,10 +144,10 @@ class PasswordPanel(AccountPanelForm):
         )
 
     # hide inherited Save and Cancel buttons
-    @button.buttonAndHandler(_(u'Save'), condition=lambda form: False)
+    @button.buttonAndHandler(_('Save'), condition=lambda form: False)
     def handleSave(self, action):
         pass
 
-    @button.buttonAndHandler(_(u'Cancel'), condition=lambda form: False)
+    @button.buttonAndHandler(_('Cancel'), condition=lambda form: False)
     def cancel(self, action):
         pass

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl import Unauthorized
 from Acquisition import aq_inner
 from plone.app.layout.navigation.interfaces import INavigationRoot
@@ -33,14 +32,14 @@ from ZTUtils import make_query
 
 MESSAGE_EMAIL_CANNOT_CHANGE = \
     _('message_email_cannot_change',
-      default=(u"Sorry, you are not allowed to "
-               u"change your email address."))
+      default=("Sorry, you are not allowed to "
+               "change your email address."))
 
 MESSAGE_EMAIL_IN_USE = \
     _('message_email_in_use',
-      default=(u"The email address you selected is "
-               u"already in use or is not valid as login "
-               u"name. Please choose another."))
+      default=("The email address you selected is "
+               "already in use or is not valid as login "
+               "name. Please choose another."))
 
 
 def getSchema(schema_interface, schema_adapter, form_name=None):
@@ -86,7 +85,7 @@ def isDefaultPortrait(value, portal):
     return aq_inner(value) == aq_inner(default_portrait_value)
 
 
-class AccountPanelSchemaAdapter(object):
+class AccountPanelSchemaAdapter:
     """Data manager that gets and sets any property mentioned
        in the schema to the property sheet
     """
@@ -134,7 +133,7 @@ class AccountPanelSchemaAdapter(object):
         if name not in self.schema or hasattr(self.__class__, name):
             # Either not part of the schema or dealt with by an explicit
             # property
-            return super(AccountPanelSchemaAdapter, self).__setattr__(name,
+            return super().__setattr__(name,
                                                                       value)
         if isinstance(value, NamedBlobImage):
             # any image is stored as portrait
@@ -264,7 +263,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
                 if err_str:
                     notifyWidgetActionExecutionError(action, 'email', err_str)
 
-    @button.buttonAndHandler(_(u'Save'))
+    @button.buttonAndHandler(_('Save'))
     def handleSave(self, action):
         CheckAuthenticator(self.request)
         data, errors = self.extractData()
@@ -288,16 +287,16 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         self.request.response.redirect(self.action())
 
     def updateActions(self):
-        super(AccountPanelForm, self).updateActions()
+        super().updateActions()
         if self.actions and 'save' in self.actions:
             self.actions['save'].addClass('btn btn-primary')
 
-    @button.buttonAndHandler(_(u'Cancel'))
+    @button.buttonAndHandler(_('Cancel'))
     def cancel(self, action):
         IStatusMessage(self.request).addStatusMessage(_("Changes canceled."),
                                                       type="info")
         self.request.response.redirect(
-            '%s%s' % (self.request['ACTUAL_URL'], self.makeQuery())
+            '{}{}'.format(self.request['ACTUAL_URL'], self.makeQuery())
         )
 
     def _on_save(self, data=None):
@@ -323,7 +322,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         if _check_allowed(context, self.request, 'personal-information'):
             tabs.append({
                 'title': _('title_personal_information_form',
-                           u'Personal Information'),
+                           'Personal Information'),
                 'url': navigation_root_url + '/@@personal-information',
                 'selected': (self.__name__ == 'personal-information'),
                 'id': 'user_data-personal-information',
@@ -331,7 +330,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
 
         if _check_allowed(context, self.request, 'personal-preferences'):
             tabs.append({
-                'title': _(u'Personal Preferences'),
+                'title': _('Personal Preferences'),
                 'url': navigation_root_url + '/@@personal-preferences',
                 'selected': (self.__name__ == 'personal-preferences'),
                 'id': 'user_data-personal-preferences',
@@ -340,7 +339,7 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         member = mt.getAuthenticatedMember()
         if member.canPasswordSet():
             tabs.append({
-                'title': _('label_password', u'Password'),
+                'title': _('label_password', 'Password'),
                 'url': navigation_root_url + '/@@change-password',
                 'selected': (self.__name__ == 'change-password'),
                 'id': 'user_data-change-password',

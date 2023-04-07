@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from AccessControl.SecurityManagement import getSecurityManager
 from plone.app.users.browser.account import AccountPanelForm
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
@@ -59,7 +58,7 @@ class UserDataPanelAdapter(AccountPanelSchemaAdapter):
 
 class UserDataPanel(AccountPanelForm):
 
-    form_name = _(u'User Data Form')
+    form_name = _('User Data Form')
     enableCSRFProtection = True
 
     @property
@@ -74,14 +73,14 @@ class UserDataPanel(AccountPanelForm):
         if userid and (userid != mt.getAuthenticatedMember().getId()):
             # editing someone else's profile
             return _(
-                u'description_personal_information_form_otheruser',
+                'description_personal_information_form_otheruser',
                 default='Change personal information for $name',
                 mapping={'name': escape(userid)}
             )
         else:
             # editing my own profile
             return _(
-                u'description_personal_information_form',
+                'description_personal_information_form',
                 default='Change your personal information'
             )
 
@@ -92,12 +91,12 @@ class UserDataPanel(AccountPanelForm):
             if mt.getMemberById(userid) is None:
                 raise NotFound('User does not exist.')
         self.request.set('disable_border', 1)
-        return super(UserDataPanel, self).__call__()
+        return super().__call__()
 
 
 def getUserDataSchema():
     portal = get_portal()
-    form_name = u'In User Profile'
+    form_name = 'In User Profile'
     if getSecurityManager().checkPermission('Manage portal', portal):
         form_name = None
     schema = getSchema(IUserDataSchema, UserDataPanelAdapter, form_name=form_name)

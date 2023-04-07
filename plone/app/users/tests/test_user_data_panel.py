@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.testing import applyProfile
 from plone.app.users.browser.userdatapanel import UserDataPanel
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Note: test setup somehow fails when only tests from this file are run.
 from plone.app.users.browser.interfaces import IUserIdGenerator
 from plone.app.users.browser.register import BaseRegistrationForm

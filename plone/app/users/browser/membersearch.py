@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.autoform.form import AutoExtensibleForm
 from plone.supermodel import model
 from Products.CMFPlone import PloneMessageFactory as _
@@ -13,30 +12,30 @@ class IMemberSearchSchema(model.Schema):
 
     model.fieldset(
         'extra',
-        label=_(u'legend_member_search_criteria',
-                default=u'User Search Criteria'),
+        label=_('legend_member_search_criteria',
+                default='User Search Criteria'),
         fields=['login', 'email', 'fullname']
     )
 
     login = schema.TextLine(
-        title=_(u'label_name', default=u'Name'),
+        title=_('label_name', default='Name'),
         description=_(
-            u'help_search_name',
-            default=u'Find users whose login name contain'),
+            'help_search_name',
+            default='Find users whose login name contain'),
         required=False,
     )
     email = schema.TextLine(
-        title=_(u'label_email', default=u'Email'),
+        title=_('label_email', default='Email'),
         description=_(
-            u'help_search_email',
-            default=u'Find users whose email address contain'),
+            'help_search_email',
+            default='Find users whose email address contain'),
         required=False,
     )
     fullname = schema.TextLine(
-        title=_(u'label_fullname', default=u'Full Name'),
+        title=_('label_fullname', default='Full Name'),
         description=_(
-            u'help_search_fullname',
-            default=u'Find users whose full names contain'),
+            'help_search_fullname',
+            default='Find users whose full names contain'),
         required=False,
     )
     # disabled: https://dev.plone.org/ticket/13862
@@ -85,17 +84,17 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
     schema = IMemberSearchSchema
     ignoreContext = True
 
-    label = _(u'heading_member_search', default=u'Search for users')
-    description = _(u'description_member_search',
-                    default=u'This search form enables you to find users by '
-                            u'specifying one or more search criteria.')
+    label = _('heading_member_search', default='Search for users')
+    description = _('description_member_search',
+                    default='This search form enables you to find users by '
+                            'specifying one or more search criteria.')
     template = ViewPageTemplateFile('membersearch_form.pt')
     enableCSRFProtection = True
     formErrorsMessage = _('There were errors.')
 
     submitted = False
 
-    @button.buttonAndHandler(_(u'label_search', default=u'Search'),
+    @button.buttonAndHandler(_('label_search', default='Search'),
                              name='search')
     def handleApply(self, action):
         request = self.request
@@ -110,4 +109,4 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
 
             view = self.context.restrictedTraverse('@@pas_search')
             criteria = extractCriteriaFromRequest(self.request.form.copy())
-            self.results = view.searchUsers(sort_by=u'fullname', **criteria)
+            self.results = view.searchUsers(sort_by='fullname', **criteria)

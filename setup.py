@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 from setuptools import find_packages
 from setuptools import setup
 
 version = '3.0.2.dev0'
 
-long_description = u'{0}\n\n{1}'.format(
+long_description = '{}\n\n{}'.format(
     open('README.rst').read(),
     open('CHANGES.rst').read()
 )

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.uuid.interfaces import IUUIDGenerator
 from z3c.form.action import ActionErrorOccurred
 from z3c.form.interfaces import WidgetActionExecutionError
