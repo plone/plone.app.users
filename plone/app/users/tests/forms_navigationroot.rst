@@ -49,7 +49,7 @@ same base class so if the fix works on one, it works on them all.
     >>> browser.url
     'http://nohost/plone/@@personal-preferences'
 
-Check the existance and links for a standard site context (navigation root
+Check the existence and links for a standard site context (navigation root
 is the Plone site itself since the marker interface isn't applied here
 yet).
 
