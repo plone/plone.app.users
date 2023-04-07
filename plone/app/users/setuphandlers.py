@@ -4,6 +4,7 @@ import logging
 import plone.app.users.browser.schemaeditor as ttw
 import six
 
+
 logger = logging.getLogger('plone.app.users.setuphandlers')
 
 FILE = 'userschema.xml'

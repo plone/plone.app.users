@@ -1,5 +1,5 @@
-from AccessControl import getSecurityManager
 from .browser.schemaeditor import getFromBaseSchema
+from AccessControl import getSecurityManager
 from plone.app.users.schema import ICombinedRegisterSchema
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName

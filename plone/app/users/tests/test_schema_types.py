@@ -5,9 +5,9 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.users.setuphandlers import import_schema
+from plone.app.users.tests.base import BaseTestCase
 from plone.testing.z2 import Browser
 from Products.GenericSetup.tests.common import DummyImportContext
-from plone.app.users.tests.base import BaseTestCase
 
 import transaction
 
@@ -192,8 +192,8 @@ class TestSchema(BaseTestCase):
         self.assertEqual(self.browser.getControl('Age').value, '40')
 
     def _enable_self_registration(self):
-        from plone.registry.interfaces import IRegistry
         from plone.base.interfaces import ISecuritySchema
+        from plone.registry.interfaces import IRegistry
         from zope.component import getUtility
 
         self.portal.manage_permission('Add portal member', roles=['Anonymous'])

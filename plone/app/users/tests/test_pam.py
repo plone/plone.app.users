@@ -3,7 +3,9 @@ from plone.app.testing import applyProfile
 from plone.app.testing import login
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import setRoles
-from plone.app.testing import TEST_USER_ID, TEST_USER_NAME, TEST_USER_PASSWORD
+from plone.app.testing import TEST_USER_ID
+from plone.app.testing import TEST_USER_NAME
+from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.testing.layers import FunctionalTesting
 from plone.app.users.browser.userdatapanel import UserDataPanel
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING

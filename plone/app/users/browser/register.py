@@ -9,14 +9,14 @@ from plone.app.users.schema import IRegisterSchema
 from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.app.users.utils import uuid_userid_generator
 from plone.autoform.form import AutoExtensibleForm
+from plone.base.interfaces import ISecuritySchema
+from plone.base.interfaces import IUserGroupsSettingsSchema
 from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone import PloneMessageFactory as _
-from plone.base.interfaces import ISecuritySchema
-from plone.base.interfaces import IUserGroupsSettingsSchema
 from Products.CMFPlone.utils import normalizeString
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage

@@ -1,9 +1,10 @@
-from Products.CMFCore.interfaces import IMembershipTool
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.tests.base import BaseTestCase
 from plone.testing import z2
-from zope.interface import implementer
+from Products.CMFCore.interfaces import IMembershipTool
 from zope.component import provideUtility
+from zope.interface import implementer
+
 import unittest
 
 
