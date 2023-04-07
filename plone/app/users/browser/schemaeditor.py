@@ -211,7 +211,7 @@ class UsersMetadataSchemaExporter:
             "set": set,
             "tuple": tuple,
         }
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             listm = listre.search(value)
             if value.startswith("int:"):
                 value = int(value.split("int:")[1])
@@ -222,7 +222,7 @@ class UsersMetadataSchemaExporter:
                     value = i["list"].split(SPLITTER)
                     if tp not in ["list"]:
                         value = ltypes[tp](value)
-                except:
+                except Exception:
                     value = []
             else:
                 value = {"bool:true": True, "bool:false": False}.get(
@@ -236,7 +236,7 @@ class UsersMetadataSchemaExporter:
         elif isinstance(value, (list, set, tuple)):
             value = f"{type(value).__name__}:{SPLITTER.join(value)}"
         elif value is not None:
-            value = "int:%s" % unicode(value)
+            value = f"int:{value}"
         return value
 
 

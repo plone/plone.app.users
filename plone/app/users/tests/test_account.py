@@ -1,5 +1,4 @@
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from plone.app.users.tests.base import BaseTestCase
 from plone.testing import z2
 from Products.CMFCore.interfaces import IMembershipTool
 from zope.component import provideUtility

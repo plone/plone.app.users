@@ -1,6 +1,4 @@
-from plone.app.testing import applyProfile
 from plone.app.users.browser.userdatapanel import UserDataPanel
-from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.app.users.tests.base import BaseTestCase
 from zExceptions import NotFound
 from zope.i18n import translate

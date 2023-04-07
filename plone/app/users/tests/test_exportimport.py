@@ -1,7 +1,6 @@
 from plone.app.users.browser.userdatapanel import getUserDataSchema
 from plone.app.users.setuphandlers import export_schema
 from plone.app.users.setuphandlers import import_schema
-from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.app.users.tests.base import BaseTestCase
 from plone.namedfile.field import NamedBlobImage
 from Products.CMFCore.utils import getToolByName

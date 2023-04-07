@@ -8,7 +8,6 @@ from AccessControl.SecurityInfo import ClassSecurityInfo
 from Acquisition import aq_base
 from OFS.Cache import Cacheable
 from plone.app.testing import login
-from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.base.interfaces import ISecuritySchema

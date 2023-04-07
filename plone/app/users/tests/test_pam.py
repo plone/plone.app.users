@@ -7,13 +7,8 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.testing.layers import FunctionalTesting
-from plone.app.users.browser.userdatapanel import UserDataPanel
-from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.testing import z2
 from Products.CMFCore.utils import getToolByName
-from transaction import commit
-from zExceptions import NotFound
-from zope.i18n import translate
 
 import unittest
 
