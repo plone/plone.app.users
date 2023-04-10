@@ -1,49 +1,61 @@
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
-      xmlns:tal="http://xml.zope.org/namespaces/tal"
-      xmlns:metal="http://xml.zope.org/namespaces/metal"
+<html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
       lang="en"
       metal:use-macro="here/prefs_main_template/macros/master"
-      i18n:domain="plone">
+      xml:lang="en"
+      i18n:domain="plone"
+>
 
-<div metal:fill-slot="prefs_configlet_main">
-  <header>
-    <h1 class="documentFirstHeading"
-        i18n:translate="">User Details</h1>
-    <div>
-      <a href="${portal_url}/@@usergroup-userprefs" i18n:translate="label_go_to_users" class="mt-n2">Up to List of Users</a>
-    </div>
-    <div metal:use-macro="context/global_statusmessage/macros/portal_message">
+  <div metal:fill-slot="prefs_configlet_main">
+    <header>
+      <h1 class="documentFirstHeading"
+          i18n:translate=""
+      >User Details</h1>
+      <div>
+        <a class="mt-n2"
+           href="${portal_url}/@@usergroup-userprefs"
+           i18n:translate="label_go_to_users"
+        >Up to List of Users</a>
+      </div>
+      <div metal:use-macro="context/global_statusmessage/macros/portal_message">
       Portal status message
-    </div>
-  </header>
-  <article id="content">
-    <div id="content-core">
-      <p class="lead mt-4">${python:view.description}</p>
-      <nav class="nav nav-tabs mb-2"
-            tal:define="userquery python:view.makeQuery()">
-        <li class="nav-item">
-          <a href="${portal_url}/@@user-information${userquery}"
-              class="nav-link ${python:'active' if getattr(view, 'tab', None)=='userdata' else ''}"
-              i18n:translate="title_personal_information_form">Personal Information</a>
-        </li>
-        <li class="nav-item">
-          <a href="${portal_url}/@@user-preferences${userquery}"
-              class="nav-link ${python:'active' if getattr(view, 'tab', None)=='userprefs' else ''}"
-              i18n:translate="">Personal Preferences</a>
-        </li>
-        <li class="nav-item">
-          <a href="${portal_url}/@@usergroup-usermembership${userquery}"
-              class="nav-link"
-              i18n:translate="label_group_memberships">Group Memberships</a>
-        </li>
-      </nav>
-      <metal:b use-macro="context/@@ploneform-macros/titlelessform" />
+      </div>
+    </header>
+    <article id="content">
+      <div id="content-core">
+        <p class="lead mt-4">${python:view.description}</p>
+        <nav class="nav nav-tabs mb-2"
+             tal:define="
+               userquery python:view.makeQuery();
+             "
+        >
+          <li class="nav-item">
+            <a class="nav-link ${python:'active' if getattr(view, 'tab', None)=='userdata' else ''}"
+               href="${portal_url}/@@user-information${userquery}"
+               i18n:translate="title_personal_information_form"
+            >Personal Information</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link ${python:'active' if getattr(view, 'tab', None)=='userprefs' else ''}"
+               href="${portal_url}/@@user-preferences${userquery}"
+               i18n:translate=""
+            >Personal Preferences</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link"
+               href="${portal_url}/@@usergroup-usermembership${userquery}"
+               i18n:translate="label_group_memberships"
+            >Group Memberships</a>
+          </li>
+        </nav>
+        <metal:b use-macro="context/@@ploneform-macros/titlelessform" />
 
-    </div>
+      </div>
 
-  </article>
+    </article>
 
-</div>
+  </div>
 
 </html>

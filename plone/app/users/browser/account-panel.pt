@@ -1,10 +1,10 @@
-<html
-    xmlns="http://www.w3.org/1999/xhtml"
-    xmlns:metal="http://xml.zope.org/namespaces/metal"
-    xmlns:tal="http://xml.zope.org/namespaces/tal"
-    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-    i18n:domain="plone"
-    metal:use-macro="context/main_template/macros/master">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="context/main_template/macros/master"
+      i18n:domain="plone"
+>
 
   <metal:b fill-slot="content-title">
     <h1 class="documentFirstHeading">${view/label}</h1>
@@ -16,19 +16,25 @@
 
   <metal:b fill-slot="content-core">
     <div class="autotabs">
-      <nav
-          class="autotoc-nav mb-3"
-          tal:define="view_actions view/prepareObjectTabs;">
+      <nav class="autotoc-nav mb-3"
+           tal:define="
+             view_actions view/prepareObjectTabs;
+           "
+      >
         <ul class="nav nav-tabs">
-          <li
-              class="nav-item"
-              tal:repeat="action view_actions">
-            <a
-                id="contentview-${action/id}"
-                href="${action/url}"
-                tal:define="selected action/selected|nothing;"
-                tal:attributes="class python:'autotoc-level-1' + (' nav-link active' if selected else ' nav-link')"
-                i18n:translate="">${action/title}</a>
+          <li class="nav-item"
+              tal:repeat="action view_actions"
+          >
+            <a id="contentview-${action/id}"
+               href="${action/url}"
+               tal:define="
+                 selected action/selected|nothing;
+               "
+               tal:attributes="
+                 class python:'autotoc-level-1' + (' nav-link active' if selected else ' nav-link');
+               "
+               i18n:translate=""
+            >${action/title}</a>
           </li>
         </ul>
       </nav>

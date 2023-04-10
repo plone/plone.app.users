@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.uuid.interfaces import IUUIDGenerator
 from z3c.form.action import ActionErrorOccurred
 from z3c.form.interfaces import WidgetActionExecutionError
@@ -18,7 +17,6 @@ def uuid_userid_generator(data=None):
 def notifyWidgetActionExecutionError(action, widget, err_str):
     zope.event.notify(
         ActionErrorOccurred(
-            action,
-            WidgetActionExecutionError(widget, Invalid(err_str))
+            action, WidgetActionExecutionError(widget, Invalid(err_str))
         )
     )

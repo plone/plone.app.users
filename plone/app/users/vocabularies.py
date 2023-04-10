@@ -1,12 +1,12 @@
-# -*- coding: utf-8 -*-
-from AccessControl import getSecurityManager
 from .browser.schemaeditor import getFromBaseSchema
+from AccessControl import getSecurityManager
 from plone.app.users.schema import ICombinedRegisterSchema
+from plone.base.utils import safe_text
+from plone.i18n.normalizer.interfaces import IIDNormalizer
 from Products.CMFCore.permissions import ManagePortal
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import get_portal
-from Products.CMFPlone.utils import normalizeString
-from Products.CMFPlone.utils import safe_unicode
+from zope.component import queryUtility
 from zope.interface import implementer
 from zope.schema import getFieldNames
 from zope.schema.interfaces import IVocabularyFactory
@@ -16,11 +16,11 @@ from zope.schema.vocabulary import SimpleVocabulary
 
 # Define constants from the Join schema that should be added to the
 # vocab of the join fields setting in usergroupssettings controlpanel.
-JOIN_CONST = ['username', 'password', 'email', 'mail_me']
+JOIN_CONST = ["username", "password", "email", "mail_me"]
 
 
 @implementer(IVocabularyFactory)
-class UserRegistrationFieldsVocabulary(object):
+class UserRegistrationFieldsVocabulary:
     """Returns list of fields available for registration form.
 
     It gets fields from z3c.form adopted Registration form schema.
@@ -65,7 +65,7 @@ UserRegistrationFieldsVocabularyFactory = UserRegistrationFieldsVocabulary()
 
 
 @implementer(IVocabularyFactory)
-class GroupIdVocabulary(object):
+class GroupIdVocabulary:
     """
     Return vocab of groups to add new user to.
 
@@ -98,29 +98,29 @@ class GroupIdVocabulary(object):
 
     def __call__(self, context):
         site = get_portal()
-        groups_tool = getToolByName(site, 'portal_groups')
-        is_zope_manager = getSecurityManager().checkPermission(
-            ManagePortal, context)
+        groups_tool = getToolByName(site, "portal_groups")
+        is_zope_manager = getSecurityManager().checkPermission(ManagePortal, context)
         groups = groups_tool.listGroups()
 
         # Get group id, title tuples for each, omitting virtual group
         # 'AuthenticatedUsers'
         terms = []
         for g in groups:
-            if g.id == 'AuthenticatedUsers':
+            if g.id == "AuthenticatedUsers":
                 continue
-            if 'Manager' in g.getRoles() and not is_zope_manager:
+            if "Manager" in g.getRoles() and not is_zope_manager:
                 continue
 
-            group_title = safe_unicode(g.getGroupTitleOrName())
+            group_title = safe_text(g.getGroupTitleOrName())
             if group_title != g.id:
-                title = u'%s (%s)' % (group_title, g.id)
+                title = f"{group_title} ({g.id})"
             else:
                 title = group_title
             terms.append(SimpleTerm(g.id, g.id, title))
 
         # Sort by title
-        terms.sort(key=lambda x: normalizeString(x.title))
+        utility = queryUtility(IIDNormalizer)
+        terms.sort(key=lambda x: utility.normalize(x.title))
         return SimpleVocabulary(terms)
 
 

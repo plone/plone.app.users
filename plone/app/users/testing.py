@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.contenttypes.testing import PLONE_APP_CONTENTTYPES_FIXTURE
 from plone.app.robotframework.testing import REMOTE_LIBRARY_BUNDLE_FIXTURE
 from plone.app.testing import applyProfile
@@ -11,7 +10,6 @@ import plone.app.users
 
 
 class PloneAppUsersLayer(PloneSandboxLayer):
-
     defaultBases = (PLONE_APP_CONTENTTYPES_FIXTURE,)
 
     def setUpZope(self, app, configurationContext):
@@ -21,7 +19,7 @@ class PloneAppUsersLayer(PloneSandboxLayer):
         self.loadZCML(package=plone.app.users)
 
     def setUpPloneSite(self, portal):
-        applyProfile(portal, 'plone.app.users:default')
+        applyProfile(portal, "plone.app.users:default")
 
 
 PLONE_APP_USERS_FIXTURE = PloneAppUsersLayer()
@@ -29,13 +27,13 @@ PLONE_APP_USERS_FIXTURE = PloneAppUsersLayer()
 
 PLONE_APP_USERS_INTEGRATION_TESTING = IntegrationTesting(
     bases=(PLONE_APP_USERS_FIXTURE,),
-    name='PloneAppUsersLayer:IntegrationTesting',
+    name="PloneAppUsersLayer:IntegrationTesting",
 )
 
 
 PLONE_APP_USERS_FUNCTIONAL_TESTING = FunctionalTesting(
     bases=(PLONE_APP_USERS_FIXTURE,),
-    name='PloneAppUsersLayer:FunctionalTesting',
+    name="PloneAppUsersLayer:FunctionalTesting",
 )
 
 
@@ -45,5 +43,5 @@ PLONE_APP_USERS_ACCEPTANCE_TESTING = FunctionalTesting(
         REMOTE_LIBRARY_BUNDLE_FIXTURE,
         z2.ZSERVER_FIXTURE,
     ),
-    name='PloneAppUsersLayer:AcceptanceTesting',
+    name="PloneAppUsersLayer:AcceptanceTesting",
 )

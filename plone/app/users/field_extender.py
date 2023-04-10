@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.app.users.browser.schemaeditor import USERS_NAMESPACE
 from plone.app.users.browser.schemaeditor import USERS_PREFIX
 from plone.autoform import directives as form
@@ -15,19 +14,19 @@ from zope.schema.vocabulary import SimpleVocabulary
 import zope.schema
 
 
-form_vocab = SimpleVocabulary([
-    SimpleTerm(value=u'On Registration',
-               title=u'On Registration'),
-    SimpleTerm(value=u'In User Profile',
-               title=u'In User Profile'),
-])
+form_vocab = SimpleVocabulary(
+    [
+        SimpleTerm(value="On Registration", title="On Registration"),
+        SimpleTerm(value="In User Profile", title="In User Profile"),
+    ]
+)
 
 
 class IUserFormSelection(Interface):
     form.widget(forms=CheckBoxFieldWidget)
     forms = zope.schema.List(
-        title=u"Where should this field be shown",
-        description=u"Does not apply to username or to email fields",
+        title="Where should this field be shown",
+        description="Does not apply to username or to email fields",
         required=True,
         value_type=zope.schema.Choice(vocabulary=form_vocab),
     )
@@ -41,14 +40,14 @@ def get_user_addform_selection(schema_context):
     return IUserFormSelection
 
 
-class UserFormSelectionAdapter(object):
+class UserFormSelectionAdapter:
     adapts(IField)
 
     def __init__(self, field):
         self.field = field
 
     def _get_forms(self):
-        forms = getattr(self.field, 'forms_selection', [])
+        forms = getattr(self.field, "forms_selection", [])
         return forms
 
     def _set_forms(self, value):
@@ -58,17 +57,16 @@ class UserFormSelectionAdapter(object):
 
 
 @implementer(IFieldMetadataHandler)
-class UserFormSelectionMetadata(object):
-
+class UserFormSelectionMetadata:
     namespace = USERS_NAMESPACE
     prefix = USERS_PREFIX
 
     def read(self, fieldNode, schema, field):
-        forms = fieldNode.get(ns('forms', self.namespace))
+        forms = fieldNode.get(ns("forms", self.namespace))
         if forms:
-            field.forms_selection = forms.split('|')
+            field.forms_selection = forms.split("|")
 
     def write(self, fieldNode, schema, field):
-        forms = getattr(field, 'forms_selection', [])
+        forms = getattr(field, "forms_selection", [])
         if forms:
-            fieldNode.set(ns('forms', self.namespace), "|".join(forms))
+            fieldNode.set(ns("forms", self.namespace), "|".join(forms))

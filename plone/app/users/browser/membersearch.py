@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 from plone.autoform.form import AutoExtensibleForm
+from plone.base import PloneMessageFactory as _
 from plone.supermodel import model
-from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form import button
 from z3c.form import form
@@ -12,31 +11,30 @@ class IMemberSearchSchema(model.Schema):
     """Provide schema for member search."""
 
     model.fieldset(
-        'extra',
-        label=_(u'legend_member_search_criteria',
-                default=u'User Search Criteria'),
-        fields=['login', 'email', 'fullname']
+        "extra",
+        label=_("legend_member_search_criteria", default="User Search Criteria"),
+        fields=["login", "email", "fullname"],
     )
 
     login = schema.TextLine(
-        title=_(u'label_name', default=u'Name'),
+        title=_("label_name", default="Name"),
         description=_(
-            u'help_search_name',
-            default=u'Find users whose login name contain'),
+            "help_search_name", default="Find users whose login name contain"
+        ),
         required=False,
     )
     email = schema.TextLine(
-        title=_(u'label_email', default=u'Email'),
+        title=_("label_email", default="Email"),
         description=_(
-            u'help_search_email',
-            default=u'Find users whose email address contain'),
+            "help_search_email", default="Find users whose email address contain"
+        ),
         required=False,
     )
     fullname = schema.TextLine(
-        title=_(u'label_fullname', default=u'Full Name'),
+        title=_("label_fullname", default="Full Name"),
         description=_(
-            u'help_search_fullname',
-            default=u'Find users whose full names contain'),
+            "help_search_fullname", default="Find users whose full names contain"
+        ),
         required=False,
     )
     # disabled: https://dev.plone.org/ticket/13862
@@ -61,16 +59,18 @@ def extractCriteriaFromRequest(criteria):
     """Takes a dictionary of z3c.form data and sanitizes it to fit
     for a pas member search.
     """
-    for key in ['_authenticator',
-                'form.buttons.search',
-                'form.widgets.roles-empty-marker', ]:
+    for key in [
+        "_authenticator",
+        "form.buttons.search",
+        "form.widgets.roles-empty-marker",
+    ]:
         if key in criteria:
             del criteria[key]
-    for (key, value) in list(criteria.items()):
+    for key, value in list(criteria.items()):
         if not value:
             del criteria[key]
         else:
-            new_key = key.replace('form.widgets.', '')
+            new_key = key.replace("form.widgets.", "")
             criteria[new_key] = value
             del criteria[key]
 
@@ -85,18 +85,19 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
     schema = IMemberSearchSchema
     ignoreContext = True
 
-    label = _(u'heading_member_search', default=u'Search for users')
-    description = _(u'description_member_search',
-                    default=u'This search form enables you to find users by '
-                            u'specifying one or more search criteria.')
-    template = ViewPageTemplateFile('membersearch_form.pt')
+    label = _("heading_member_search", default="Search for users")
+    description = _(
+        "description_member_search",
+        default="This search form enables you to find users by "
+        "specifying one or more search criteria.",
+    )
+    template = ViewPageTemplateFile("membersearch_form.pt")
     enableCSRFProtection = True
-    formErrorsMessage = _('There were errors.')
+    formErrorsMessage = _("There were errors.")
 
     submitted = False
 
-    @button.buttonAndHandler(_(u'label_search', default=u'Search'),
-                             name='search')
+    @button.buttonAndHandler(_("label_search", default="Search"), name="search")
     def handleApply(self, action):
         request = self.request
         data, errors = self.extractData()
@@ -105,9 +106,9 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
             self.status = self.formErrorsMessage
             return
 
-        if request.get('form.buttons.search', None):
+        if request.get("form.buttons.search", None):
             self.submitted = True
 
-            view = self.context.restrictedTraverse('@@pas_search')
+            view = self.context.restrictedTraverse("@@pas_search")
             criteria = extractCriteriaFromRequest(self.request.form.copy())
-            self.results = view.searchUsers(sort_by=u'fullname', **criteria)
+            self.results = view.searchUsers(sort_by="fullname", **criteria)

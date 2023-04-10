@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
 from plone.app.users.browser.userdatapanel import getUserDataSchema
 from plone.app.users.setuphandlers import export_schema
 from plone.app.users.setuphandlers import import_schema
-from plone.app.users.testing import PLONE_APP_USERS_FUNCTIONAL_TESTING
 from plone.app.users.tests.base import BaseTestCase
 from plone.namedfile.field import NamedBlobImage
 from Products.CMFCore.utils import getToolByName
@@ -12,9 +10,8 @@ from zope import schema
 
 
 class TestImport(BaseTestCase):
-
     def setUp(self):
-        super(TestImport, self).setUp()
+        super().setUp()
         xml = """<model xmlns:lingua="http://namespaces.plone.org/supermodel/lingua" xmlns:users="http://namespaces.plone.org/supermodel/users" xmlns:form="http://namespaces.plone.org/supermodel/form" xmlns:i18n="http://xml.zope.org/namespaces/i18n" xmlns:security="http://namespaces.plone.org/supermodel/security" xmlns:marshal="http://namespaces.plone.org/supermodel/marshal" xmlns="http://namespaces.plone.org/supermodel/schema" i18n:domain="plone">
   <schema name="member-fields">
     <field name="home_page" type="zope.schema.URI" users:forms="In User Profile">
@@ -99,7 +96,7 @@ class TestImport(BaseTestCase):
 </model>
 """
         context = DummyImportContext(self.portal, purge=False)
-        context._files = {'userschema.xml': xml}
+        context._files = {"userschema.xml": xml}
         import_schema(context)
 
     def test_import(self):
@@ -108,65 +105,65 @@ class TestImport(BaseTestCase):
         member_properties = pm.propertyIds()
 
         self.assertIn("home_page", user_schema)
-        self.assertTrue(isinstance(user_schema['home_page'], schema.URI))
+        self.assertTrue(isinstance(user_schema["home_page"], schema.URI))
         self.assertIn("home_page", member_properties)
-        self.assertEqual(pm.getPropertyType('home_page'), 'text')
+        self.assertEqual(pm.getPropertyType("home_page"), "text")
 
         self.assertIn("description", user_schema)
-        self.assertTrue(isinstance(user_schema['description'], schema.Text))
+        self.assertTrue(isinstance(user_schema["description"], schema.Text))
         self.assertIn("description", member_properties)
-        self.assertEqual(pm.getPropertyType('description'), 'text')
+        self.assertEqual(pm.getPropertyType("description"), "text")
 
         self.assertIn("location", user_schema)
-        self.assertTrue(isinstance(user_schema['location'], schema.TextLine))
+        self.assertTrue(isinstance(user_schema["location"], schema.TextLine))
         self.assertIn("location", member_properties)
-        self.assertEqual(pm.getPropertyType('location'), 'string')
+        self.assertEqual(pm.getPropertyType("location"), "string")
 
         self.assertIn("portrait", user_schema)
-        self.assertTrue(isinstance(user_schema['portrait'], NamedBlobImage))
+        self.assertTrue(isinstance(user_schema["portrait"], NamedBlobImage))
         # image fields are not handled as memberdata property,
         # it is handled directly in portal_membership
         self.assertNotIn("portrait", member_properties)
 
         self.assertIn("birthdate", user_schema)
-        self.assertTrue(isinstance(user_schema['birthdate'], schema.Date))
+        self.assertTrue(isinstance(user_schema["birthdate"], schema.Date))
         self.assertIn("birthdate", member_properties)
-        self.assertEqual(pm.getPropertyType('birthdate'), 'date')
+        self.assertEqual(pm.getPropertyType("birthdate"), "date")
 
         self.assertIn("another_date", user_schema)
-        self.assertTrue(isinstance(user_schema['another_date'], schema.Datetime))
+        self.assertTrue(isinstance(user_schema["another_date"], schema.Datetime))
         self.assertIn("another_date", member_properties)
-        self.assertEqual(pm.getPropertyType('another_date'), 'date')
+        self.assertEqual(pm.getPropertyType("another_date"), "date")
 
         self.assertIn("age", user_schema)
-        self.assertTrue(isinstance(user_schema['age'], schema.Int))
+        self.assertTrue(isinstance(user_schema["age"], schema.Int))
         self.assertIn("age", member_properties)
-        self.assertEqual(pm.getPropertyType('age'), 'int')
+        self.assertEqual(pm.getPropertyType("age"), "int")
 
         self.assertIn("department", user_schema)
-        self.assertTrue(isinstance(user_schema['department'], schema.Choice))
+        self.assertTrue(isinstance(user_schema["department"], schema.Choice))
         self.assertIn("department", member_properties)
-        self.assertEqual(pm.getPropertyType('department'), 'string')
+        self.assertEqual(pm.getPropertyType("department"), "string")
 
         self.assertIn("skills", user_schema)
-        self.assertTrue(isinstance(user_schema['skills'], schema.Set))
+        self.assertTrue(isinstance(user_schema["skills"], schema.Set))
         self.assertIn("skills", member_properties)
-        self.assertEqual(pm.getPropertyType('skills'), 'lines')
+        self.assertEqual(pm.getPropertyType("skills"), "lines")
 
         self.assertIn("pi", user_schema)
-        self.assertTrue(isinstance(user_schema['pi'], schema.Float))
+        self.assertTrue(isinstance(user_schema["pi"], schema.Float))
         self.assertIn("pi", member_properties)
-        self.assertEqual(pm.getPropertyType('pi'), 'float')
+        self.assertEqual(pm.getPropertyType("pi"), "float")
 
         self.assertIn("vegetarian", user_schema)
-        self.assertTrue(isinstance(user_schema['vegetarian'], schema.Bool))
+        self.assertTrue(isinstance(user_schema["vegetarian"], schema.Bool))
         self.assertIn("vegetarian", member_properties)
-        self.assertEqual(pm.getPropertyType('vegetarian'), 'boolean')
+        self.assertEqual(pm.getPropertyType("vegetarian"), "boolean")
 
     def test_export(self):
         context = DummyExportContext(self.portal)
         export_schema(context)
-        self.assertEqual('userschema.xml', context._wrote[0][0])
+        self.assertEqual("userschema.xml", context._wrote[0][0])
         self.assertIn(b'field name="home_page"', context._wrote[0][1])
         self.assertIn(b'field name="description"', context._wrote[0][1])
         self.assertIn(b'field name="location"', context._wrote[0][1])

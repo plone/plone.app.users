@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 from plone.app.users.schema import IRegistrationSettingsSchema
+from plone.base import PloneMessageFactory as _
 from plone.protect import CheckAuthenticator
 from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone import PloneMessageFactory as _
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
@@ -13,24 +12,26 @@ from z3c.form.browser.orderedselect import OrderedSelectFieldWidget
 
 class RegistrationControlPanel(form.Form):
     label = _("Users and Groups")
-    description = _(u"Registration settings for this site.")
-    form_name = _(u"Registration settings")
+    description = _("Registration settings for this site.")
+    form_name = _("Registration settings")
     enableCSRFProtection = True
 
-    formErrorsMessage = _('There were errors.')
-    template = ViewPageTemplateFile('memberregistration.pt')
+    formErrorsMessage = _("There were errors.")
+    template = ViewPageTemplateFile("memberregistration.pt")
 
     fields = field.Fields(IRegistrationSettingsSchema)
-    fields['user_registration_fields'].widgetFactory = OrderedSelectFieldWidget
+    fields["user_registration_fields"].widgetFactory = OrderedSelectFieldWidget
 
     def getContent(self):
         props = self.props()
-        return {'user_registration_fields': props.getProperty(
-            'user_registration_fields', [])}
+        return {
+            "user_registration_fields": props.getProperty(
+                "user_registration_fields", []
+            )
+        }
 
     @button.buttonAndHandler(
-        _(u'label_apply_changes', default=u'Apply changes'),
-        name='save'
+        _("label_apply_changes", default="Apply changes"), name="save"
     )
     def action_save(self, action):
         # CSRF protection
@@ -39,16 +40,18 @@ class RegistrationControlPanel(form.Form):
         data, errors = self.extractData()
         if errors:
             IStatusMessage(self.request).addStatusMessage(
-                self.formErrorsMessage, type='error')
+                self.formErrorsMessage, type="error"
+            )
             return
 
         # save property
-        if data['user_registration_fields'] != \
-                self.getContent()['user_registration_fields']:
+        if (
+            data["user_registration_fields"]
+            != self.getContent()["user_registration_fields"]
+        ):
             props = self.props()
             props._updateProperty(
-                'user_registration_fields',
-                data['user_registration_fields']
+                "user_registration_fields", data["user_registration_fields"]
             )
             msg = _("Changes saved.")
         else:
@@ -69,10 +72,10 @@ class RegistrationControlPanel(form.Form):
     #     self.request.response.redirect(url + '/@@overview-controlpanel')
 
     def updateActions(self):
-        super(RegistrationControlPanel, self).updateActions()
-        if self.actions and 'save' in self.actions:
-            self.actions['save'].addclass('btn btn-primary')
+        super().updateActions()
+        if self.actions and "save" in self.actions:
+            self.actions["save"].addclass("btn btn-primary")
 
     def props(self):
-        pprop = getToolByName(self.context, 'portal_properties')
+        pprop = getToolByName(self.context, "portal_properties")
         return pprop.site_properties
