@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+2.6.8 (2023-04-14)
+------------------
+
+Bug fixes:
+
+
+- For user schemas use a volatile cache on the request instead of on the portal.
+  This prevents seeing an empty user profile when you have custom user schemas.
+  This fixes `issue 76 <https://github.com/plone/plone.app.users/issues/76>`_.
+  [maurits] (#76)
+
+
 2.6.7 (2022-10-28)
 ------------------
 
