@@ -24,5 +24,5 @@ jobs:
     uses: plone/meta/.github/workflows/dependencies.yml@master
   release-ready:
     uses: plone/meta/.github/workflows/release_ready.yml@master
-  circular:
-    uses: plone/meta/.github/workflows/circular.yml@master
+# circular:
+#   uses: plone/meta/.github/workflows/circular.yml@master
