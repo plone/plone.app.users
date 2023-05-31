@@ -4,3 +4,6 @@
 [meta]
 template = "default"
 commit-id = "53dc5b4c"
+
+[pyproject]
+codespell_ignores = "complet,exemple"
