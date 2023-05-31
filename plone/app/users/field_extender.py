@@ -1,6 +1,7 @@
 from plone.app.users.browser.schemaeditor import USERS_NAMESPACE
 from plone.app.users.browser.schemaeditor import USERS_PREFIX
 from plone.autoform import directives as form
+from plone.base import PloneMessageFactory as _
 from plone.supermodel.interfaces import IFieldMetadataHandler
 from plone.supermodel.utils import ns
 from z3c.form.browser.checkbox import CheckBoxFieldWidget
@@ -16,8 +17,8 @@ import zope.schema
 
 form_vocab = SimpleVocabulary(
     [
-        SimpleTerm(value="On Registration", title="On Registration"),
-        SimpleTerm(value="In User Profile", title="In User Profile"),
+        SimpleTerm(value="On Registration", title=_("On Registration")),
+        SimpleTerm(value="In User Profile", title=_("In User Profile")),
     ]
 )
 
@@ -25,8 +26,11 @@ form_vocab = SimpleVocabulary(
 class IUserFormSelection(Interface):
     form.widget(forms=CheckBoxFieldWidget)
     forms = zope.schema.List(
-        title="Where should this field be shown",
-        description="Does not apply to username or to email fields",
+        title=_("Where should this field be shown?"),
+        description=_(
+            "Does not apply to username or to email fields. "
+            "With the Manager role you always see all fields in the user profile."
+        ),
         required=True,
         value_type=zope.schema.Choice(vocabulary=form_vocab),
     )
