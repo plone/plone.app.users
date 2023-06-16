@@ -8,6 +8,24 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.3 (2023-06-16)
+------------------
+
+Bug fixes:
+
+
+- Improve help text for member fields option where fields are shown.
+  For Managers the restriction to not show a field on the user profile does not apply.
+  [maurits] (#3794)
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (53dc5b4c, e08b1234)
+
+
 3.0.2 (2023-04-15)
 ------------------
 
