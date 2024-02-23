@@ -24,6 +24,7 @@ from transaction import commit
 from zope.component import getSiteManager
 from zope.component import getUtility
 
+import transaction
 import unittest
 
 
@@ -42,6 +43,7 @@ class BaseTestCase(unittest.TestCase):
 
         self.browser = Browser(self.layer["app"])
         self.request = self.layer["request"]
+        transaction.commit()
 
     def tearDown(self):
         login(self.portal, "admin")
