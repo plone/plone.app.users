@@ -59,6 +59,7 @@ setup(
     extras_require=extras_require,
     install_requires=[
         "Acquisition",
+        "Pillow",
         "Products.GenericSetup",
         "Products.PlonePAS >= 5.0.1",
         "Products.statusmessages",
