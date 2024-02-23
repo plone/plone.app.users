@@ -1,5 +1,7 @@
 from AccessControl import Unauthorized
 from Acquisition import aq_inner
+from PIL import Image
+from PIL import UnidentifiedImageError
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.app.users.browser.schemaeditor import getFromBaseSchema
@@ -42,6 +44,11 @@ MESSAGE_EMAIL_IN_USE = _(
         "already in use or is not valid as login "
         "name. Please choose another."
     ),
+)
+
+MESSAGE_IMAGE_NOT_SUPPORTED = _(
+    "message_image_not_supported",
+    "The file you selected is not supported by Pillow. " "Please choose another.",
 )
 
 
@@ -259,6 +266,23 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
                 if err_str:
                     notifyWidgetActionExecutionError(action, "email", err_str)
 
+    def validate_portrait(self, action, data):
+        """Portrait validation.
+        Checks if image is supported by Pillow.
+        SVG files are not yet supported.
+        """
+        error_keys = [error.field.getName() for error in action.form.widgets.errors]
+        if "portrait" not in error_keys and data["portrait"] is not None:
+            portrait = data["portrait"].open()
+            try:
+                Image.open(portrait)
+            except UnidentifiedImageError:
+                notifyWidgetActionExecutionError(
+                    action, "portrait", MESSAGE_IMAGE_NOT_SUPPORTED
+                )
+            except Exception as exc:
+                raise exc
+
     @button.buttonAndHandler(_("Save"))
     def handleSave(self, action):
         CheckAuthenticator(self.request)
@@ -268,6 +292,11 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         # data when you are at the personal-preferences page.
         if "email" in data:
             self.validate_email(action, data)
+
+        # Validate portrait, upload image could be not supported
+        # by PIL what raises an exception when scaling image.
+        if "portrait" in data:
+            self.validate_portrait(action, data)
 
         if action.form.widgets.errors:
             self.status = self.formErrorsMessage

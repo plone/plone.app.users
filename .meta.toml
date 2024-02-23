@@ -7,4 +7,4 @@ commit-id = "cfffba8c"
 
 [pyproject]
 codespell_ignores = "complet,exemple"
-dependencies_ignores = "['Products.CMFPlone']"
+dependencies_ignores = "['Products.CMFPlone', 'PIL']"
