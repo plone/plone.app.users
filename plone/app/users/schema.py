@@ -36,13 +36,13 @@ def checkEmailAddress(value):
 
 
 class ProtectedTextLine(schema.TextLine):
-    """TextLine field which cannot be edited via shema editor"""
+    """TextLine field which cannot be edited via schema editor"""
 
     pass
 
 
 class ProtectedEmail(Email):
-    """Email field which cannot be edited via shema editor"""
+    """Email field which cannot be edited via schema editor"""
 
     pass
 
