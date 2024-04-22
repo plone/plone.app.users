@@ -120,6 +120,7 @@ Zope = [
 ]
 python-dateutil = ['dateutil']
 ignore-packages = ['Products.CMFPlone']
+Pillow = ['PIL']
 
 ##
 # Add extra configuration options in .meta.toml:
