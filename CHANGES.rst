@@ -8,6 +8,18 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.6 (2024-04-23)
+------------------
+
+Bug fixes:
+
+
+- Fix #122 validating if image is supported by PIL showing a validation error if not.
+  Include Pillow dependency in setup.py.
+  Fix ValueError: User could not be found in BaseTest setUp adding a transaction.commit().
+  [rber474] (#122)
+
+
 3.0.5 (2024-03-19)
 ------------------
 

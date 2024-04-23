@@ -1,4 +1,0 @@
-Fix #122 validating if image is supported by PIL showing a validation error if not.
-Include Pillow dependency in setup.py.
-Fix ValueError: User could not be found in BaseTest setUp adding a transaction.commit().
-[rber474]
