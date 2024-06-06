@@ -21,6 +21,7 @@ from Products.PlonePAS.tools.membership import default_portrait
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from z3c.form import form
+from z3c.form.interfaces import NOT_CHANGED
 from zope import schema
 from zope.cachedescriptors.property import Lazy as lazy_property
 from zope.component import getMultiAdapter
@@ -272,8 +273,12 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         SVG files are not yet supported.
         """
         error_keys = [error.field.getName() for error in action.form.widgets.errors]
-        if "portrait" not in error_keys and data["portrait"] is not None:
-            portrait = data["portrait"].open()
+        if "portrait" in error_keys:
+            return
+        portrait_file = data["portrait"]
+        if portrait_file is None or portrait_file is NOT_CHANGED:
+            return
+        with portrait_file.open() as portrait:
             try:
                 Image.open(portrait)
             except UnidentifiedImageError:
