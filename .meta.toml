@@ -3,8 +3,11 @@
 # See the inline comments on how to expand/tweak this configuration file
 [meta]
 template = "default"
-commit-id = "123ebc0a"
+commit-id = "a89af8f2"
 
 [pyproject]
 codespell_ignores = "complet,exemple"
 dependencies_ignores = "['Products.CMFPlone']"
+dependencies_mappings = [
+    "Pillow = ['PIL']",
+    ]
