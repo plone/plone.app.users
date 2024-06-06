@@ -1,0 +1,4 @@
+Remove unused and broken member-registration control panel.
+This still tried to use the ``portal_properties`` tool.
+Since Plone 5.0 the ``member-fields`` control panel is used instead.
+[maurits]
