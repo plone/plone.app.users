@@ -8,6 +8,21 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.7 (2024-06-07)
+------------------
+
+Bug fixes:
+
+
+- Fix error on personal-information page when you leave an existing portrait unchanged.
+  The previous release added validation, but this caused a regression.
+  [maurits] (#126)
+- Remove unused and broken member-registration control panel.
+  This still tried to use the ``portal_properties`` tool.
+  Since Plone 5.0 the ``member-fields`` control panel is used instead.
+  [maurits] (#127)
+
+
 3.0.6 (2024-04-23)
 ------------------
 

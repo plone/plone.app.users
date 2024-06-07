@@ -1,3 +1,0 @@
-Fix error on personal-information page when you leave an existing portrait unchanged.
-The previous release added validation, but this caused a regression.
-[maurits]
