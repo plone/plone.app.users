@@ -12,13 +12,6 @@
       />
 
   <browser:page
-      name="member-registration"
-      for="plone.base.interfaces.IPloneSiteRoot"
-      class=".registersettingspanel.RegistrationControlPanel"
-      permission="plone.app.controlpanel.UsersAndGroups"
-      />
-
-  <browser:page
       name="register"
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
       class=".register.RegistrationForm"
