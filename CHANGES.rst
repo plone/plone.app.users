@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.8 (2024-11-25)
+------------------
+
+Bug fixes:
+
+
+- Check `plone.app.controlpanel.UsersAndGroups` permission for the `@@member-fields` edit view. @yurj (#125)
+
+
 3.0.7 (2024-06-07)
 ------------------
 
