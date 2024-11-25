@@ -80,7 +80,7 @@
       name="edit"
       for=".schemaeditor.IMemberSchemaContext"
       class=".schemaeditor.SchemaListingPage"
-      permission="zope2.View"
+      permission="plone.app.controlpanel.UsersAndGroups"
       />
 
   <browser:page
