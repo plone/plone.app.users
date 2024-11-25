@@ -1,1 +1,1 @@
-[yurj] fix for https://github.com/plone/plone.app.users/issues/125 (view @@member-fields is public)
+Check plone.app.controlpanel.UsersAndGroups permission for the @@member-fields edit view. @yurj 
