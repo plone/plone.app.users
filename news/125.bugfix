@@ -1,1 +1,1 @@
-Check plone.app.controlpanel.UsersAndGroups permission for the @@member-fields edit view. @yurj 
+Check `plone.app.controlpanel.UsersAndGroups` permission for the `@@member-fields` edit view. @yurj 
