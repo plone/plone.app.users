@@ -79,7 +79,7 @@ class IUserDataSchema(Interface):
 
     email = ProtectedEmail(
         title=_("label_email", default="Email"),
-        description="We will use this address if you need to recover your " "password",
+        description=_("We will use this address if you need to recover your password"),
         required=True,
         constraint=checkEmailAddress,
     )
