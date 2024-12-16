@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.9 (2024-12-16)
+------------------
+
+Bug fixes:
+
+
+- Add missing locale for translations [erral] (#132)
+
+
 3.0.8 (2024-11-25)
 ------------------
 
