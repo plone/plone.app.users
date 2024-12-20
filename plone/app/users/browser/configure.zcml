@@ -87,7 +87,7 @@
       name="member-search"
       for="*"
       class=".membersearch.MemberSearchForm"
-      permission="zope2.View"
+      permission="plone.app.controlpanel.UsersAndGroups"
       />
 
   <adapter
