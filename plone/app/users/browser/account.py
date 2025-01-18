@@ -2,12 +2,12 @@ from AccessControl import Unauthorized
 from Acquisition import aq_inner
 from PIL import Image
 from PIL import UnidentifiedImageError
-from plone.app.layout.navigation.interfaces import INavigationRoot
 from plone.app.users.browser.interfaces import IAccountPanelForm
 from plone.app.users.browser.schemaeditor import getFromBaseSchema
 from plone.app.users.utils import notifyWidgetActionExecutionError
 from plone.autoform.form import AutoExtensibleForm
 from plone.base import PloneMessageFactory as _
+from plone.base.interfaces import INavigationRoot
 from plone.base.interfaces import IPloneSiteRoot
 from plone.base.interfaces import ISecuritySchema
 from plone.base.utils import safe_text

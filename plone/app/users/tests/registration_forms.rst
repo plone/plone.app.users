@@ -12,7 +12,7 @@ Testing the flexible user registration
 
     >>> import transaction
     >>> transaction.commit()
-    >>> from plone.testing.z2 import Browser
+    >>> from plone.testing.zope import Browser
     >>> browser = Browser(layer['app'])
     >>> browser.open('http://nohost/plone')
     >>> list_widget_suffix = ':list'

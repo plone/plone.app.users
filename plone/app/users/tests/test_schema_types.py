@@ -6,7 +6,7 @@ from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.users.setuphandlers import import_schema
 from plone.app.users.tests.base import BaseTestCase
-from plone.testing.z2 import Browser
+from plone.testing.zope import Browser
 from Products.GenericSetup.tests.common import DummyImportContext
 
 import transaction

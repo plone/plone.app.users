@@ -7,7 +7,7 @@ Set Up
     >>> from plone.app.testing import SITE_OWNER_PASSWORD
     >>> from plone.app.testing import TEST_USER_ID
     >>> from plone.app.testing import TEST_USER_NAME
-    >>> from plone.testing.z2 import Browser
+    >>> from plone.testing.zope import Browser
 
     >>> import transaction
 

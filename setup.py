@@ -64,7 +64,6 @@ setup(
         "Products.PlonePAS >= 5.0.1",
         "Products.statusmessages",
         "Zope",
-        "plone.app.layout",
         "plone.autoform >= 1.2",
         "plone.app.event",
         "plone.app.vocabularies",
