@@ -1,6 +1,9 @@
 from plone.autoform.form import AutoExtensibleForm
 from plone.base import PloneMessageFactory as _
+from plone.memoize.view import memoize
 from plone.supermodel import model
+from Products.CMFCore.permissions import ListPortalMembers
+from Products.CMFCore.utils import getToolByName
 from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from z3c.form import button
 from z3c.form import form
@@ -97,6 +100,32 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
 
     submitted = False
 
+    @property
+    @memoize
+    def listing_allowed(self):
+        """
+        Check if the user has the necessary "List Portal Members" permissions
+        to view the list of search results.
+        """
+        pm = getToolByName(self.context, "portal_membership")
+        return pm.checkPermission(ListPortalMembers, self.context)
+
+    @property
+    def results(self):
+        """
+        Retrieve, merge, and sort the list of results based on search criteria.
+
+        This is based on the methods previously defined in the
+        Products.PlonePAS.browser.search module.
+        """
+        # First of all check if we have the proper permissions
+        if not self.listing_allowed:
+            return []
+
+        view = self.context.restrictedTraverse("@@pas_search")
+        criteria = extractCriteriaFromRequest(self.request.form.copy())
+        return view.searchUsers(sort_by="fullname", **criteria)
+
     @button.buttonAndHandler(_("label_search", default="Search"), name="search")
     def handleApply(self, action):
         request = self.request
@@ -108,7 +137,3 @@ class MemberSearchForm(AutoExtensibleForm, form.Form):
 
         if request.get("form.buttons.search", None):
             self.submitted = True
-
-            view = self.context.restrictedTraverse("@@pas_search")
-            criteria = extractCriteriaFromRequest(self.request.form.copy())
-            self.results = view.searchUsers(sort_by="fullname", **criteria)

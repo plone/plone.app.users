@@ -23,8 +23,8 @@
       <tal:block condition="view/submitted">
         <article id="content"
                  tal:define="
-                   listing_allowed python: checkPermission('List portal members', here);
-                   results python:listing_allowed and view.results;
+                   listing_allowed python: view.listing_allowed;
+                   results python: view.results;
                    Batch python:modules['Products.CMFPlone'].Batch;
                    DateTime python:modules['DateTime'].DateTime;
                    b_size python:12;
