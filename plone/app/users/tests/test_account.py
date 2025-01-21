@@ -1,5 +1,5 @@
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
-from plone.testing import z2
+from plone.testing import zope
 from Products.CMFCore.interfaces import IMembershipTool
 from zope.component import provideUtility
 from zope.interface import implementer
@@ -23,7 +23,7 @@ class DummyPortalMembership:
 
 
 class TestAccountPanelSchemaAdapter(unittest.TestCase):
-    layer = z2.INTEGRATION_TESTING
+    layer = zope.INTEGRATION_TESTING
 
     def test__init__no_userid(self):
         """Should edit current user."""

@@ -12,7 +12,7 @@ Set up
     >>> from plone.app.testing import SITE_OWNER_PASSWORD
     >>> from plone.app.testing import TEST_USER_NAME
     >>> from plone.app.testing import TEST_USER_PASSWORD
-    >>> from plone.testing.z2 import Browser
+    >>> from plone.testing.zope import Browser
 
     >>> app = layer['app']
     >>> portal = layer['portal']

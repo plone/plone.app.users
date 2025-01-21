@@ -7,7 +7,7 @@ from plone.app.testing import TEST_USER_ID
 from plone.app.testing import TEST_USER_NAME
 from plone.app.testing import TEST_USER_PASSWORD
 from plone.app.testing.layers import FunctionalTesting
-from plone.testing import z2
+from plone.testing import zope
 from Products.CMFCore.utils import getToolByName
 
 import unittest
@@ -36,7 +36,7 @@ class TestUserDataPanelWithPAM(unittest.TestCase):
     layer = WITHPAM_FUNCTIONAL_TESTING
 
     def test_pam(self):
-        browser = z2.Browser(self.layer["app"])
+        browser = zope.Browser(self.layer["app"])
         browser.addHeader(
             "Authorization", f"Basic {TEST_USER_NAME}:{TEST_USER_PASSWORD}"
         )

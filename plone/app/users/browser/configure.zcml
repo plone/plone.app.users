@@ -13,14 +13,14 @@
 
   <browser:page
       name="register"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      for="plone.base.interfaces.INavigationRoot"
       class=".register.RegistrationForm"
       permission="cmf.AddPortalMember"
       />
 
   <browser:page
       name="registered"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      for="plone.base.interfaces.INavigationRoot"
       class=".registered.RegisteredView"
       template="registered.pt"
       permission="cmf.AddPortalMember"
@@ -28,42 +28,42 @@
 
   <browser:page
       name="new-user"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      for="plone.base.interfaces.INavigationRoot"
       class=".register.AddUserForm"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
   <browser:page
       name="change-password"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      for="plone.base.interfaces.INavigationRoot"
       class=".passwordpanel.PasswordPanel"
       permission="cmf.SetOwnPassword"
       />
 
   <browser:page
       name="personal-preferences"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      for="plone.base.interfaces.INavigationRoot"
       class=".personalpreferences.PersonalPreferencesPanel"
       permission="cmf.SetOwnProperties"
       />
 
   <browser:page
       name="user-preferences"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      for="plone.base.interfaces.INavigationRoot"
       class=".personalpreferences.PersonalPreferencesConfiglet"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
 
   <browser:page
       name="personal-information"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      for="plone.base.interfaces.INavigationRoot"
       class=".userdatapanel.UserDataPanel"
       permission="cmf.SetOwnProperties"
       />
 
   <browser:page
       name="user-information"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      for="plone.base.interfaces.INavigationRoot"
       class=".userdatapanel.UserDataConfiglet"
       permission="plone.app.controlpanel.UsersAndGroups"
       />
@@ -93,13 +93,13 @@
   <adapter
       factory=".personalpreferences.PersonalPreferencesPanelAdapter"
       provides=".personalpreferences.IPersonalPreferences"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      for="plone.base.interfaces.INavigationRoot"
       />
 
   <adapter
       factory=".passwordpanel.PasswordPanelAdapter"
       provides=".passwordpanel.IPasswordSchema"
-      for="plone.app.layout.navigation.interfaces.INavigationRoot"
+      for="plone.base.interfaces.INavigationRoot"
       />
 
   <subscriber

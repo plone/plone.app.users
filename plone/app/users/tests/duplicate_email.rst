@@ -28,7 +28,7 @@ Create a new user two:
 
 Login as user two:
 
-    >>> from plone.testing.z2 import Browser
+    >>> from plone.testing.zope import Browser
     >>> browser = Browser(layer['app'])
     >>> browser.open('http://nohost/plone/')
     >>> browser.getLink('Log in').click()

@@ -2,7 +2,7 @@
 Testing the flexible user registration
 ======================================
 
-    >>> from plone.testing.z2 import Browser
+    >>> from plone.testing.zope import Browser
     >>> from plone.app.testing import SITE_OWNER_PASSWORD
     >>> import transaction
     >>> app = layer['app']

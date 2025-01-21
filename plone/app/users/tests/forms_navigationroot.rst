@@ -9,10 +9,10 @@ Set up
 ======
 
     >>> from Products.Five.utilities.marker import mark
-    >>> from plone.app.layout.navigation.interfaces import INavigationRoot
+    >>> from plone.base.interfaces import INavigationRoot
     >>> from plone.app.testing import SITE_OWNER_NAME
     >>> from plone.app.testing import SITE_OWNER_PASSWORD
-    >>> from plone.testing.z2 import Browser
+    >>> from plone.testing.zope import Browser
 
     >>> app = layer['app']
     >>> portal = layer['portal']
