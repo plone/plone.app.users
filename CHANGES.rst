@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.10 (2025-01-23)
+-------------------
+
+Bug fixes:
+
+
+- The member-search logic has been moved from the page template to the Python code
+  [ale-rt] (#125)
+- Fix DeprecationWarnings. [maurits] (#4090)
+
+
 3.0.9 (2024-12-16)
 ------------------
 

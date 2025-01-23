@@ -1,2 +1,0 @@
-The member-search logic has been moved from the page template to the Python code
-[ale-rt]
