@@ -133,3 +133,27 @@ We can really get the new user.
     >>> browser.getLink(url='bob-jones-1').click()
     >>> '@@user-information?userid=bob-jones-1' in browser.url
     True
+
+Saving this form without changes should work, without complaint that this login name is already taken.
+
+    >>> browser.getControl('Save').click()
+    >>> browser.contents
+    '...Changes saved...'
+
+Pick a different email address.
+
+    >>> browser.getControl('Email').value = "different@example.com"
+    >>> browser.getControl('Save').click()
+    >>> browser.contents
+    '...Changes saved...'
+
+Pick a valid email address with a format that may cause problems.
+This needs plone.schema 2.0.2, with a better email validation.
+This also needs a Products.CMFPlone release where the RegistrationTool has the principal_id_or_login_name_exists method.
+This is expected in 6.0.15, 6.1.1, and 6.2.0a1.
+TODO: enable this test after we have those releases.
+
+    .. >>> browser.getControl('Email').value = "o'hara@example.com"
+    .. >>> browser.getControl('Save').click()
+    .. >>> browser.contents
+    .. '...Changes saved...'
