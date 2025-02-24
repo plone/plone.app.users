@@ -8,6 +8,24 @@ Changelog
 
 .. towncrier release notes start
 
+3.1.0 (2025-02-21)
+------------------
+
+New features:
+
+
+- Email validation: use new registration tool method `principal_id_or_login_name_exists` if available.
+  This helps in some corner cases when email-as-login is used.
+  [maurits] (#4120)
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs]
+
+
 3.0.10 (2025-01-23)
 -------------------
 

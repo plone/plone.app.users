@@ -229,13 +229,23 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
         Keeping your email the same (which happens when you change something
         else on the personalize form) or changing it back to your login name,
         is fine.
+
+        So: we only return True if it is *really* a different email.
         """
         membership = getToolByName(self.context, "portal_membership")
         if self.request.get("userid"):
             member = membership.getMemberById(self.request.get("userid"))
         else:
             member = membership.getAuthenticatedMember()
-        return email not in (member.getId(), member.getUserName())
+        if email in (member.getId(), member.getUserName()):
+            return False
+        # By default, PAS transforms login names to lowercase, at least when
+        # email-as-login is used.  So compare the transformed/normalized names.
+        pas = getToolByName(self.context, "acl_users")
+        email_normalized = pas.applyTransform(email)
+        # The user name should already have been normalized, but let's make sure.
+        login_normalized = pas.applyTransform(member.getUserName())
+        return email_normalized != login_normalized
 
     def makeQuery(self):
         userid = self.request.form.get("userid", None)
@@ -249,23 +259,40 @@ class AccountPanelForm(AutoExtensibleForm, form.Form):
     def validate_email(self, action, data):
         context = aq_inner(self.context)
         error_keys = [error.field.getName() for error in action.form.widgets.errors]
-        if "email" not in error_keys:
-            registration = getToolByName(context, "portal_registration")
-            registry = getUtility(IRegistry)
-            security_settings = registry.forInterface(ISecuritySchema, prefix="plone")
-            if security_settings.use_email_as_login:
-                err_str = ""
-                try:
-                    id_allowed = registration.isMemberIdAllowed(data["email"])
-                except Unauthorized:
-                    err_str = MESSAGE_EMAIL_CANNOT_CHANGE
-                else:
-                    if not id_allowed:
-                        # only allow if unchanged
-                        if self._differentEmail(data["email"]):
-                            err_str = MESSAGE_EMAIL_IN_USE
-                if err_str:
-                    notifyWidgetActionExecutionError(action, "email", err_str)
+        if "email" in error_keys:
+            # There is already a validation error for email,
+            # so there is no need for further validation.
+            return
+        # We only need an extra check if email is used as login.
+        registry = getUtility(IRegistry)
+        security_settings = registry.forInterface(ISecuritySchema, prefix="plone")
+        if not security_settings.use_email_as_login:
+            return
+
+        registration = getToolByName(context, "portal_registration")
+        err_str = ""
+        email = data["email"]
+        try:
+            if hasattr(registration, "principal_id_or_login_name_exists"):
+                # This is a new addition, as isMemberIdAllowed will reject
+                # some valid email addresses because they would be bad when
+                # used as actual ids, instead of just login names.
+                # isMemberIdAllowed also calls this new method now.
+                id_allowed = not registration.principal_id_or_login_name_exists(email)
+            else:
+                id_allowed = registration.isMemberIdAllowed(email)
+        except Unauthorized:
+            # This try/except Unauthorized may be an unneeded left-over from the
+            # days when this code was in a Python skin script.  But hard to be sure.
+            err_str = MESSAGE_EMAIL_CANNOT_CHANGE
+        else:
+            if not id_allowed:
+                # A member with this login name already exists.
+                # Only allow if unchanged: then that member is us!
+                if self._differentEmail(email):
+                    err_str = MESSAGE_EMAIL_IN_USE
+        if err_str:
+            notifyWidgetActionExecutionError(action, "email", err_str)
 
     def validate_portrait(self, action, data):
         """Portrait validation.
