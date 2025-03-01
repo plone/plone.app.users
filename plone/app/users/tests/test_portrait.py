@@ -1,4 +1,4 @@
-from pkg_resources import resource_stream
+from importlib.resources import files
 from plone.app.testing import SITE_OWNER_NAME
 from plone.app.testing import SITE_OWNER_PASSWORD
 from plone.app.users.tests.base import BaseTestCase
@@ -15,7 +15,9 @@ class TestPortrait(BaseTestCase):
         self.browser.getControl("Log in").click()
         self.browser.open("http://nohost/plone/@@personal-information")
         self.browser.getControl(name="form.widgets.email").value = "test@test.com"
-        portrait_file = resource_stream("plone.app.users.tests", "onepixel.jpg")
+        path = files("plone.app.users").joinpath("tests/onepixel.jpg")
+        with open(path, "rb") as file_handle:
+            portrait_file = file_handle.read()
         self.browser.getControl(name="form.widgets.portrait").add_file(
             portrait_file, "image/jpg", "onepixel.# jpg"
         )
@@ -32,9 +34,9 @@ class TestPortrait(BaseTestCase):
         self.browser.getControl("Log in").click()
         self.browser.open("http://nohost/plone/@@personal-information")
         self.browser.getControl(name="form.widgets.email").value = "test@test.com"
-        portrait_file = resource_stream(
-            "plone.app.users.tests", "transparent_square.svg"
-        )
+        path = files("plone.app.users").joinpath("tests/transparent_square.svg")
+        with open(path, "rb") as file_handle:
+            portrait_file = file_handle.read()
         self.browser.getControl(name="form.widgets.portrait").add_file(
             portrait_file, "image/svg+xml", "onepixel.# jpg"
         )

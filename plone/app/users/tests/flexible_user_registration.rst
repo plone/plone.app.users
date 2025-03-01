@@ -166,8 +166,9 @@ Check register form with portrait field.
     True
     >>> 'Portrait' in browser.contents
     True
-    >>> from pkg_resources import resource_stream
-    >>> portrait_file = resource_stream("plone.app.users.tests", 'onepixel.jpg')
+    >>> from importlib.resources import files
+    >>> with open(files("plone.app.users").joinpath("tests/onepixel.jpg"), 'rb') as file_handle:
+    ...     portrait_file = file_handle.read()
     >>> browser.getControl(name='form.widgets.portrait').add_file(portrait_file, "image/jpg", "onepixel.jpg")
     >>> browser.getControl('User Name').value = 'testuser'
     >>> browser.getControl('Email').value = 'test@example.com'
