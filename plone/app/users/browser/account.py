@@ -173,6 +173,7 @@ class AccountPanelSchemaAdapter:
             portrait_file = value.open()
             portrait_file.filename = value.filename
             mt.changeMemberPortrait(portrait_file, str(self.context.getId()))
+            portrait_file.close()
 
     portrait = property(get_portrait, set_portrait)
 
