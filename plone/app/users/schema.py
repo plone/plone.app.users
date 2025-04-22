@@ -72,7 +72,8 @@ class IUserDataSchema(Interface):
     fullname = ProtectedTextLine(
         title=_("label_full_name", default="Full Name"),
         description=_(
-            "help_full_name_creation", default="Enter full name, e.g. John Smith."
+            "help_full_name_creation",
+            default="Enter full name, for example, John Smith.",
         ),
         required=False,
     )
