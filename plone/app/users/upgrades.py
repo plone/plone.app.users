@@ -36,7 +36,7 @@ class IHomePageSchema(Interface):
         title=_("label_homepage", default="Home page"),
         description=_(
             "help_homepage",
-            default="The URL for your external home page, " "if you have one.",
+            default="The URL for your external home page, if you have one.",
         ),
         required=False,
     )

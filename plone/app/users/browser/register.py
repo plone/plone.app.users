@@ -341,7 +341,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             # user id may not be the same as the portal id.
             if user_id == portal.getId():
                 err_str = _(
-                    "This username is reserved. Please choose a " "different name."
+                    "This username is reserved. Please choose a different name."
                 )
                 notifyWidgetActionExecutionError(action, username_field, err_str)
 
@@ -371,7 +371,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if not (data["password"] or data["mail_me"]):
                 err_str = _(
                     "msg_no_password_no_mail_me",
-                    default="You must set a password or choose to " "send an email.",
+                    default="You must set a password or choose to send an email.",
                 )
 
                 # set error on password field

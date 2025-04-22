@@ -27,7 +27,7 @@ class IPasswordSchema(Interface):
         title=_("label_confirm_password", default="Confirm password"),
         description=_(
             "help_confirm_password",
-            default="Re-enter the password. " "Make sure the passwords are identical.",
+            default="Re-enter the password. Make sure the passwords are identical.",
         ),
     )
 

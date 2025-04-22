@@ -107,14 +107,14 @@ class IRegisterSchema(Interface):
         title=_("label_confirm_password", default="Confirm password"),
         description=_(
             "help_confirm_password",
-            default="Re-enter the password. " "Make sure the passwords are identical.",
+            default="Re-enter the password. Make sure the passwords are identical.",
         ),
     )
 
     mail_me = schema.Bool(
         title=_(
             "label_mail_password",
-            default="Send a confirmation mail with a link to set the " "password",
+            default="Send a confirmation mail with a link to set the password",
         ),
         required=False,
         default=False,

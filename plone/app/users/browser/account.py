@@ -35,7 +35,7 @@ from ZTUtils import make_query
 
 MESSAGE_EMAIL_CANNOT_CHANGE = _(
     "message_email_cannot_change",
-    default=("Sorry, you are not allowed to " "change your email address."),
+    default=("Sorry, you are not allowed to change your email address."),
 )
 
 MESSAGE_EMAIL_IN_USE = _(
@@ -49,7 +49,7 @@ MESSAGE_EMAIL_IN_USE = _(
 
 MESSAGE_IMAGE_NOT_SUPPORTED = _(
     "message_image_not_supported",
-    "The file you selected is not supported by Pillow. " "Please choose another.",
+    "The file you selected is not supported by Pillow. Please choose another.",
 )
 
 
