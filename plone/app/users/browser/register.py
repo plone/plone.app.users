@@ -92,7 +92,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 "help_email_creation_for_login",
                 default="Enter an email "
                 "address. This will be your login name. We respect your "
-                "privacy, and will not give the address away to any third "
+                "privacy and will not give the address away to any third "
                 "parties or expose it anywhere.",
             )
             del self.fields["username"]
@@ -100,7 +100,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             self.fields["email"].field.description = _(
                 "help_email_creation",
                 default="Enter an email address. This is necessary in case "
-                "the password is lost. We respect your privacy, and "
+                "the password is lost. We respect your privacy and "
                 "will not give the address away to any third parties "
                 "or expose it anywhere.",
             )
