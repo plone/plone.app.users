@@ -92,7 +92,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
                 "help_email_creation_for_login",
                 default="Enter an email "
                 "address. This will be your login name. We respect your "
-                "privacy, and will not give the address away to any third "
+                "privacy and will not give the address away to any third "
                 "parties or expose it anywhere.",
             )
             del self.fields["username"]
@@ -100,7 +100,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             self.fields["email"].field.description = _(
                 "help_email_creation",
                 default="Enter an email address. This is necessary in case "
-                "the password is lost. We respect your privacy, and "
+                "the password is lost. We respect your privacy and "
                 "will not give the address away to any third parties "
                 "or expose it anywhere.",
             )
@@ -341,7 +341,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             # user id may not be the same as the portal id.
             if user_id == portal.getId():
                 err_str = _(
-                    "This username is reserved. Please choose a " "different name."
+                    "This username is reserved. Please choose a different name."
                 )
                 notifyWidgetActionExecutionError(action, username_field, err_str)
 
@@ -371,7 +371,7 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
             if not (data["password"] or data["mail_me"]):
                 err_str = _(
                     "msg_no_password_no_mail_me",
-                    default="You must set a password or choose to " "send an email.",
+                    default="You must set a password or choose to send an email.",
                 )
 
                 # set error on password field

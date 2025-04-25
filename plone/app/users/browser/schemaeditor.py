@@ -205,7 +205,7 @@ class UsersMetadataSchemaExporter:
                 fieldNode.set(ns(attr, self.ns), v)
 
     def load(self, value):
-        listre = re.compile("(?P<type>list|set|tuple)" ":(?P<list>.*)", re_flags)
+        listre = re.compile("(?P<type>list|set|tuple):(?P<list>.*)", re_flags)
         ltypes = {
             "list": list,
             "set": set,
