@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+3.1.2 (2025-05-02)
+------------------
+
+Bug fixes:
+
+
+- Remove superfluous comma on registration form.
+  Replace "e.g." with "for example".
+  [maurits] (#139)
+
+
 3.1.1 (2025-03-11)
 ------------------
 
