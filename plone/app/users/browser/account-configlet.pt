@@ -23,7 +23,7 @@
       Portal status message
       </div>
     </header>
-    <article id="content">
+    <article id="user-content">
       <div id="content-core">
         <p class="lead mt-4">${python:view.description}</p>
         <nav class="nav nav-tabs mb-2"

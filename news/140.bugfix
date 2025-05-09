@@ -1,0 +1,2 @@
+Rename article#content to article#user-content to avoid duplicate IDs when included into the main_template.
+[pilz]
