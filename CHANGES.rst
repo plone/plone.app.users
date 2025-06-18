@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+3.1.3 (2025-06-18)
+------------------
+
+Bug fixes:
+
+
+- Rename article#content to article#user-content to avoid duplicate IDs when included into the main_template.
+  [pilz] (#140)
+
+
 3.1.2 (2025-05-02)
 ------------------
 
