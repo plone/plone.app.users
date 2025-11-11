@@ -74,7 +74,6 @@ setup(
         "plone.supermodel",
         "plone.uuid",
         "plone.z3cform",
-        "setuptools",
         "z3c.form",
         "zope.annotation",
         "zope.cachedescriptors",
