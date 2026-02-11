@@ -6,6 +6,7 @@ from Products.CMFCore.utils import getToolByName
 from Products.statusmessages.interfaces import IStatusMessage
 from z3c.form import button
 from zope import schema
+from zope.cachedescriptors.property import Lazy as lazy_property
 from zope.interface import Interface
 
 
@@ -53,6 +54,12 @@ class PasswordPanel(AccountPanelForm):
     description = _("Change Password")
     form_name = _("legend_password_details", default="Password Details")
     schema = IPasswordSchema
+
+    @lazy_property
+    def member(self):
+        # Only show current username in label
+        mtool = getToolByName(self.context, "portal_membership")
+        return mtool.getAuthenticatedMember()
 
     def updateFields(self):
         super().updateFields()
