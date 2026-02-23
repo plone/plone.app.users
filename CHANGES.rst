@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.0a2 (2026-02-23)
+--------------------
+
+Bug fixes:
+
+
+- Only show current username in change-password form.
+  [pbauer] (#146)
+
+
 4.0.0a1 (2025-11-19)
 --------------------
 
