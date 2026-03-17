@@ -1,18 +1,17 @@
 from AccessControl import getSecurityManager
 from plone.app.users.browser.account import AccountPanelSchemaAdapter
 from plone.app.users.browser.account import getSchema
-from plone.app.users.browser.interfaces import ILoginNameGenerator
-from plone.app.users.browser.interfaces import IUserIdGenerator
 from plone.app.users.schema import IAddUserSchema
 from plone.app.users.schema import ICombinedRegisterSchema
 from plone.app.users.schema import IRegisterSchema
+from plone.app.users.utils import generate_login_name as _generate_login_name
+from plone.app.users.utils import generate_user_id as _generate_user_id
 from plone.app.users.utils import notifyWidgetActionExecutionError
-from plone.app.users.utils import uuid_userid_generator
+from plone.app.users.utils import RENAME_AFTER_CREATION_ATTEMPTS  # noqa: F401
 from plone.autoform.form import AutoExtensibleForm
 from plone.base import PloneMessageFactory as _
 from plone.base.interfaces import ISecuritySchema
 from plone.base.interfaces import IUserGroupsSettingsSchema
-from plone.i18n.normalizer.interfaces import IIDNormalizer
 from plone.protect import CheckAuthenticator
 from plone.registry.interfaces import IRegistry
 from Products.CMFCore.interfaces import ISiteRoot
@@ -30,14 +29,9 @@ from ZODB.POSException import ConflictError
 from zope.component import getAdapter
 from zope.component import getMultiAdapter
 from zope.component import getUtility
-from zope.component import queryUtility
 from zope.schema import getFieldNames
 
 import logging
-
-
-# Number of retries for creating a user id like bob-jones-42:
-RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 
 def getRegisterSchema():
@@ -127,148 +121,18 @@ class BaseRegistrationForm(AutoExtensibleForm, form.Form):
     def generate_user_id(self, data):
         """Generate a user id from data.
 
-        We try a few options for coming up with a good user id:
-
-        1. We query a utility, so integrators can register a hook to
-           generate a user id using their own logic.
-
-        2. If use_uuid_as_userid is set in the registry, we
-           generate a uuid.
-
-        3. If a username is given and we do not use email as login,
-           then we simply return that username as the user id.
-
-        4. We create a user id based on the full name, if that is
-           passed.  This may result in an id like bob-jones-2.
-
-        When the email address is used as login name, we originally
-        used the email address as user id as well.  This has a few
-        possible downsides, which are the main reasons for the new,
-        pluggable approach:
-
-        - It does not work for some valid email addresses.
-
-        - Exposing the email address in this way may not be wanted.
-
-        - When the user later changes his email address, the user id
-          will still be his old address.  It works, but may be
-          confusing.
-
-        Another possibility would be to simply generate a uuid, but that
-        is ugly.  We could certainly try that though: the big plus here
-        would be that you then cannot create a new user with the same user
-        id as a previously existing user if this ever gets removed.  If
-        you would get the same id, this new user would get the same global
-        and local roles, if those have not been cleaned up.
-
-        When a user id is chosen, the 'user_id' key of the data gets
-        set and the user id is returned.
+        Delegates to the standalone function in plone.app.users.utils.
+        See :func:`plone.app.users.utils.generate_user_id` for details.
         """
-        generator = queryUtility(IUserIdGenerator)
-        if generator:
-            userid = generator(data)
-            if userid:
-                data["user_id"] = userid
-                return userid
-
-        settings = self._get_security_settings()
-        if settings.use_uuid_as_userid:
-            userid = uuid_userid_generator()
-            data["user_id"] = userid
-            return userid
-
-        # We may have a username already.
-        userid = data.get("username")
-        if userid:
-            # If we are not using email as login, then this user name is fine.
-            if not settings.use_email_as_login:
-                data["user_id"] = userid
-                return userid
-
-        # First get a default value that we can return if we cannot
-        # find anything better.
-        pas = getToolByName(self.context, "acl_users")
-        email = pas.applyTransform(data.get("email"))
-        default = data.get("username") or email or ""
-        data["user_id"] = default
-        fullname = data.get("fullname")
-        if not fullname:
-            return default
-        userid = getUtility(IIDNormalizer).normalize(fullname)
-        # First check that this is a valid member id, regardless of
-        # whether a member with this id already exists or not.  We
-        # access an underscore attribute of the registration tool, so
-        # we take a precaution in case this is ever removed as an
-        # implementation detail.
-        registration = getToolByName(self.context, "portal_registration")
-        if hasattr(registration, "_ALLOWED_MEMBER_ID_PATTERN"):
-            if not registration._ALLOWED_MEMBER_ID_PATTERN.match(userid):
-                # If 'bob-jones' is not good then 'bob-jones-1' will not
-                # be good either.
-                return default
-        if registration.isMemberIdAllowed(userid):
-            data["user_id"] = userid
-            return userid
-        # Try bob-jones-1, bob-jones-2, etc.
-        idx = 1
-        while idx <= RENAME_AFTER_CREATION_ATTEMPTS:
-            new_id = "%s-%d" % (userid, idx)
-            if registration.isMemberIdAllowed(new_id):
-                data["user_id"] = new_id
-                return new_id
-            idx += 1
-
-        # We cannot come up with a nice id, so we simply return the default.
-        return default
+        return _generate_user_id(self.context, data)
 
     def generate_login_name(self, data):
         """Generate a login name from data.
 
-        Usually the login name and user id are the same, but this is
-        not necessarily true.  When using the email address as login
-        name, we may have a different user id, generated by calling
-        the generate_user_id method.
-
-        We try a few options for coming up with a good login name:
-
-        1. We query a utility, so integrators can register a hook to
-           generate a login name using their own logic.
-
-        2. If a username is given and we do not use email as login,
-           then we simply return that username as the login name.
-
-        3. When using email as login, we use the email address.
-
-        In all cases, we call PAS.applyTransform on the login name, if
-        that is defined.  This is a recent addition to PAS, currently
-        under development.
-
-        When a login name is chosen, the 'login_name' key of the data gets
-        set and the login name is returned.
+        Delegates to the standalone function in plone.app.users.utils.
+        See :func:`plone.app.users.utils.generate_login_name` for details.
         """
-        pas = getToolByName(self.context, "acl_users")
-        generator = queryUtility(ILoginNameGenerator)
-        if generator:
-            login_name = generator(data)
-            if login_name:
-                login_name = pas.applyTransform(login_name)
-                data["login_name"] = login_name
-                return login_name
-
-        # We may have a username already.
-        login_name = data.get("username")
-        login_name = pas.applyTransform(login_name)
-        data["login_name"] = login_name
-        settings = self._get_security_settings()
-        # If we are not using email as login, then this user name is fine.
-        if not settings.use_email_as_login:
-            return login_name
-
-        # We use email as login.
-        login_name = data.get("email")
-        login_name = pas.applyTransform(login_name)
-        data["login_name"] = login_name
-        return login_name
+        return _generate_login_name(self.context, data)
 
     # Actions validators
     def validate_registration(self, action, data):
