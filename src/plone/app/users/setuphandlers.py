@@ -3,7 +3,6 @@ from plone.base.utils import safe_bytes
 import logging
 import plone.app.users.browser.schemaeditor as ttw
 
-
 logger = logging.getLogger("plone.app.users.setuphandlers")
 
 FILE = "userschema.xml"
