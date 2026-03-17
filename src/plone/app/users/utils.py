@@ -13,7 +13,6 @@ from zope.interface import Invalid
 
 import zope.event
 
-
 RENAME_AFTER_CREATION_ATTEMPTS = 100
 
 
