@@ -35,7 +35,6 @@ from zope.schema import getFieldNames
 
 import logging
 
-
 # Number of retries for creating a user id like bob-jones-42:
 RENAME_AFTER_CREATION_ATTEMPTS = 100
 

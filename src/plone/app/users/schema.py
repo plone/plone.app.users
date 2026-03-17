@@ -17,7 +17,6 @@ from zope.interface import implementer
 from zope.interface import Interface
 from ZTUtils import make_query
 
-
 SCHEMA_ANNOTATION = "plone.app.users.schema"
 # must match the browser view name !
 SCHEMATA_KEY = "member-fields"

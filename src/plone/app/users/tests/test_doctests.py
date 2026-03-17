@@ -4,7 +4,6 @@ from plone.testing import layered
 import doctest
 import unittest
 
-
 doc_tests = [
     "duplicate_email.rst",
     "email_login.rst",

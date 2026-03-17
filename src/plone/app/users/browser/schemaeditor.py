@@ -26,7 +26,6 @@ import copy
 import logging
 import re
 
-
 USERS_NAMESPACE = "http://namespaces.plone.org/supermodel/users"
 USERS_PREFIX = "users"
 SPLITTER = "_//_"

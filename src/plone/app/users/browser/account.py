@@ -32,7 +32,6 @@ from zope.globalrequest import getRequest
 from zope.interface import implementer
 from ZTUtils import make_query
 
-
 MESSAGE_EMAIL_CANNOT_CHANGE = _(
     "message_email_cannot_change",
     default=("Sorry, you are not allowed to change your email address."),
