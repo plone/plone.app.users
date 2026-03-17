@@ -13,7 +13,6 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zExceptions import NotFound
 from zope.component import getUtility
 
-
 try:
     from html import escape
 except ImportError:

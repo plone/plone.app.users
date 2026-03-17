@@ -6,7 +6,6 @@ from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.interface import Interface
 from zope.schema import Choice
 
-
 try:
     import plone.app.event  # noqa
 

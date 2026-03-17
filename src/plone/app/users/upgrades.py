@@ -12,7 +12,6 @@ from zope.interface import Interface
 import copy
 import logging
 
-
 log = logging.getLogger("plone.app.users:upgrade")
 
 

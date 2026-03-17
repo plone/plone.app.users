@@ -14,7 +14,6 @@ from zope.schema.vocabulary import SimpleVocabulary
 
 import zope.schema
 
-
 form_vocab = SimpleVocabulary(
     [
         SimpleTerm(value="On Registration", title=_("On Registration")),
