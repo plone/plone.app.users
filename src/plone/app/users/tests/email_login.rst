@@ -150,10 +150,9 @@ Pick a different email address.
 Pick a valid email address with a format that may cause problems.
 This needs plone.schema 2.0.2, with a better email validation.
 This also needs a Products.CMFPlone release where the RegistrationTool has the principal_id_or_login_name_exists method.
-This is expected in 6.0.15, 6.1.1, and 6.2.0a1.
-TODO: enable this test after we have those releases.
+This is available since 6.0.15, 6.1.1, and 6.2.0a1.
 
-    .. >>> browser.getControl('Email').value = "o'hara@example.com"
-    .. >>> browser.getControl('Save').click()
-    .. >>> browser.contents
-    .. '...Changes saved...'
+    >>> browser.getControl('Email').value = "o'hara@example.com"
+    >>> browser.getControl('Save').click()
+    >>> browser.contents
+    '...Changes saved...'

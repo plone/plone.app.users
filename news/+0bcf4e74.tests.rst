@@ -1,0 +1,2 @@
+Re-enable test of valid email address with a format that may cause problems.
+[maurits]
