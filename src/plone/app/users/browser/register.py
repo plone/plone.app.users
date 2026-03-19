@@ -7,7 +7,6 @@ from plone.app.users.schema import IRegisterSchema
 from plone.app.users.utils import generate_login_name as _generate_login_name
 from plone.app.users.utils import generate_user_id as _generate_user_id
 from plone.app.users.utils import notifyWidgetActionExecutionError
-from plone.app.users.utils import RENAME_AFTER_CREATION_ATTEMPTS  # noqa: F401
 from plone.autoform.form import AutoExtensibleForm
 from plone.base import PloneMessageFactory as _
 from plone.base.interfaces import ISecuritySchema
@@ -29,9 +28,15 @@ from ZODB.POSException import ConflictError
 from zope.component import getAdapter
 from zope.component import getMultiAdapter
 from zope.component import getUtility
+from zope.deferredimport import deprecated
 from zope.schema import getFieldNames
 
 import logging
+
+deprecated(
+    "Import from plone.app.users.utils instead.",
+    RENAME_AFTER_CREATION_ATTEMPTS="plone.app.users.utils:RENAME_AFTER_CREATION_ATTEMPTS",
+)
 
 
 def getRegisterSchema():
