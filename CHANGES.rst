@@ -8,6 +8,29 @@ Changelog
 
 .. towncrier release notes start
 
+4.0.0a3 (2026-03-23)
+--------------------
+
+New features:
+
+
+- Extract ``generate_user_id`` and ``generate_login_name`` as standalone functions in ``plone.app.users.utils``, enabling reuse from ``plone.api`` and ``plone.restapi`` without form view dependency. @jensens (#4292)
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs]
+
+
+Tests:
+
+
+- Re-enable test of valid email address with a format that may cause problems.
+  [maurits]
+
+
 4.0.0a2 (2026-02-23)
 --------------------
 
