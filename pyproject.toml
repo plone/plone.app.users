@@ -115,7 +115,7 @@ Zope = [
   'zope.sendmail', 'Zope'
 ]
 'plone.base' = [
-  'plone.batching', 'plone.registry', 'plone.schema','plone.z3cform',
+  'plone.batching', 'plone.registry', 'plone.schema',
   'Products.CMFCore', 'Products.CMFDynamicViewFTI',
 ]
 python-dateutil = ['dateutil']

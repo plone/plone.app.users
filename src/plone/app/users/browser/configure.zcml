@@ -69,21 +69,6 @@
       />
 
   <browser:page
-      name="member-fields"
-      for="*"
-      class=".schemaeditor.MemberSchemaContext"
-      allowed_interface="OFS.interfaces.IItem"
-      permission="plone.app.controlpanel.UsersAndGroups"
-      />
-
-  <browser:page
-      name="edit"
-      for=".schemaeditor.IMemberSchemaContext"
-      class=".schemaeditor.SchemaListingPage"
-      permission="plone.app.controlpanel.UsersAndGroups"
-      />
-
-  <browser:page
       name="member-search"
       for="*"
       class=".membersearch.MemberSearchForm"
