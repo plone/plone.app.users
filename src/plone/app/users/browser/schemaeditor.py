@@ -13,7 +13,6 @@ from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import get_portal
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getGlobalSiteManager
-from zope.interface import Interface
 
 import copy
 import logging
@@ -73,10 +72,6 @@ re_flags = re.S | re.U | re.X
 def log(message, level="info", id="plone.app.users.browser.schemaeditor"):
     logger = logging.getLogger(id)
     getattr(logger, level)(message)
-
-
-class IMemberSchemaContext(Interface):
-    """ """
 
 
 def updateSchema(object, event):

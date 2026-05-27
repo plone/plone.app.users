@@ -88,7 +88,7 @@
       />
 
   <subscriber
-      for="plone.app.users.browser.schemaeditor.IMemberSchemaContext
+      for="plone.app.users.schema.IMemberSchemaContext
            plone.schemaeditor.interfaces.ISchemaModifiedEvent"
       handler="plone.app.users.browser.schemaeditor.updateSchema"
       />
