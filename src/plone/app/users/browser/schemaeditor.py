@@ -10,9 +10,7 @@ from plone.supermodel import loadString
 from plone.supermodel.model import finalizeSchemas
 from plone.supermodel.model import Model
 from plone.supermodel.model import SchemaClass
-from plone.supermodel.parser import IFieldMetadataHandler
 from plone.supermodel.serializer import serialize
-from plone.supermodel.utils import ns
 from plone.z3cform.layout import FormWrapper
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import get_portal
@@ -28,7 +26,6 @@ import re
 
 USERS_NAMESPACE = "http://namespaces.plone.org/supermodel/users"
 USERS_PREFIX = "users"
-SPLITTER = "_//_"
 
 ALLOWED_FIELDS = [
     "zope.schema._bootstrapfields.TextLine",
@@ -72,10 +69,6 @@ re_flags = re.S | re.U | re.X
 def log(message, level="info", id="plone.app.users.browser.schemaeditor"):
     logger = logging.getLogger(id)
     getattr(logger, level)(message)
-
-
-class IMemberFieldValidator(Interface):
-    """Base marker for field validators"""
 
 
 class IMemberSchemaContext(Interface):
@@ -173,70 +166,6 @@ def get_ttw_edited_schema():
             return ""
         return ttwschema
     return ""
-
-
-@implementer(IFieldMetadataHandler)
-class UsersMetadataSchemaExporter:
-    """Support the security: namespace in model definitions."""
-
-    namespace = ns = USERS_NAMESPACE
-    prefix = USERS_PREFIX
-    if_attrs = (
-        "min",
-        "max",
-        "order",
-        "min_length",
-        "max_length",
-        "required",
-    )
-
-    def read(self, fieldNode, schema, field):
-        for attr in self.if_attrs:
-            value = self.load(fieldNode.get(ns(attr, self.ns), None))
-            if value is not None:
-                setattr(field, attr, value)
-
-    def write(self, fieldNode, schema, field):
-        for attr in self.if_attrs:
-            value = getattr(field, attr, None)
-            if value is not None:
-                v = self.serialize(value)
-                fieldNode.set(ns(attr, self.ns), v)
-
-    def load(self, value):
-        listre = re.compile("(?P<type>list|set|tuple):(?P<list>.*)", re_flags)
-        ltypes = {
-            "list": list,
-            "set": set,
-            "tuple": tuple,
-        }
-        if isinstance(value, str):
-            listm = listre.search(value)
-            if value.startswith("int:"):
-                value = int(value.split("int:")[1])
-            elif listm:
-                i = listm.groupdict()
-                try:
-                    tp = i["type"]
-                    value = i["list"].split(SPLITTER)
-                    if tp not in ["list"]:
-                        value = ltypes[tp](value)
-                except Exception:
-                    value = []
-            else:
-                value = {"bool:true": True, "bool:false": False}.get(
-                    value.lower(), value
-                )
-        return value
-
-    def serialize(self, value):
-        if isinstance(value, bool):
-            value = value and "bool:true" or "bool:false"
-        elif isinstance(value, (list, set, tuple)):
-            value = f"{type(value).__name__}:{SPLITTER.join(value)}"
-        elif value is not None:
-            value = f"int:{value}"
-        return value
 
 
 def is_serialisable_field(field):
