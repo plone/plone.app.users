@@ -24,9 +24,6 @@ import copy
 import logging
 import re
 
-USERS_NAMESPACE = "http://namespaces.plone.org/supermodel/users"
-USERS_PREFIX = "users"
-
 ALLOWED_FIELDS = [
     "zope.schema._bootstrapfields.TextLine",
     "zope.schema._bootstrapfields.Text",
