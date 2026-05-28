@@ -1,21 +1,28 @@
 from plone.base import PloneMessageFactory as _
-from plone.formwidget.namedfile.widget import NamedImageWidget
-from plone.namedfile.interfaces import INamedImageField
 from plone.schema.email import Email
 from plone.schemaeditor.fields import FieldFactory
 from plone.schemaeditor.interfaces import IFieldFactory
 from Products.CMFCore.interfaces import ISiteRoot
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.RegistrationTool import EmailAddressInvalid
-from z3c.form.interfaces import IFieldWidget
-from z3c.form.interfaces import IFormLayer
-from z3c.form.widget import FieldWidget
 from zope import schema
-from zope.component import adapter
 from zope.component import getUtility
 from zope.interface import implementer
 from zope.interface import Interface
-from ZTUtils import make_query
+
+import zope.deferredimport
+
+zope.deferredimport.initialize()
+
+zope.deferredimport.deprecated(
+    "Please use from plone.app.z3cform.widgets.image import PortraitWidget instead.",
+    LanguageSelector="plone.app.z3cform.widgets.image:PortraitWidget",
+)
+zope.deferredimport.deprecated(
+    "Please use from plone.app.z3cform.widgets.image import PortraitFieldWidget instead.",
+    LanguageSelector="plone.app.z3cform.widgets.image:PortraitFieldWidget",
+)
+
 
 SCHEMA_ANNOTATION = "plone.app.users.schema"
 # must match the browser view name !
@@ -131,36 +138,6 @@ class IAddUserSchema(Interface):
         required=False,
         value_type=schema.Choice(vocabulary="plone.app.users.group_ids"),
     )
-
-
-class PortraitWidget(NamedImageWidget):
-    # Cheat around 2 bugs:
-    # * You are not authenticated during traversal, so fetching
-    #   the current user does not work.
-    # * download_url won't append our querystring, so fetching
-    #   another user's image does not work.
-    @property
-    def download_url(self):
-        userid = self.request.form.get("userid")
-        if not userid:
-            mt = getToolByName(self.form.context, "portal_membership")
-            userid = mt.getAuthenticatedMember().getId()
-
-        # anonymous
-        if not userid:
-            return None
-
-        url = super().download_url
-        if not url:
-            return None
-
-        return "{}?{}".format(url, make_query({"userid": userid}))
-
-
-@implementer(IFieldWidget)
-@adapter(INamedImageField, IFormLayer)
-def PortraitFieldWidget(field, request):
-    return FieldWidget(field, PortraitWidget(request))
 
 
 class IRegistrationSettingsSchema(Interface):

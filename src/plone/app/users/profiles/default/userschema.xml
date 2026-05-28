@@ -36,7 +36,7 @@
       <required>False</required>
       <title i18n:translate="label_location">Location</title>
     </field>
-    <field form:widget="plone.app.users.schema.PortraitFieldWidget"
+    <field form:widget="plone.app.z3cform.widgets.image.PortraitFieldWidget"
            name="portrait"
            type="plone.namedfile.field.NamedBlobImage"
            users:forms="In User Profile"
