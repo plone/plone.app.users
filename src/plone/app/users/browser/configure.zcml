@@ -6,50 +6,12 @@
     >
 
   <include package="plone.autoform" />
-  <include
-      package="Products.CMFPlone.controlpanel"
-      file="permissions.zcml"
-      />
-
-  <browser:page
-      name="personal-preferences"
-      for="plone.base.interfaces.INavigationRoot"
-      class=".personalpreferences.PersonalPreferencesPanel"
-      permission="cmf.SetOwnProperties"
-      />
-
-  <browser:page
-      name="user-preferences"
-      for="plone.base.interfaces.INavigationRoot"
-      class=".personalpreferences.PersonalPreferencesConfiglet"
-      permission="plone.app.controlpanel.UsersAndGroups"
-      />
-
-  <browser:page
-      name="personal-information"
-      for="plone.base.interfaces.INavigationRoot"
-      class=".userdatapanel.UserDataPanel"
-      permission="cmf.SetOwnProperties"
-      />
-
-  <browser:page
-      name="user-information"
-      for="plone.base.interfaces.INavigationRoot"
-      class=".userdatapanel.UserDataConfiglet"
-      permission="plone.app.controlpanel.UsersAndGroups"
-      />
 
   <browser:page
       name="member-search"
       for="*"
       class=".membersearch.MemberSearchForm"
       permission="zope2.View"
-      />
-
-  <adapter
-      factory=".personalpreferences.PersonalPreferencesPanelAdapter"
-      provides=".personalpreferences.IPersonalPreferences"
-      for="plone.base.interfaces.INavigationRoot"
       />
 
   <subscriber
