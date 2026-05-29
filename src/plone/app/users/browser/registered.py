@@ -1,14 +1,8 @@
-from Products.CMFCore.utils import getToolByName
-from Products.Five import BrowserView
-from zope.component import getMultiAdapter
+import zope.deferredimport
 
-import datetime
+zope.deferredimport.initialize()
 
-
-class RegisteredView(BrowserView):
-    def expire_date(self):
-        ppr = getToolByName(self.context, "portal_password_reset")
-        expire_length = datetime.timedelta(days=ppr.getExpirationTimeout())
-        expiration_date = datetime.datetime.now() + expire_length
-        ploneview = getMultiAdapter((self.context, self.request), name="plone")
-        return ploneview.toLocalizedTime(expiration_date, long_format=1)
+zope.deferredimport.deprecated(
+    "Please use from plone.app.layout.users.registered import RegisteredView instead.",
+    RegisteredView="plone.app.layout.users.registered:RegisteredView",
+)

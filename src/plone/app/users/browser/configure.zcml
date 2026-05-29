@@ -12,28 +12,6 @@
       />
 
   <browser:page
-      name="register"
-      for="plone.base.interfaces.INavigationRoot"
-      class=".register.RegistrationForm"
-      permission="cmf.AddPortalMember"
-      />
-
-  <browser:page
-      name="registered"
-      for="plone.base.interfaces.INavigationRoot"
-      class=".registered.RegisteredView"
-      template="registered.pt"
-      permission="cmf.AddPortalMember"
-      />
-
-  <browser:page
-      name="new-user"
-      for="plone.base.interfaces.INavigationRoot"
-      class=".register.AddUserForm"
-      permission="plone.app.controlpanel.UsersAndGroups"
-      />
-
-  <browser:page
       name="change-password"
       for="plone.base.interfaces.INavigationRoot"
       class=".passwordpanel.PasswordPanel"

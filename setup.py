@@ -66,7 +66,6 @@ setup(
         "plone.i18n",
         "plone.memoize",
         "plone.namedfile",
-        "plone.protect",
         "plone.registry",
         "plone.schema",
         "plone.schemaeditor",
