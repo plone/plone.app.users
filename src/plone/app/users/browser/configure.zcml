@@ -12,13 +12,6 @@
       />
 
   <browser:page
-      name="change-password"
-      for="plone.base.interfaces.INavigationRoot"
-      class=".passwordpanel.PasswordPanel"
-      permission="cmf.SetOwnPassword"
-      />
-
-  <browser:page
       name="personal-preferences"
       for="plone.base.interfaces.INavigationRoot"
       class=".personalpreferences.PersonalPreferencesPanel"
@@ -56,12 +49,6 @@
   <adapter
       factory=".personalpreferences.PersonalPreferencesPanelAdapter"
       provides=".personalpreferences.IPersonalPreferences"
-      for="plone.base.interfaces.INavigationRoot"
-      />
-
-  <adapter
-      factory=".passwordpanel.PasswordPanelAdapter"
-      provides=".passwordpanel.IPasswordSchema"
       for="plone.base.interfaces.INavigationRoot"
       />
 
