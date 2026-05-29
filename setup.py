@@ -63,7 +63,6 @@ setup(
         "plone.base",
         "plone.formwidget.namedfile >= 1.0.3",
         "plone.i18n",
-        "plone.memoize",
         "plone.namedfile",
         "plone.registry",
         "plone.schema",
