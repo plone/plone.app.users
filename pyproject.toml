@@ -1,8 +1,102 @@
 # Generated from:
-# https://github.com/plone/meta/tree/main/src/plone/meta/default
+# https://github.com/plone/meta/tree/2.x/src/plone/meta/default
 # See the inline comments on how to expand/tweak this configuration file
 [build-system]
 requires = ["setuptools>=68.2,<83", "wheel"]
+
+# START-MARKER-MANUAL-CONFIG
+# Anything from here until END-MARKER-MANUAL-CONFIG
+# will be kept by plone.meta
+
+[project]
+name = "plone.app.users"
+version = "4.0.1.dev0"
+description = "A package for all things users and groups related (specific to plone)"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Framework :: Plone",
+    "Framework :: Plone :: 6.2",
+    "Framework :: Plone :: Core",
+    "Framework :: Zope :: 5",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+license = "GPL-2.0-only"
+dynamic = ["readme"]
+requires-python = ">=3.10"
+authors = [
+    {name = "Plone Foundation",email = "plone-developers@lists.sourceforge.net"},
+]
+maintainers = [
+    {name = "Plone Foundation and contributors",email = "plone-developers@lists.sourceforge.net"},
+]
+dependencies = [
+    "Acquisition",
+    "Pillow",
+    "Products.GenericSetup",
+    "Products.PlonePAS >= 5.0.1",
+    "Products.statusmessages",
+    "Zope",
+    "plone.app.event",
+    "plone.app.vocabularies",
+    "plone.autoform >= 1.2",
+    "plone.base",
+    "plone.formwidget.namedfile >= 1.0.3",
+    "plone.i18n",
+    "plone.memoize",
+    "plone.namedfile",
+    "plone.protect",
+    "plone.registry",
+    "plone.schema",
+    "plone.schemaeditor",
+    "plone.supermodel",
+    "plone.uuid",
+    "plone.z3cform",
+    "z3c.form",
+    "zope.annotation",
+    "zope.cachedescriptors",
+    "zope.component",
+    "zope.event",
+    "zope.interface",
+    "zope.schema",
+]
+keywords = [
+    "Zope",
+    "CMF",
+    "Plone",
+    "Users",
+    "Groups",
+]
+
+[project.entry-points."plone.autoinclude.plugin"]
+target = "plone"
+
+[project.optional-dependencies]
+test = [
+    "Products.MailHost",
+    "Products.PluggableAuthService",
+    "plone.app.contenttypes[test]",
+    "plone.app.multilingual",
+    "plone.app.robotframework",
+    "plone.app.testing",
+    "plone.keyring",
+    "plone.testing",
+]
+
+[project.urls]
+Source = "https://github.com/plone/plone.app.users"
+Issues = "https://github.com/plone/Products.CMFPlone/issues"
+Changelog = "https://github.com/plone/plone.app.users/blob/master/CHANGES.rst"
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.rst", "CHANGES.rst"]}
+# END-MARKER-MANUAL-CONFIG
 
 [tool.towncrier]
 directory = "news/"
