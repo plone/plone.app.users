@@ -4,31 +4,31 @@ from plone.app.users.schema import SCHEMA_ANNOTATION
 from plone.app.users.schema import SCHEMATA_KEY
 from plone.base import PloneMessageFactory as _
 from plone.base.interfaces import IPloneSiteRoot
-from plone.schemaeditor.browser.schema.listing import SchemaListing
-from plone.schemaeditor.browser.schema.traversal import SchemaContext
 from plone.supermodel import loadString
 from plone.supermodel.model import finalizeSchemas
 from plone.supermodel.model import Model
 from plone.supermodel.model import SchemaClass
-from plone.supermodel.parser import IFieldMetadataHandler
 from plone.supermodel.serializer import serialize
-from plone.supermodel.utils import ns
-from plone.z3cform.layout import FormWrapper
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import get_portal
-from Products.Five.browser.pagetemplatefile import ViewPageTemplateFile
 from zope.annotation.interfaces import IAnnotations
 from zope.component import getGlobalSiteManager
-from zope.interface import implementer
-from zope.interface import Interface
 
 import copy
 import logging
 import re
+import zope.deferredimport
 
-USERS_NAMESPACE = "http://namespaces.plone.org/supermodel/users"
-USERS_PREFIX = "users"
-SPLITTER = "_//_"
+zope.deferredimport.initialize()
+
+zope.deferredimport.deprecated(
+    "Please use from plone.app.layout.users.schemaeditor import MemberSchemaContext instead.",
+    MemberSchemaContext="plone.app.layout.users.schemaeditor:MemberSchemaContext",
+)
+zope.deferredimport.deprecated(
+    "Please use from plone.app.layout.users.schemaeditor import SchemaListingPage instead.",
+    SchemaListingPage="plone.app.layout.users.schemaeditor:SchemaListingPage",
+)
 
 ALLOWED_FIELDS = [
     "zope.schema._bootstrapfields.TextLine",
@@ -72,38 +72,6 @@ re_flags = re.S | re.U | re.X
 def log(message, level="info", id="plone.app.users.browser.schemaeditor"):
     logger = logging.getLogger(id)
     getattr(logger, level)(message)
-
-
-class IMemberFieldValidator(Interface):
-    """Base marker for field validators"""
-
-
-class IMemberSchemaContext(Interface):
-    """ """
-
-
-class SchemaListingPage(FormWrapper):
-    form = SchemaListing
-    index = ViewPageTemplateFile("schema_layout.pt")
-
-
-@implementer(IMemberSchemaContext)
-class MemberSchemaContext(SchemaContext):
-    label = _("Edit Member Form Fields")
-
-    def __init__(self, context, request):
-        self.fieldsWhichCannotBeDeleted = ["fullname", "email"]
-        self.showSaveDefaults = False
-        self.enableFieldsets = False
-        self.allowedFields = ALLOWED_FIELDS
-
-        schema = getFromBaseSchema(IUserDataSchema)
-        super().__init__(
-            schema,
-            request,
-            name=SCHEMATA_KEY,
-            title=_("Member Fields"),
-        )
 
 
 def updateSchema(object, event):
@@ -173,70 +141,6 @@ def get_ttw_edited_schema():
             return ""
         return ttwschema
     return ""
-
-
-@implementer(IFieldMetadataHandler)
-class UsersMetadataSchemaExporter:
-    """Support the security: namespace in model definitions."""
-
-    namespace = ns = USERS_NAMESPACE
-    prefix = USERS_PREFIX
-    if_attrs = (
-        "min",
-        "max",
-        "order",
-        "min_length",
-        "max_length",
-        "required",
-    )
-
-    def read(self, fieldNode, schema, field):
-        for attr in self.if_attrs:
-            value = self.load(fieldNode.get(ns(attr, self.ns), None))
-            if value is not None:
-                setattr(field, attr, value)
-
-    def write(self, fieldNode, schema, field):
-        for attr in self.if_attrs:
-            value = getattr(field, attr, None)
-            if value is not None:
-                v = self.serialize(value)
-                fieldNode.set(ns(attr, self.ns), v)
-
-    def load(self, value):
-        listre = re.compile("(?P<type>list|set|tuple):(?P<list>.*)", re_flags)
-        ltypes = {
-            "list": list,
-            "set": set,
-            "tuple": tuple,
-        }
-        if isinstance(value, str):
-            listm = listre.search(value)
-            if value.startswith("int:"):
-                value = int(value.split("int:")[1])
-            elif listm:
-                i = listm.groupdict()
-                try:
-                    tp = i["type"]
-                    value = i["list"].split(SPLITTER)
-                    if tp not in ["list"]:
-                        value = ltypes[tp](value)
-                except Exception:
-                    value = []
-            else:
-                value = {"bool:true": True, "bool:false": False}.get(
-                    value.lower(), value
-                )
-        return value
-
-    def serialize(self, value):
-        if isinstance(value, bool):
-            value = value and "bool:true" or "bool:false"
-        elif isinstance(value, (list, set, tuple)):
-            value = f"{type(value).__name__}:{SPLITTER.join(value)}"
-        elif value is not None:
-            value = f"int:{value}"
-        return value
 
 
 def is_serialisable_field(field):
