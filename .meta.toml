@@ -6,7 +6,7 @@ template = "default"
 commit-id = "2.11.2.dev0"
 
 [tox]
-test_matrix = {"6.2" = ["*"]}
+test_matrix = {"6.3" = ["*"]}
 
 [pyproject]
 codespell_ignores = "complet,exemple"
