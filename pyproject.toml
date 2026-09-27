@@ -78,7 +78,6 @@ test = [
     "Products.PluggableAuthService",
     "plone.app.contenttypes[test]",
     "plone.app.multilingual",
-    "plone.app.robotframework",
     "plone.app.testing",
     "plone.keyring",
     "plone.testing",
