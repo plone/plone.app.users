@@ -8,6 +8,23 @@ Changelog
 
 .. towncrier release notes start
 
+5.0.0a1 (2026-09-27)
+--------------------
+
+Breaking changes:
+
+
+- Move Classic-UI template/view code to plone.app.layout
+  [tlotze] (#3953)
+
+
+Internal:
+
+
+- Move package metadata from ``setup.py`` to ``pyproject.toml``.
+  [plone devs]
+
+
 4.0.0 (2026-05-16)
 ------------------
 

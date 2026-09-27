@@ -10,7 +10,7 @@ requires = ["setuptools>=68.2,<83", "wheel"]
 
 [project]
 name = "plone.app.users"
-version = "4.0.1.dev0"
+version = "5.0.0a1"
 description = "A package for all things users and groups related (specific to plone)"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
