@@ -1,5 +1,3 @@
-from plone.app.users.browser.schemaeditor import USERS_NAMESPACE
-from plone.app.users.browser.schemaeditor import USERS_PREFIX
 from plone.autoform import directives as form
 from plone.base import PloneMessageFactory as _
 from plone.supermodel.interfaces import IFieldMetadataHandler
@@ -13,6 +11,9 @@ from zope.schema.vocabulary import SimpleTerm
 from zope.schema.vocabulary import SimpleVocabulary
 
 import zope.schema
+
+USERS_NAMESPACE = "http://namespaces.plone.org/supermodel/users"
+USERS_PREFIX = "users"
 
 form_vocab = SimpleVocabulary(
     [

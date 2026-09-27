@@ -56,7 +56,7 @@
   <adapter
       factory=".field_extender.get_user_form_selection"
       provides="plone.schemaeditor.interfaces.IFieldEditorExtender"
-      for=".browser.schemaeditor.IMemberSchemaContext
+      for=".schema.IMemberSchemaContext
            zope.schema.interfaces.IField"
       name="plone.app.users.userformselection"
       />
@@ -64,7 +64,7 @@
   <adapter
       factory=".field_extender.get_user_addform_selection"
       provides="plone.schemaeditor.interfaces.IFieldEditorExtender"
-      for=".browser.schemaeditor.IMemberSchemaContext"
+      for=".schema.IMemberSchemaContext"
       name="plone.app.users.useraddformselection"
       />
 

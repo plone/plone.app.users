@@ -85,6 +85,10 @@ class IUserDataSchema(Interface):
     )
 
 
+class IMemberSchemaContext(Interface):
+    """ """
+
+
 class IRegisterSchema(Interface):
     username = schema.ASCIILine(
         title=_("label_user_name", default="User Name"),

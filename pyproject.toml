@@ -41,7 +41,6 @@ dependencies = [
     "Pillow",
     "Products.GenericSetup",
     "Products.PlonePAS >= 5.0.1",
-    "Products.statusmessages",
     "Zope",
     "plone.app.event",
     "plone.app.vocabularies",
@@ -49,18 +48,14 @@ dependencies = [
     "plone.base",
     "plone.formwidget.namedfile >= 1.0.3",
     "plone.i18n",
-    "plone.memoize",
     "plone.namedfile",
-    "plone.protect",
     "plone.registry",
     "plone.schema",
     "plone.schemaeditor",
     "plone.supermodel",
     "plone.uuid",
-    "plone.z3cform",
     "z3c.form",
     "zope.annotation",
-    "zope.cachedescriptors",
     "zope.component",
     "zope.event",
     "zope.interface",
@@ -209,7 +204,7 @@ Zope = [
   'zope.sendmail', 'Zope'
 ]
 'plone.base' = [
-  'plone.batching', 'plone.registry', 'plone.schema','plone.z3cform',
+  'plone.batching', 'plone.registry', 'plone.schema',
   'Products.CMFCore', 'Products.CMFDynamicViewFTI',
 ]
 python-dateutil = ['dateutil']
