@@ -229,7 +229,7 @@ class AccountPanelValidation:
                     err_str = MESSAGE_EMAIL_IN_USE
         return err_str
 
-    def validate_portrait(self, action, data):
+    def validate_portrait(self, data):
         """Portrait validation.
         Checks if image is supported by Pillow.
         SVG files are not yet supported.
