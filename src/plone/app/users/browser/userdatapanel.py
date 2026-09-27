@@ -14,12 +14,12 @@ import zope.deferredimport
 zope.deferredimport.initialize()
 
 zope.deferredimport.deprecated(
-    "Please use from plone.app.layout.users.account import UserDataPanel instead.",
-    UserDataPanel="plone.app.layout.users.account:UserDataPanel",
+    "Please use from plone.app.layout.users.userdatapanel import UserDataPanel instead.",
+    UserDataPanel="plone.app.layout.users.userdatapanel:UserDataPanel",
 )
 zope.deferredimport.deprecated(
-    "Please use from plone.app.layout.users.account import UserDataConfiglet instead.",
-    UserDataConfiglet="plone.app.layout.users.account:UserDataConfiglet",
+    "Please use from plone.app.layout.users.userdatapanel import UserDataConfiglet instead.",
+    UserDataConfiglet="plone.app.layout.users.userdatapanel:UserDataConfiglet",
 )
 
 

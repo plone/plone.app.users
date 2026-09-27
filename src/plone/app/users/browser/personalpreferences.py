@@ -8,12 +8,12 @@ import zope.deferredimport
 zope.deferredimport.initialize()
 
 zope.deferredimport.deprecated(
-    "Please use from plone.app.layout.users.passwordpanel import PersonalPreferencesPanel instead.",
-    PersonalPreferencesPanel="plone.app.layout.users.passwordpanel:PersonalPreferencesPanel",
+    "Please use from plone.app.layout.users.personalpreferences import PersonalPreferencesPanel instead.",
+    PersonalPreferencesPanel="plone.app.layout.users.personalpreferences:PersonalPreferencesPanel",
 )
 zope.deferredimport.deprecated(
-    "Please use from plone.app.layout.users.passwordpanel import PersonalPreferencesConfiglet instead.",
-    PersonalPreferencesConfiglet="plone.app.layout.users.passwordpanel:PersonalPreferencesConfiglet",
+    "Please use from plone.app.layout.users.personalpreferences import PersonalPreferencesConfiglet instead.",
+    PersonalPreferencesConfiglet="plone.app.layout.users.personalpreferences:PersonalPreferencesConfiglet",
 )
 
 
