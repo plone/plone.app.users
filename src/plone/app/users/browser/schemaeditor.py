@@ -99,7 +99,7 @@ def applySchema(snew_schema):
     # update portal_memberdata properties
     pm = getToolByName(site, "portal_memberdata")
     existing = pm.propertyIds()
-    for field_id in [a for a in new_schema]:
+    for field_id in [*new_schema]:
         field_type = field_type_mapping.get(
             new_schema[field_id].__class__.__name__, None
         )
@@ -118,9 +118,7 @@ def applySchema(snew_schema):
 
     if old_schema:
         to_remove = [
-            field_id
-            for field_id in [a for a in old_schema]
-            if field_id not in [a for a in new_schema]
+            field_id for field_id in [*old_schema] if field_id not in [*new_schema]
         ]
         for field_id in to_remove:
             field_type = field_type_mapping.get(
@@ -155,7 +153,7 @@ def is_serialisable_field(field):
 def serialize_ttw_schema(schema=None):
     if not schema:
         schema = get_ttw_edited_schema()
-    bfields = [a for a in IUserDataSchema]
+    bfields = [*IUserDataSchema]
     attrs = {}
     for name in schema:
         f = schema[name]
